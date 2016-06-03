@@ -1,0 +1,150 @@
+﻿
+.bambora_transactionid p {
+    line-height: 6px;
+}
+
+    .bambora_transactionid p:first-child {
+        font-size: 12px;
+        font-weight: 400;
+        color: grey;
+    }
+
+    .bambora_transactionid p:last-child {
+        font-weight: 600;
+    }
+
+.bambora_info_overview {
+    font-weight: 600;
+}
+
+    .bambora_info_overview p {
+        display: inline-block;
+        margin: 0;
+    }
+
+        .bambora_info_overview p:last-child {
+            float: right;
+        }
+
+.bambora_action_container {
+    background-color: #eaecf0;
+    border: 1px solid #b9c4e2;
+    padding: 15px 9px 0 9px;
+    margin: 20px 0;
+    -moz-box-shadow: 0 0 3px #ccc;
+    -webkit-box-shadow: 0 0 3px #ccc;
+    box-shadow: 0 0 3px #ccc;
+}
+
+.bambora_action {
+    position: relative;
+    display: table;
+    border-collapse: separate;
+    width: 100%;
+}
+
+
+    .bambora_action p,
+    .bambora_action input,
+    .bambora_action a {
+        display: inline-block;
+    }
+
+    .bambora_action p {
+        padding: 6px 12px;
+        font-weight: 400;
+        line-height: 1;
+        color: #555;
+        text-align: center;
+        background-color: #eee;
+        border: 1px solid #ccc;
+        border-radius: 4px 0 0 4px;
+        margin: 0;
+    }
+
+    .bambora_action input {
+        margin: 0;
+    }
+
+    .bambora_action a {
+        box-shadow: none !important;
+        height: inherit !important;
+        color: #ffffff !important;
+    }
+
+    .bambora_action .capture,
+    .bambora_action .credit {
+        border-radius: 0 4px 4px 0 !important;
+    }
+
+    .bambora_action .capture {
+        background-color: #67b168 !important;
+        border-color: #67b168;
+        padding: 0 10px 0 !important;
+    }
+
+        .bambora_action .capture:hover {
+            background-color: #88a755 !important;
+            border-color: #88a755 !important;
+        }
+
+    .bambora_action .credit {
+        background-color: #f3c022 !important;
+        border-color: #f3c022 !important;
+        padding: 0 13px 0 !important;
+    }
+
+        .bambora_action .credit:hover {
+            background-color: #e4ba00 !important;
+            border-color: #e4ba00 !important;
+        }
+
+    .bambora_action .delete {
+        background-color: #fa8564;
+        border-color: #fa8564;
+        border-radius: 4px !important;
+        float: right;
+        margin: 0 6px 10px 0;
+        padding: 0 16px;
+    }
+
+        .bambora_action .delete:hover {
+            background-color: #ec6459;
+            border-color: #ec6459;
+        }
+
+
+.bambora_amount {
+    width: 45%;
+}
+
+
+.bambora-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bambora_transaction_date {
+    font-size: 11px;
+    font-weight: 400;
+    color: grey;
+    line-height: 9px;
+}
+
+    .bambora_transaction_date td {
+        padding: 12px 10px 0 10px;
+    }
+
+.bambora_transaction {
+    border-bottom: 1px solid #C1C1C1;
+    font-weight: 600;
+    padding-bottom: 10px;
+}
+
+    .bambora_transaction td {
+        padding: 0 10px 7px 10px;
+    }
+
+        .bambora_transaction td:last-child {
+            float: right;
+        }

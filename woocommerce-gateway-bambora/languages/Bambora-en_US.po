@@ -1,0 +1,175 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: Woocommerce\n"
+"Language: en\n"
+
+#. Name of the plugin
+#: 
+msgid "WooCommerce Bambora Checkout Payment Gateway"
+msgstr ""
+
+#. URI of the plugin
+#: 
+msgid "http://www.bambora.com"
+msgstr ""
+
+#. Description of the plugin
+#: 
+msgid "A payment gateway for Bambora Checkout (http://www.bambora.com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout/)."
+msgstr ""
+
+#. Author of the plugin
+#: 
+msgid "Bambora - Michael Korsgaard & Allan W. Lie"
+msgstr ""
+
+#. Author URI of the plugin
+#: 
+msgid "http://www.bambora.com"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:90
+msgid "Enable/Disable"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:92
+msgid "Enable Bambora Checkout"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:96
+msgid "Title"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:98
+msgid "This controls the title which the user sees during checkout."
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:99
+msgid "Bambora Checkout"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:102
+msgid "Description"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:104
+msgid "This controls the description which the user sees during checkout."
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:105
+msgid "Pay using Bambora Payment Solutions"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:108
+msgid "Merchant number"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:113
+msgid "Access token"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:118
+msgid "Secret token"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:123
+msgid "Window ID"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:128
+msgid "Display window as"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:131
+msgid "How to open the Bambora Checkout"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:136
+msgid "Instant capture"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:138
+msgid "Enable instant capture"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:158
+msgid "<a href=\"http://dev.bambora.com/carts.html#woo-commerce\" target=\"_blank\">Documentation can be found here</a>"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:216
+msgid "Thank you for your order, please click the button below to pay with Bambora."
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:237
+msgid "Pay via Bambora"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:238
+msgid "Cancel order &amp; restore cart"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:270
+msgctxt "hash before order number"
+msgid "#"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:416
+msgid "Callback completed"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:422
+msgid "Fee"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:451
+msgid "Bambora Payment Solutions"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:608
+msgid "Transaction ID"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:616
+msgid "Authorized:"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:623
+msgid "Captured:"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:630
+msgid "Credited:"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:648
+msgid "Are you sure you want to capture?"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:649
+msgid "Capture"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:663
+msgid "Are you sure you want to credit?"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:664
+msgid "Refund "
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:676
+msgid "Are you sure you want to Delete?"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:677
+msgid "Delete"
+msgstr ""
+
+#: ../woocommerce-gateway-bambora.php:720
+msgid "TRANSACTION HISTORY"
+msgstr ""
+
