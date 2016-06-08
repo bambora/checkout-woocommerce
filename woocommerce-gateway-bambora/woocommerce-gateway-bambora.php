@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Bambora Checkout Payment Gateway
 Plugin URI: http://www.bambora.com
 Description: A payment gateway for Bambora Checkout (http://www.bambora.com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout/).
-Version: 1.2.6
+Version: 1.2.7
 Author: Bambora
 Author URI: http://www.bambora.com
 Text Domain: Bambora
@@ -67,6 +67,7 @@ function add_wc_bambora_gateway()
 			$this->windowstate = $this->settings["windowstate"];
 			$this->instantcapture = $this->settings["instantcapture"];
             $this->immediateredirecttoaccept = $this->settings["immediateredirecttoaccept"];
+            $this->md5key = $this->settings["md5key"];
 			
 			// Actions
 			add_action('init', array(& $this, 'check_callback'));
@@ -118,6 +119,12 @@ function add_wc_bambora_gateway()
 								'title' => __( 'Secret token', 'woocommerce-gateway-bambora'), 
 								'type' => 'password',  
 								'default' => ''
+							),
+                'md5key' => array(
+					            'title' => __( 'MD5 Key', 'woocommerce-gateway-bambora'), 
+					            'type' => 'text',
+                                'description' => __( 'This needs to be generated in the merchant administration <a href="https://merchant.bambora.com/" target="_blank">https://merchant.bambora.com/</a> . Settings->Merchant numbers -> Edit.', 'woocommerce'),
+					            'default' => ''
 							),
 				'windowid' => array(
 								'title' => __( 'Window ID', 'woocommerce-gateway-bambora'), 
