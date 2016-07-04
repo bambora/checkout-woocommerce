@@ -63,7 +63,7 @@ function add_wc_bambora_gateway()
 			$this->merchant = $this->settings["merchant"];
             $this->accesstoken = $this->settings["accesstoken"];
             $this->secrettoken = $this->settings["secrettoken"];
-			$this->windowid = $this->settings["windowid"];
+			$this->paymentwindowid = $this->settings["paymentwindowid"];
 			$this->windowstate = $this->settings["windowstate"];
 			$this->instantcapture = $this->settings["instantcapture"];
             $this->immediateredirecttoaccept = $this->settings["immediateredirecttoaccept"];
@@ -126,8 +126,8 @@ function add_wc_bambora_gateway()
                                 'description' => __( 'This needs to be generated in the merchant administration <a href="https://merchant.bambora.com/" target="_blank">https://merchant.bambora.com/</a> . Settings->Merchant numbers -> Edit.', 'woocommerce'),
 					            'default' => ''
 							),
-				'windowid' => array(
-								'title' => __( 'Window ID', 'woocommerce-gateway-bambora'), 
+				'paymentwindowid' => array(
+								'title' => __( 'Payment Window ID', 'woocommerce-gateway-bambora'), 
 								'type' => 'text',  
 								'default' => '1'
 							),
@@ -211,6 +211,7 @@ function add_wc_bambora_gateway()
             $request -> language = str_replace("_","-",get_locale());
             $request -> order = $bamboraOrder;
             $request -> url = $bamboraUrl;
+            $request->paymentwindowid = $this->paymentwindowid;
             
             $api = new BamboraApi(BamboraHelper::generateApiKey($this->merchant, $this->accesstoken, $this->secrettoken));
 
