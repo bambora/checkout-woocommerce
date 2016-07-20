@@ -128,7 +128,8 @@ function add_wc_bambora_gateway()
 							),
 				'paymentwindowid' => array(
 								'title' => __( 'Payment Window ID', 'woocommerce-gateway-bambora'), 
-								'type' => 'text',  
+								'type' => 'text',
+                                'description' => __( 'Choose which payment window to use. You can create multiple payment windows in the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> Payment windows. This is useful if you want to show different layouts, payment types or transaction fees for various customers.', 'woocommerce'),  
 								'default' => '1'
 							),
 				'windowstate' => array(
