@@ -9,12 +9,3 @@
         }
     });
 });
-
-function bambora_action_url(confirmMessage, adminUrl, extentions) {
-    
-    if (confirm(confirmMessage)) {
-        location.href = adminUrl + extentions;
-    } else {
-        return false;
-    }
-}

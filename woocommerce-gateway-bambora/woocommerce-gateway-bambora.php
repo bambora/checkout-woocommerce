@@ -9,24 +9,28 @@ Author URI: http://www.bambora.com
 Text Domain: Bambora
  */
 
-add_action('plugins_loaded', 'add_wc_bambora_gateway', 0);
+ /*
+Add Bambora Stylesheet and javascript to plugin
+*/
+add_action('admin_enqueue_scripts', 'enqueue_wc_bambora_styles_and_scripts');
 
+function enqueue_wc_bambora_styles_and_scripts()
+{
+    wp_enqueue_style('bambora_style',  WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/style/bambora.css');
+
+    //Fix for load of Jquery time
+	wp_enqueue_script('jquery');
+	
+    wp_enqueue_script('bambora_script',  WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/js/bambora.js');
+}
+
+add_action('plugins_loaded', 'add_wc_bambora_gateway', 0);
 
 function add_wc_bambora_gateway() 
 {
 	if ( ! class_exists( 'WC_Payment_Gateway' ) ) { return; }
 	
 	define('bambora_LIB', dirname(__FILE__) . '/lib/');
-
-
-    /**
-     * Add Bambora Stylesheet and javascript to plugin
-     */
-    wp_enqueue_style('bambora_style',  WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/style/bambora.css');
-	//Fix for load of Jquery time
-	wp_enqueue_script('jquery');
-	
-    wp_enqueue_script('bambora_script',  WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/js/bambora.js');
 
     //Including Bambora files
     include(bambora_LIB .'bamboraApi.php');
