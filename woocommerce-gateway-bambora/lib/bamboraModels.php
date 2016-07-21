@@ -73,4 +73,3 @@ class BamboraCheckoutRequest
     public $order; //bamboraOrder 
     public $url; //bamboraUrl
 }
-?>

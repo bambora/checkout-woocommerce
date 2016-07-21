@@ -66,7 +66,7 @@ class BamboraApi
 
     
     public function capture($transactionid, $amount, $currency)
-	{           
+    {           
         $serviceUrl = BamboraendpointConfig::getTransactionEndpoint().'/transactions/'.  sprintf('%.0F',$transactionid) . '/capture';             
 
         $data = array();
@@ -78,10 +78,10 @@ class BamboraApi
         $result = $this->_callRestService($serviceUrl, $jsonData, "POST");
         return $result;
         
-	}
+    }
 
     public function credit($transactionid, $amount, $currency)
-	{       
+    {       
         $serviceUrl = BamboraendpointConfig::getTransactionEndpoint().'/transactions/'.  sprintf('%.0F',$transactionid) . '/credit';             
 
         $data = array();
@@ -92,10 +92,10 @@ class BamboraApi
         
         $result = $this->_callRestService($serviceUrl, $jsonData, "POST");
         return $result;        
-	}
+    }
 
     public function delete($transactionid)
-	{                  
+    {                  
         $serviceUrl = BamboraendpointConfig::getTransactionEndpoint().'/transactions/'.  sprintf('%.0F',$transactionid) . '/delete';             
         
         $data = array();
@@ -106,7 +106,7 @@ class BamboraApi
     }
 
     public function gettransactionInformation($transactionid)
-	{            
+    {            
         $serviceUrl = BamboraendpointConfig::getMerchantEndpoint().'/transactions/'. sprintf('%.0F',$transactionid);                         
 
         $data = array();    
@@ -114,7 +114,7 @@ class BamboraApi
         
         $result = $this->_callRestService($serviceUrl, $jsonData, "GET");
         return $result;    
-	}
+    }
     
     public function getTransactionOperations($transactionid)
     {            
@@ -187,5 +187,3 @@ class BamboraApi
         return $result;        
     }
 }
-
-?>
