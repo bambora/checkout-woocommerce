@@ -456,7 +456,7 @@ function add_wc_bambora_gateway()
                         
                         $genstamp = md5($var . $this->md5key);
                         
-                        if($genstamp != $posted["hash"])
+                        if(!hash_equals($genstamp, $posted["hash"]))
                         {
                             echo "MD5 error";
                             error_log('MD5 check failed for Bambora callback with order_id:' . $posted["wooorderid"]);
