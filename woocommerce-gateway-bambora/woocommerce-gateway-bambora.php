@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Bambora Checkout Payment Gateway
 Plugin URI: http://www.bambora.com
 Description: A payment gateway for Bambora Checkout (http://www.bambora.com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout/).
-Version: 1.2.7
+Version: 1.2.8
 Author: Bambora
 Author URI: http://www.bambora.com
 Text Domain: Bambora
@@ -87,7 +87,7 @@ function add_wc_bambora_gateway()
 	    function init_form_fields()
 		{			
 	    	$this->form_fields = array(
-				'enabled' => array(
+                'enabled' => array(
 								'title' => __( 'Enable/Disable', 'woocommerce'), 
 								'type' => 'checkbox', 
 								'label' => __( 'Enable Bambora Checkout', 'woocommerce'), 
@@ -107,23 +107,26 @@ function add_wc_bambora_gateway()
 							),
 				'merchant' => array(
 								'title' => __( 'Merchant number', 'woocommerce-gateway-bambora'), 
-								'type' => 'text',  
+								'type' => 'text',
+                                'description' => __('Get your Merchant number from the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> Merchant numbers. If you haven\'t got a Merchant number, please contact <a href="http://www.bambora.com/da/dk/bamboraone/" target="_blank">Bambora</a> to get one. <br/><b>Note:</b> This field is mandatory to enable payments.', 'woocommerce'),  
 								'default' => ''
 							),
                 'accesstoken' => array(
 								'title' => __( 'Access token', 'woocommerce-gateway-bambora'), 
-								'type' => 'text',  
+								'type' => 'text',
+                                'description' => __('Get your Access token from the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> API users. Copy the Access token from the API user into this field.<br/><b>Note:</b> This field is mandatory in order to enable payments.', 'woocommerce'),  
 								'default' => ''
 							),
                 'secrettoken' => array(
 								'title' => __( 'Secret token', 'woocommerce-gateway-bambora'), 
-								'type' => 'password',  
+								'type' => 'password',
+                                'description' => __('Get your Secret token from the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> API users.<br/>The secret token is only displayed once when an API user is created! Please save this token in a safe place as Bambora will not be able to recover it.<br/><b>Note: </b> This field is mandatory in order to enable payments.', 'woocommerce'),  
 								'default' => ''
 							),
                 'md5key' => array(
 					            'title' => __( 'MD5 Key', 'woocommerce-gateway-bambora'), 
 					            'type' => 'text',
-                                'description' => __( 'This needs to be generated in the merchant administration <a href="https://merchant.bambora.com/" target="_blank">https://merchant.bambora.com/</a> . Settings->Merchant numbers -> Edit.', 'woocommerce'),
+                                'description' => __( 'We recommend using MD5 to secure the data sent between your system and Bambora.<br/>If you have generated a MD5 key in the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> Edit merchant, you have to enter the MD5 key here as well. <br/><b>Note:</b> The keys must be identical in the two systems.', 'woocommerce'),
 					            'default' => ''
 							),
 				'windowid' => array(
@@ -134,6 +137,7 @@ function add_wc_bambora_gateway()
 				'windowstate' => array(
 								'title' => __( 'Display window as', 'woocommerce-gateway-bambora'), 
 								'type' => 'select',
+                                'description' => __('Please select if you want the Payment window shown as an overlay or as full screen.', 'woocommerce'),
 								'options' => array(2 => 'Overlay',1 => 'Full screen'),
 								'label' => __( 'How to open the Bambora Checkout', 'woocommerce-gateway-bambora'), 
 								'default' => 2
@@ -141,13 +145,15 @@ function add_wc_bambora_gateway()
 
 				'instantcapture' => array(
 								'title' => __( 'Instant capture', 'woocommerce-gateway-bambora'), 
-								'type' => 'checkbox', 
+								'type' => 'checkbox',
+                                'description' => __('Enable this to capture the payment immediately.<br/>You should only use this setting, if your customer receives the goods immediately e.g. via downloads or services.', 'woocommerce'),
 								'label' => __( 'Enable instant capture', 'woocommerce-gateway-bambora'), 
 								'default' => 'no'
 							), 
                 'immediateredirecttoaccept' => array(
 								'title' => __( 'Immediate redirect to order confirmation page', 'woocommerce-gateway-bambora'), 
-								'type' => 'checkbox', 
+								'type' => 'checkbox',
+                                'description' => __('Please select if you to go directly to the order confirmation page when payment is completed.', 'woocommerce'), 
 								'label' => __( 'Enable Immediate redirect', 'woocommerce-gateway-bambora'), 
 								'default' => 0
 							), 
