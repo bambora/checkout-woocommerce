@@ -342,7 +342,8 @@ function add_wc_bambora_gateway()
                 //$line->vat = round((BamboraCurrency::convertPriceToMinorUnits($item["line_subtotal_tax"], $minorUnits) / BamboraCurrency::convertPriceToMinorUnits($item["line_subtotal"], $minorUnits)) * 100, 2);    
                 $product = $order->get_product_from_item($item);
                 $item_tax_class = $product->get_tax_class();
-                $item_tax_rate = array_shift($wc_tax->get_rates($item_tax_class));
+                $item_tax_rate_array = $wc_tax->get_rates($item_tax_class);
+                $item_tax_rate = array_shift($item_tax_rate_array);
                 if(isset($item_tax_rate["rate"]))
                 {
                     $line->vat = $item_tax_rate["rate"];
