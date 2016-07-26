@@ -3,30 +3,34 @@
 Plugin Name: WooCommerce Bambora Checkout Payment Gateway
 Plugin URI: http://www.bambora.com
 Description: A payment gateway for Bambora Checkout (http://www.bambora.com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout/).
-Version: 1.2.7
+Version: 1.2.8
 Author: Bambora
 Author URI: http://www.bambora.com
 Text Domain: Bambora
  */
 
-add_action('plugins_loaded', 'add_wc_bambora_gateway', 0);
+ /*
+Add Bambora Stylesheet and javascript to plugin
+*/
+add_action('admin_enqueue_scripts', 'enqueue_wc_bambora_styles_and_scripts');
 
+function enqueue_wc_bambora_styles_and_scripts()
+{
+    wp_enqueue_style('bambora_style',  WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/style/bambora.css');
+
+    //Fix for load of Jquery time
+    wp_enqueue_script('jquery');
+    
+    wp_enqueue_script('bambora_script',  WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/js/bambora.js');
+}
+
+add_action('plugins_loaded', 'add_wc_bambora_gateway', 0);
 
 function add_wc_bambora_gateway() 
 {
-	if ( ! class_exists( 'WC_Payment_Gateway' ) ) { return; }
-	
-	define('bambora_LIB', dirname(__FILE__) . '/lib/');
-
-
-    /**
-     * Add Bambora Stylesheet and javascript to plugin
-     */
-    wp_enqueue_style('bambora_style',  WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/style/bambora.css');
-	//Fix for load of Jquery time
-	wp_enqueue_script('jquery');
-	
-    wp_enqueue_script('bambora_script',  WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/js/bambora.js');
+    if ( ! class_exists( 'WC_Payment_Gateway' ) ) { return; }
+    
+    define('bambora_LIB', dirname(__FILE__) . '/lib/');
 
     //Including Bambora files
     include(bambora_LIB .'bamboraApi.php');
@@ -34,33 +38,31 @@ function add_wc_bambora_gateway()
     include(bambora_LIB .'bamboraCurrency.php');
 
 
-	/**
+    /**
      * Gateway class
      **/
-	class WC_Gateway_Bambora extends WC_Payment_Gateway
-	{	
-		public function __construct()
-		{
-			global $woocommerce;
-			
-			$this->id = 'bambora';
-			$this->method_title = 'Bambora';
-			$this->icon = WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/Bambora_1_MINI_RGB-slim.png';
-			$this->has_fields = false;
+    class WC_Gateway_Bambora extends WC_Payment_Gateway
+    {    
+        public function __construct()
+        {
+            $this->id = 'bambora';
+            $this->method_title = 'Bambora';
+            $this->icon = WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/Bambora_1_MINI_RGB-slim.png';
+            $this->has_fields = false;
 
-			$this->supports = array('products');
-			
-			// Load the form fields.
-			$this->init_form_fields();
-			
-			// Load the settings.
-			$this->init_settings();
-			
-			// Define user set variables
-			$this->enabled = $this->settings["enabled"];
-			$this->title = $this->settings["title"];
-			$this->description = $this->settings["description"];
-			$this->merchant = $this->settings["merchant"];
+            $this->supports = array('products');
+            
+            // Load the form fields.
+            $this->init_form_fields();
+            
+            // Load the settings.
+            $this->init_settings();
+            
+            // Define user set variables
+            $this->enabled = $this->settings["enabled"];
+            $this->title = $this->settings["title"];
+            $this->description = $this->settings["description"];
+            $this->merchant = $this->settings["merchant"];
             $this->accesstoken = $this->settings["accesstoken"];
             $this->secrettoken = $this->settings["secrettoken"];
 			$this->paymentwindowid = $this->settings["paymentwindowid"];
@@ -68,142 +70,146 @@ function add_wc_bambora_gateway()
 			$this->instantcapture = $this->settings["instantcapture"];
             $this->immediateredirecttoaccept = $this->settings["immediateredirecttoaccept"];
             $this->md5key = $this->settings["md5key"];
-			
-			// Actions
-			add_action('init', array(& $this, 'check_callback'));
-			add_action('valid-bambora-callback', array(&$this, 'successful_request'));
+            
+            // Actions
+            add_action('init', array(& $this, 'check_callback'));
+            add_action('valid-bambora-callback', array(&$this, 'successful_request'));
             add_action('add_meta_boxes', array( &$this, 'bambora_meta_boxes' ), 10, 0);
             add_action('woocommerce_api_' . strtolower(get_class()), array($this, 'check_callback'));
             add_action('wp_before_admin_bar_render', array($this, 'bambora_action', ));
-            add_action('woocommerce_update_options_payment_gateways', array($this, 'process_admin_options', ));			
-			add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));			
-			add_action('woocommerce_receipt_bambora', array($this, 'receipt_page'));
+            add_action('woocommerce_update_options_payment_gateways', array($this, 'process_admin_options', ));            
+            add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));            
+            add_action('woocommerce_receipt_bambora', array($this, 'receipt_page'));
             //add_action('woocommerce_thankyou', array($this, 'bambora_accepted_payment'));
-		}
+        }
 
         /**
          * Initialise Gateway Settings Form Fields
          */
-	    function init_form_fields()
-		{			
-	    	$this->form_fields = array(
-				'enabled' => array(
-								'title' => __( 'Enable/Disable', 'woocommerce'), 
-								'type' => 'checkbox', 
-								'label' => __( 'Enable Bambora Checkout', 'woocommerce'), 
-								'default' => 'yes'
-							), 
-				'title' => array(
-								'title' => __( 'Title', 'bambora' , 'woocommerce-gateway-bambora'), 
-								'type' => 'text', 
-								'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce'), 
-								'default' => __( 'Bambora Checkout', 'bambora')
-							),
-				'description' => array(
-								'title' => __( 'Description', 'woocommerce' , 'woocommerce-gateway-bambora'), 
-								'type' => 'textarea', 
-								'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce'), 
-								'default' => __("Pay using Bambora Checkout", 'woocommerce-gateway-bambora')
-							),
-				'merchant' => array(
-								'title' => __( 'Merchant number', 'woocommerce-gateway-bambora'), 
-								'type' => 'text',  
-								'default' => ''
-							),
+        function init_form_fields()
+        {            
+            $this->form_fields = array(
+                'enabled' => array(
+                                'title' => __( 'Enable/Disable', 'woocommerce'), 
+                                'type' => 'checkbox', 
+                                'label' => __( 'Enable Bambora Checkout', 'woocommerce'), 
+                                'default' => 'yes'
+                            ), 
+                'title' => array(
+                                'title' => __( 'Title', 'bambora' , 'woocommerce-gateway-bambora'), 
+                                'type' => 'text', 
+                                'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce'), 
+                                'default' => __( 'Bambora Checkout', 'bambora')
+                            ),
+                'description' => array(
+                                'title' => __( 'Description', 'woocommerce' , 'woocommerce-gateway-bambora'), 
+                                'type' => 'textarea', 
+                                'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce'), 
+                                'default' => __("Pay using Bambora Checkout", 'woocommerce-gateway-bambora')
+                            ),
+                'merchant' => array(
+                                'title' => __( 'Merchant number', 'woocommerce-gateway-bambora'), 
+                                'type' => 'text',
+                                'description' => __('Get your Merchant number from the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> Merchant numbers. If you haven\'t got a Merchant number, please contact <a href="http://www.bambora.com/da/dk/bamboraone/" target="_blank">Bambora</a> to get one. <br/><b>Note:</b> This field is mandatory to enable payments.', 'woocommerce'),  
+                                'default' => ''
+                            ),
                 'accesstoken' => array(
-								'title' => __( 'Access token', 'woocommerce-gateway-bambora'), 
-								'type' => 'text',  
-								'default' => ''
-							),
+                                'title' => __( 'Access token', 'woocommerce-gateway-bambora'), 
+                                'type' => 'text',
+                                'description' => __('Get your Access token from the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> API users. Copy the Access token from the API user into this field.<br/><b>Note:</b> This field is mandatory in order to enable payments.', 'woocommerce'),  
+                                'default' => ''
+                            ),
                 'secrettoken' => array(
-								'title' => __( 'Secret token', 'woocommerce-gateway-bambora'), 
-								'type' => 'password',  
-								'default' => ''
-							),
+                                'title' => __( 'Secret token', 'woocommerce-gateway-bambora'), 
+                                'type' => 'password',
+                                'description' => __('Get your Secret token from the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> API users.<br/>The secret token is only displayed once when an API user is created! Please save this token in a safe place as Bambora will not be able to recover it.<br/><b>Note: </b> This field is mandatory in order to enable payments.', 'woocommerce'),  
+                                'default' => ''
+                            ),
                 'md5key' => array(
-					            'title' => __( 'MD5 Key', 'woocommerce-gateway-bambora'), 
-					            'type' => 'text',
-                                'description' => __( 'This needs to be generated in the merchant administration <a href="https://merchant.bambora.com/" target="_blank">https://merchant.bambora.com/</a> . Settings->Merchant numbers -> Edit.', 'woocommerce'),
-					            'default' => ''
-							),
-				'paymentwindowid' => array(
-								'title' => __( 'Payment Window ID', 'woocommerce-gateway-bambora'), 
-								'type' => 'text',
+                                'title' => __( 'MD5 Key', 'woocommerce-gateway-bambora'), 
+                                'type' => 'text',
+                                'description' => __( 'We recommend using MD5 to secure the data sent between your system and Bambora.<br/>If you have generated a MD5 key in the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> Edit merchant, you have to enter the MD5 key here as well. <br/><b>Note:</b> The keys must be identical in the two systems.', 'woocommerce'),
+                                'default' => ''
+                            ),
+                'paymentwindowid' => array(
+                                'title' => __( 'Payment Window ID', 'woocommerce-gateway-bambora'), 
+                                'type' => 'text',
                                 'description' => __( 'Choose which payment window to use. You can create multiple payment windows in the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> Payment windows.<br/>This is useful if you want to show different layouts, payment types or transaction fees for various customers.', 'woocommerce'),  
-								'default' => '1'
-							),
-				'windowstate' => array(
-								'title' => __( 'Display window as', 'woocommerce-gateway-bambora'), 
-								'type' => 'select',
-								'options' => array(2 => 'Overlay',1 => 'Full screen'),
-								'label' => __( 'How to open the Bambora Checkout', 'woocommerce-gateway-bambora'), 
-								'default' => 2
-							),
+                                'default' => '1'
+                            ),
+                'windowstate' => array(
+                                'title' => __( 'Display window as', 'woocommerce-gateway-bambora'), 
+                                'type' => 'select',
+                                'description' => __('Please select if you want the Payment window shown as an overlay or as full screen.', 'woocommerce'),
+                                'options' => array(2 => 'Overlay',1 => 'Full screen'),
+                                'label' => __( 'How to open the Bambora Checkout', 'woocommerce-gateway-bambora'), 
+                                'default' => 2
+                            ),
 
-				'instantcapture' => array(
-								'title' => __( 'Instant capture', 'woocommerce-gateway-bambora'), 
-								'type' => 'checkbox', 
-								'label' => __( 'Enable instant capture', 'woocommerce-gateway-bambora'), 
-								'default' => 'no'
-							), 
+                'instantcapture' => array(
+                                'title' => __( 'Instant capture', 'woocommerce-gateway-bambora'), 
+                                'type' => 'checkbox',
+                                'description' => __('Enable this to capture the payment immediately.<br/>You should only use this setting, if your customer receives the goods immediately e.g. via downloads or services.', 'woocommerce'),
+                                'label' => __( 'Enable instant capture', 'woocommerce-gateway-bambora'), 
+                                'default' => 'no'
+                            ), 
                 'immediateredirecttoaccept' => array(
-								'title' => __( 'Immediate redirect to order confirmation page', 'woocommerce-gateway-bambora'), 
-								'type' => 'checkbox', 
-								'label' => __( 'Enable Immediate redirect', 'woocommerce-gateway-bambora'), 
-								'default' => 0
-							), 
+                                'title' => __( 'Immediate redirect to order confirmation page', 'woocommerce-gateway-bambora'), 
+                                'type' => 'checkbox',
+                                'description' => __('Please select if you to go directly to the order confirmation page when payment is completed.', 'woocommerce'), 
+                                'label' => __( 'Enable Immediate redirect', 'woocommerce-gateway-bambora'), 
+                                'default' => 0
+                            ), 
 
-	
+    
                 );
             
-	    } // End init_form_fields()
-	    
-		/**
+        } // End init_form_fields()
+        
+        /**
          * Admin Panel Options 
          * - Options for bits like 'title' and availability on a country-by-country basis
          *
          * @since 1.0.0
          */
-		public function admin_options()
-		{
-			$plugin_data = get_plugin_data(__FILE__, false, false);
-			$version = $plugin_data["Version"];
-			
-			echo '<h3>' . 'Bambora Payment Solutions' . ' v' . $version . '</h3>';
-			echo __('<a href="http://dev.bambora.com/carts.html#woo-commerce" target="_blank">Documentation can be found here</a>', 'woocommerce-gateway-bambora');
-			echo '<table class="form-table">';
+        public function admin_options()
+        {
+            $plugin_data = get_plugin_data(__FILE__, false, false);
+            $version = $plugin_data["Version"];
+            
+            echo '<h3>' . 'Bambora Payment Solutions' . ' v' . $version . '</h3>';
+            echo __('<a href="http://dev.bambora.com/carts.html#woo-commerce" target="_blank">Documentation can be found here</a>', 'woocommerce-gateway-bambora');
+            echo '<table class="form-table">';
             // Generate the HTML For the settings form.
             $this->generate_settings_html();
-			echo '</table>';
-		}
-	    
-	    /**
+            echo '</table>';
+        }
+        
+        /**
          * There are no payment fields for bambora, but we want to show the description if set.
          **/
-		function payment_fields()
-		{
-			if($this->description)
-				echo wpautop(wptexturize($this->description));
-		}
-	    
-		function fix_url($url)
-		{
-			$url = str_replace('&#038;', '&amp;', $url);
-			$url = str_replace('&amp;', '&', $url);
-			
-			return $url;
-		}
+        function payment_fields()
+        {
+            if($this->description)
+                echo wpautop(wptexturize($this->description));
+        }
+        
+        function fix_url($url)
+        {
+            $url = str_replace('&#038;', '&amp;', $url);
+            $url = str_replace('&amp;', '&', $url);
+            
+            return $url;
+        }
         
         public function generate_bambora_paymentwindow($order_id)
         {
-            global $woocommerce;
-            
             $order = new WC_Order($order_id);
             $minorUnits = bamboraCurrency::getCurrencyMinorunits(get_woocommerce_currency());
 
             $bamboraCustommer = $this -> create_bambora_custommer($order);
             $bamboraOrder = $this ->create_bambora_order($order,$minorUnits);
-            $bamboraUrl = $this ->create_bambora_url($order,$minorUnits);
+            $bamboraUrl = $this ->create_bambora_url($order);
             
             $request = new BamboraCheckoutRequest();
             $request -> capturemulti = true; //TODO make config
@@ -292,7 +298,7 @@ function add_wc_bambora_gateway()
             return $bamboraAddress;
         }
 
-        private function create_bambora_url($order,$minorUnits)
+        private function create_bambora_url($order)
         {
             $bamboraUrl = new BamboraUrl();
             $bamboraUrl->accept = $this->fix_url($this->get_return_url($order));
@@ -334,7 +340,8 @@ function add_wc_bambora_gateway()
                 //$line->vat = round((BamboraCurrency::convertPriceToMinorUnits($item["line_subtotal_tax"], $minorUnits) / BamboraCurrency::convertPriceToMinorUnits($item["line_subtotal"], $minorUnits)) * 100, 2);    
                 $product = $order->get_product_from_item($item);
                 $item_tax_class = $product->get_tax_class();
-                $item_tax_rate = array_shift($wc_tax->get_rates($item_tax_class));
+                $item_tax_rate_array = $wc_tax->get_rates($item_tax_class);
+                $item_tax_rate = array_shift($item_tax_rate_array);
                 if(isset($item_tax_rate["rate"]))
                 {
                     $line->vat = $item_tax_rate["rate"];
@@ -352,18 +359,18 @@ function add_wc_bambora_gateway()
             
         }
 
-		/**
+        /**
          * Process the payment and return the result
          **/
-		function process_payment($order_id)
-		{
-			$order = new WC_Order($order_id);
-			
-			return array(
-				'result' 	=> 'success',
-				'redirect'	=> $order->get_checkout_payment_url( true )
-			);
-		}
+        function process_payment($order_id)
+        {
+            $order = new WC_Order($order_id);
+            
+            return array(
+                'result'     => 'success',
+                'redirect'    => $order->get_checkout_payment_url( true )
+            );
+        }
 
         function process_refund($order_id, $amount = null, $reason = '')
         {
@@ -387,12 +394,12 @@ function add_wc_bambora_gateway()
             return false;
         }
 
-		/**
+        /**
          * receipt_page
          **/
-		function receipt_page( $order )
-		{			
-		    echo $this->generate_bambora_paymentwindow($order);
+        function receipt_page( $order )
+        {            
+            echo $this->generate_bambora_paymentwindow($order);
         }
 
 
@@ -401,37 +408,37 @@ function add_wc_bambora_gateway()
         //    $posted = stripslashes_deep($_GET);
         //    $this->successful_request($posted);           
         //}
-		
-		/**
+        
+        /**
          * Check for Bambora IPN Response
          **/
-		function check_callback()
-		{
-			$_GET = stripslashes_deep($_GET);
-			do_action("valid-bambora-callback", $_GET);
-		}
-		
-		/**
+        function check_callback()
+        {
+            $_GET = stripslashes_deep($_GET);
+            do_action("valid-bambora-callback", $_GET);
+        }
+        
+        /**
          * Successful Payment!
          **/
-		function successful_request($posted)
-		{
+        function successful_request($posted)
+        {
             $api = new BamboraApi(BamboraHelper::generateApiKey($this->merchant, $this->accesstoken, $this->secrettoken));
             try
             {
                 $api_result = $api->gettransactionInformation($posted["txnid"]);
-            	$rest_result = json_decode($api_result, true);
+                $rest_result = json_decode($api_result, true);
                 
                 if(!isset($rest_result))
                 {
                     status_header(400);
-                	return;
+                    return;
                 }
 
                 if (!$rest_result["meta"]["result"])
                 {
                     status_header(400);
-                	echo $rest_result["meta"]["message"]["enduser"];
+                    echo $rest_result["meta"]["message"]["enduser"];
                     return;
                 }
                 
@@ -452,7 +459,7 @@ function add_wc_bambora_gateway()
                         
                         $genstamp = md5($var . $this->md5key);
                         
-                        if($genstamp != $posted["hash"])
+                        if(!hash_equals($genstamp, $posted["hash"]))
                         {
                             echo "MD5 error";
                             error_log('MD5 check failed for Bambora callback with order_id:' . $posted["wooorderid"]);
@@ -491,42 +498,40 @@ function add_wc_bambora_gateway()
             {
                 echo $this->message("error", $e->getMessage());
             }
-		}
+        }
 
         public function bambora_meta_boxes()
-		{
-			add_meta_box( 
-				'bambora-payment-actions', 
-				__('Bambora Payment Solutions', 'woocommerce-gateway-bambora'), 
-				array(&$this, 'bambora_meta_box_payment'), 
-				'shop_order', 
-				'side', 
-				'high'
-			);
-		}
+        {
+            add_meta_box( 
+                'bambora-payment-actions', 
+                __('Bambora Payment Solutions', 'woocommerce-gateway-bambora'), 
+                array(&$this, 'bambora_meta_box_payment'), 
+                'shop_order', 
+                'side', 
+                'high'
+            );
+        }
         public function bambora_action()
-		{
-			global $woocommerce;
-			
-			if(isset($_GET["bambora_action"]))
-			{              
-				$order = new WC_Order($_GET['post']);
-				$transactionId = get_post_meta($order->id, 'Transaction ID', true);
+        {            
+            if(isset($_GET["bambora_action"]))
+            {              
+                $order = new WC_Order($_GET['post']);
+                $transactionId = get_post_meta($order->id, 'Transaction ID', true);
                 $currency = $order->order_currency;
                 $minorUnits = BamboraCurrency::getCurrencyMinorunits($currency);
-				$api = new BamboraApi(BamboraHelper::generateApiKey($this->merchant, $this->accesstoken, $this->secrettoken));
-				try
-				{
-					switch($_GET["bambora_action"])
-					{
-						case 'capture':
-							
+                $api = new BamboraApi(BamboraHelper::generateApiKey($this->merchant, $this->accesstoken, $this->secrettoken));
+                try
+                {
+                    switch($_GET["bambora_action"])
+                    {
+                        case 'capture':
+                            
                             $amount = str_replace(wc_get_price_decimal_separator(),".",$_GET["amount"]); 
                             $amount = BamboraCurrency::convertPriceToMinorUnits($amount,$minorUnits);
                             $capture = $api->capture($transactionId, $amount,$currency);
                             $captureJson = $api->convertJSonResultToArray($capture,"meta");
-							if(!is_wp_error($capture))
-							{
+                            if(!is_wp_error($capture))
+                            {
                                 if($captureJson["result"])
                                 {
                                     echo $this->message('updated', __("Payment successfully","woocommerce-gateway-bambora").' <strong>'.__("Captured","woocommerce-gateway-bambora").'</strong>.');
@@ -535,79 +540,79 @@ function add_wc_bambora_gateway()
                                     echo $this->message('updated', $captureJson["message"]["merchant"]);
                                 }
                                 
-							}
-							else
-							{
-								foreach ($capture->get_error_messages() as $error)
-									throw new Exception ($error->get_error_message());
-							}
-							
-							break;
+                            }
+                            else
+                            {
+                                foreach ($capture->get_error_messages() as $error)
+                                    throw new Exception ($error->get_error_message());
+                            }
+                            
+                            break;
                         
-						case 'credit':
+                        case 'credit':
                             $amount = str_replace(wc_get_price_decimal_separator(),".",$_GET["amount"]);
                             $amount = BamboraCurrency::convertPriceToMinorUnits($amount,$minorUnits);
-							$credit = $api->credit($transactionId, $amount,$currency);
-							$creditJson = $api->convertJSonResultToArray($credit, "meta");
+                            $credit = $api->credit($transactionId, $amount,$currency);
+                            $creditJson = $api->convertJSonResultToArray($credit, "meta");
                             if(!is_wp_error($credit))
-							{
-								if($creditJson["result"])
+                            {
+                                if($creditJson["result"])
                                 {
-									echo $this->message('updated', __("Payment successfully","woocommerce-gateway-bambora").' <strong>'.__("Refunded","woocommerce-gateway-bambora").'</strong>.');
+                                    echo $this->message('updated', __("Payment successfully","woocommerce-gateway-bambora").' <strong>'.__("Refunded","woocommerce-gateway-bambora").'</strong>.');
                                 }else{
                                     echo $this->message('updated', $creditJson["message"]["merchant"]);
                                 }
-							}
-							else
-							{
-								foreach($credit->get_error_messages() as $error)
-									throw new Exception ($error->get_error_message());
-							}
-							
-							break;
+                            }
+                            else
+                            {
+                                foreach($credit->get_error_messages() as $error)
+                                    throw new Exception ($error->get_error_message());
+                            }
+                            
+                            break;
                         
-						case 'delete':
-							$delete = $api->delete($transactionId);
+                        case 'delete':
+                            $delete = $api->delete($transactionId);
                             $deleteJson = $api->convertJSonResultToArray($delete, "meta");
-							if(!is_wp_error($delete))
-							{
-								if($deleteJson["result"])
+                            if(!is_wp_error($delete))
+                            {
+                                if($deleteJson["result"])
                                 {
-									echo $this->message('updated', __("Payment successfully","woocommerce-gateway-bambora").' <strong>'.__("Deleted","woocommerce-gateway-bambora").'</strong>.');
+                                    echo $this->message('updated', __("Payment successfully","woocommerce-gateway-bambora").' <strong>'.__("Deleted","woocommerce-gateway-bambora").'</strong>.');
                                 }else
                                 {
                                     echo $this->message('updated', $deleteJson["message"]["merchant"]);
                                 }
                                 
                             }
-							else
-							{
-								foreach ($delete->get_error_messages() as $error)
-									throw new Exception ($error->get_error_message());
-							}
-							
-							break;
-					}
-				}
-				catch(Exception $e)
-				{
-					echo $this->message("error", $e->getMessage());
-				}
-			}
-		}
+                            else
+                            {
+                                foreach ($delete->get_error_messages() as $error)
+                                    throw new Exception ($error->get_error_message());
+                            }
+                            
+                            break;
+                    }
+                }
+                catch(Exception $e)
+                {
+                    echo $this->message("error", $e->getMessage());
+                }
+            }
+        }
 
         public function bambora_meta_box_payment()
-		{
-			global $post, $woocommerce;
-			
-            $order = new WC_Order($post->ID);
-			
-			$transactionId = get_post_meta($order->id, 'Transaction ID', true);
+        {
+            global $post;
             
-			if(strlen($transactionId) > 0)
-			{
-				try
-				{
+            $order = new WC_Order($post->ID);
+            
+            $transactionId = get_post_meta($order->id, 'Transaction ID', true);
+            
+            if(strlen($transactionId) > 0)
+            {
+                try
+                {
                     if(!is_wp_error($transactionId))
                     {
                         $api = new BamboraApi(BamboraHelper::generateApiKey($this->merchant, $this->accesstoken, $this->secrettoken));
@@ -645,36 +650,36 @@ function add_wc_bambora_gateway()
 
                         echo '<div class="bambora_info">';
                         echo    '<div class="bambora_transactionid">';
-						echo        '<p>';
+                        echo        '<p>';
                         _e('Transaction ID', 'woocommerce-gateway-bambora');
                         echo        '</p>';
-						echo        '<p>'.$transInfo["id"].'</p>';
+                        echo        '<p>'.$transInfo["id"].'</p>';
                         echo    '</div>';
                         echo '<br/>';
                         
                         echo '<div class="bambora_info_overview">';
-						echo    '<p>';
+                        echo    '<p>';
                         _e('Authorized:', 'woocommerce-gateway-bambora'); 
-						echo    '</p>';
+                        echo    '</p>';
                         echo '<p>'.$this->formatNumber($totalAuthorized,$minorUnits). ' ' . $order->get_order_currency().'</p>';
                         echo '</div>';
 
                         echo '<div class="bambora_info_overview">';
-						echo    '<p>';
+                        echo    '<p>';
                         _e('Captured:', 'woocommerce-gateway-bambora'); 
-						echo    '</p>';
+                        echo    '</p>';
                         echo '<p>'.$this->formatNumber($totalCaptured,$minorUnits). ' ' . $order->get_order_currency().'</p>';
                         echo '</div>';
 
                         echo '<div class="bambora_info_overview">';
-						echo    '<p>';
+                        echo    '<p>';
                         _e('Refunded:', 'woocommerce-gateway-bambora'); 
-						echo    '</p>';
+                        echo    '</p>';
                         echo '<p>'.$this->formatNumber($totalCredited,$minorUnits). ' ' . $order->get_order_currency().'</p>';
                         echo '</div>';
 
-						echo '</div>';
-						echo '<br/>';
+                        echo '</div>';
+                        echo '<br/>';
                         
                         
                         if($availableForCapture > 0 || $availableForCredit > 0)
@@ -717,8 +722,8 @@ function add_wc_bambora_gateway()
                             echo '</div>';
                             echo '<br />';
                         }
-						
-						
+                        
+                        
                         echo $this->buildTransactionLogtable($operations,$minorUnits);
                         echo '<br/>';
                     }
@@ -729,17 +734,17 @@ function add_wc_bambora_gateway()
                             throw new Exception ($error->get_error_message());
                         }
                     }
-				}
-				catch(Exception $e)
-				{
-					echo $this->message("error", $e->getMessage());
-				}
-			}
-			else
-            {
-				_e("No transaction was found","woocommerce-gateway-bambora");
+                }
+                catch(Exception $e)
+                {
+                    echo $this->message("error", $e->getMessage());
+                }
             }
-		}
+            else
+            {
+                _e("No transaction was found","woocommerce-gateway-bambora");
+            }
+        }
 
         private function formatNumber($number,$decimals)
         {
@@ -846,37 +851,37 @@ function add_wc_bambora_gateway()
             return $errMessage;       
         }
 
-		
-		private function message($type, $message) {
-			return '<div id="message" class="'.$type.'">
-				<p>'.$message.'</p>
-			</div>';
-		}	
+        
+        private function message($type, $message) {
+            return '<div id="message" class="'.$type.'">
+                <p>'.$message.'</p>
+            </div>';
+        }    
     }
 
-	/**
+    /**
      * Add the Gateway to WooCommerce
      **/
-	function add_bambora_gateway($methods) 
-	{
-		$methods[] = 'WC_Gateway_Bambora';
-		return $methods;
-	}
-	
-	function init_bambora_gateway()
-	{
-		$plugin_dir = basename(dirname(__FILE__ ));
-		load_plugin_textdomain('woocommerce-gateway-bambora', false, $plugin_dir . '/languages/');
-	}
-	
-	add_filter('woocommerce_payment_gateways', 'add_bambora_gateway');
-	add_action('plugins_loaded', 'init_bambora_gateway');
-	
-	function WC_Gateway_Bambora() 
-	{
-	    return new WC_Gateway_Bambora();
-	}
-	
-	if (is_admin())
-    	add_action('load-post.php', 'WC_Gateway_Bambora');
+    function add_bambora_gateway($methods) 
+    {
+        $methods[] = 'WC_Gateway_Bambora';
+        return $methods;
+    }
+    
+    function init_bambora_gateway()
+    {
+        $plugin_dir = basename(dirname(__FILE__ ));
+        load_plugin_textdomain('woocommerce-gateway-bambora', false, $plugin_dir . '/languages/');
+    }
+    
+    add_filter('woocommerce_payment_gateways', 'add_bambora_gateway');
+    add_action('plugins_loaded', 'init_bambora_gateway');
+   
+    function WC_Gateway_Bambora() 
+    {
+        return new WC_Gateway_Bambora();
+    }
+    
+    if (is_admin())
+        add_action('load-post.php', 'WC_Gateway_Bambora');
 }

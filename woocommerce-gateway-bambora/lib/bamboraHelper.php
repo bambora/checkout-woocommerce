@@ -20,9 +20,9 @@ class BamboraHelper
                        }
                    
                        if(".$runOnLoad.")
-				       {
-					        bam('open', '".$bamboraCheckoutUrl."', options);
-				       }
+                       {
+                            bam('open', '".$bamboraCheckoutUrl."', options);
+                       }
                 </script>";
     }
 
@@ -36,4 +36,3 @@ class BamboraHelper
         return $apiKey;      
     }
 }
-?>
