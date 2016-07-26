@@ -72,5 +72,6 @@ class BamboraCheckoutRequest
     public $language;
     public $order; //bamboraOrder 
     public $url; //bamboraUrl
+    public $paymentwindowid;
 }
 ?>
