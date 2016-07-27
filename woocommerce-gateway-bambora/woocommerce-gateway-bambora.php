@@ -249,7 +249,7 @@ function add_wc_bambora_gateway()
             $bamboraCustommer = new BamboraCustomer();
             $bamboraCustommer ->email = $order->billing_email;
             $bamboraCustommer ->phonenumber = $order ->billing_phone;
-            $bamboraCustommer ->phonenumbercountrycode = = $order->billing_country;
+            $bamboraCustommer ->phonenumbercountrycode = $order->billing_country;
             return $bamboraCustommer;
         }
         
