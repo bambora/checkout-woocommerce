@@ -442,8 +442,7 @@ function add_wc_bambora_gateway()
                     return;
                 }
                 
-                $transinfo = $rest_result["transaction"];
-                $order = new WC_Order($transinfo["orderid"]);
+                $order = wc_get_order( $posted["wooorderid"] );
                              
                 if(isset($order) && $order->has_status('pending'))
                 {
@@ -462,6 +461,7 @@ function add_wc_bambora_gateway()
                         if(!hash_equals($genstamp, $posted["hash"]))
                         {
                             echo "MD5 error";
+                            $order->add_order_note('MD5 check failed');
                             error_log('MD5 check failed for Bambora callback with order_id:' . $posted["wooorderid"]);
                             status_header(500);
                             return;
@@ -488,10 +488,11 @@ function add_wc_bambora_gateway()
                     
                     $order->payment_complete();
                     
-                    update_post_meta((int)$posted["orderid"], 'Transaction ID', $posted["txnid"]);
-                    update_post_meta((int)$posted["orderid"], 'Card no', $posted["cardno"]);
+                    update_post_meta((int)$posted["wooorderid"], 'Transaction ID', $posted["txnid"]);
+                    update_post_meta((int)$posted["wooorderid"], 'Card no', $posted["cardno"]);
                 }
                 status_header(200);
+                echo "Ok";
                 
             }
             catch (Exception $e)
