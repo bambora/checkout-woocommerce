@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Bambora Checkout Payment Gateway
 Plugin URI: http://www.bambora.com
 Description: A payment gateway for Bambora Checkout (http://www.bambora.com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout/).
-Version: 1.2.9
+Version: 1.3.0
 Author: Bambora
 Author URI: http://www.bambora.com
 Text Domain: Bambora
