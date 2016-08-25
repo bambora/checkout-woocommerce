@@ -12,22 +12,27 @@ class BamboraCurrency
 {
     private static $currencyMinorUnits = null;
 
-    public static function convertPriceToMinorUnits($amount, $minorUnits, $defaultMinorUnits = 2)
+    public static function convertPriceToMinorUnits($amount, $minorUnits, $defaultMinorUnits = 2, $round = true)
     {
         if($minorUnits == "" || $minorUnits == null)
-            $minorUnits = $defaultMinorUnits; 
+            $minorUnits = $defaultMinorUnits;
 
         if($amount == "" || $amount == null)
             return 0;
 
-        return round($amount,$minorUnits) * pow(10,$minorUnits);
+        if($round)
+        {
+            $amount = round($amount,$minorUnits);
+        }
+
+        return $amount * pow(10,$minorUnits);
     }
 
     public static function convertPriceFromMinorUnits($amount, $minorUnits, $defaultMinorUnits = 2)
     {
         if($minorUnits == "" || $minorUnits == null)
             $minorUnits = $defaultMinorUnits;
-        
+
         if($amount == "" || $amount == null)
             return 0;
 
@@ -76,7 +81,7 @@ class BamboraCurrency
         else
         {
             return 2;
-        }        
+        }
     }
 }
 
