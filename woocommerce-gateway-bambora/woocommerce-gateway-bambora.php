@@ -50,7 +50,7 @@ function add_wc_bambora_gateway()
             $this->icon = WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/Bambora_1_MINI_RGB-slim.png';
             $this->has_fields = false;
 
-            $this->supports = array('products');
+            $this->supports = array('products', 'refunds');
 
             // Load the form fields.
             $this->init_form_fields();
@@ -193,6 +193,12 @@ function add_wc_bambora_gateway()
                 echo wpautop(wptexturize($this->description));
         }
 
+        /**
+         * Fix Url
+         *
+         * @param string $url
+         * @return string
+         * */
         function fix_url($url)
         {
             $url = str_replace('&#038;', '&amp;', $url);
@@ -201,6 +207,12 @@ function add_wc_bambora_gateway()
             return $url;
         }
 
+        /**
+         * Generate Bambora payment window
+         *
+         * @param int $order_id
+         * @return string
+         * */
         public function generate_bambora_paymentwindow($order_id)
         {
             $order = new WC_Order($order_id);
@@ -211,7 +223,6 @@ function add_wc_bambora_gateway()
             $bamboraUrl = $this->create_bambora_url($order);
 
             $request = new BamboraCheckoutRequest();
-            $request->capturemulti = true; 
             $request->customer = $bamboraCustommer;
             $request->instantcaptureamount = $this->instantcapture == 'yes' ? $bamboraOrder -> total : 0;
             $request->language = str_replace("_","-",get_locale());
@@ -243,6 +254,12 @@ function add_wc_bambora_gateway()
             return $bamboraScript;
         }
 
+        /**
+         * Create Bambora customer
+         *
+         * @param WC_Order $order
+         * @return BamboraCustomer
+         * */
         private function create_bambora_custommer($order)
         {
             $bamboraCustommer = new BamboraCustomer();
@@ -252,7 +269,13 @@ function add_wc_bambora_gateway()
             return $bamboraCustommer;
         }
 
-
+        /**
+         * Create Bambora order
+         *
+         * @param WC_Order $order
+         * @param $minorUnits
+         * @return BamboraOrder
+         * */
         private function create_bambora_order($order,$minorUnits)
         {
             $bamboraOrder = new BamboraOrder();
@@ -270,6 +293,13 @@ function add_wc_bambora_gateway()
 
             return $bamboraOrder;
         }
+
+        /**
+         * Create Bambora billing address
+         *
+         * @param WC_Order $order
+         * @return BamboraAddress
+         * */
         private function create_bambora_billing_address($order)
         {
             $bamboraAddress = new BamboraAddress();
@@ -284,6 +314,12 @@ function add_wc_bambora_gateway()
             return $bamboraAddress;
         }
 
+        /**
+         * Create Bambora shipping address
+         *
+         * @param WC_Order $order
+         * @return BamboraAddress
+         * */
         private function create_bambora_shipping_address($order)
         {
             $bamboraAddress = new BamboraAddress();
@@ -314,6 +350,13 @@ function add_wc_bambora_gateway()
             return $bamboraUrl;
         }
 
+        /**
+         * Creates orderlines for an order
+         *
+         * @param WC_Order $order
+         * @param int $minorUnits
+         * @return BamboraOrderLine[]
+         */
         private function create_bambora_orderlines($order,$minorUnits)
         {
             $bamboraOrderlines = array();
@@ -321,13 +364,13 @@ function add_wc_bambora_gateway()
             $wc_tax = new WC_Tax();
 
             $items = $order->get_items();
-            $lineNumber = 1;
+            $lineNumber = 0;
             foreach($items as $item)
             {
                 $line = new BamboraOrderLine();
                 $line->description = $item["name"];
                 $line->id = $item["product_id"];
-                $line->linenumber = $lineNumber;
+                $line->linenumber = ++$lineNumber;
                 $line->quantity = $item["qty"];
                 $line->text = $item["name"];
                 $line->totalprice = BamboraCurrency::convertPriceToMinorUnits($order->get_line_total($item, false, true), $minorUnits, false);
@@ -348,25 +391,25 @@ function add_wc_bambora_gateway()
                 }
 
                 $bamboraOrderlines[] = $line;
-                $lineNumber++;
             }
 
-            //Add shipping as an orderline
-            $shippingExTax = $order->get_total_shipping();
-            if($shippingExTax > 0)
+            $shipping_methods = $order->get_shipping_methods();
+            if($shipping_methods && count($shipping_methods) != 0)
             {
+                $shipping_total = $order->get_total_shipping();
+                $shipping_tax = $order->get_shipping_tax();
                 $shippingOrderline = new BamboraOrderLine();
-                $shippingOrderline->id = __("shipping", 'woocommerce-gateway-bambora');
-                $shippingOrderline->description = __("shipping", 'woocommerce-gateway-bambora');
+                $shippingOrderline->id = __("Shipping", 'woocommerce-gateway-bambora');
+                $shippingOrderline->description = __("Shipping", 'woocommerce-gateway-bambora');
                 $shippingOrderline->quantity = 1;
+                $shippingOrderline->text = __("Shipping", 'woocommerce-gateway-bambora');
                 $shippingOrderline->unit = __("pcs.", 'woocommerce-gateway-bambora');
-                $shippingOrderline->linenumber = $lineNumber++;
-                $shippingOrderline->totalprice = BamboraCurrency::convertPriceToMinorUnits($shippingExTax, $minorUnits);
-                $shippingOrderline->totalpriceinclvat = BamboraCurrency::convertPriceToMinorUnits($shippingExTax + $order->get_shipping_tax(), $minorUnits);
-                $shippingOrderline->totalpricevatamount = BamboraCurrency::convertPriceToMinorUnits($order->get_shipping_tax(), $minorUnits);
+                $shippingOrderline->linenumber = ++$lineNumber;
+                $shippingOrderline->totalprice = BamboraCurrency::convertPriceToMinorUnits($shipping_total, $minorUnits);
+                $shippingOrderline->totalpriceinclvat = BamboraCurrency::convertPriceToMinorUnits($shipping_total + $shipping_tax, $minorUnits);
+                $shippingOrderline->totalpricevatamount = BamboraCurrency::convertPriceToMinorUnits($shipping_tax, $minorUnits);
 
-                $shippingTax = $order->get_shipping_tax();
-                $shippingOrderline->vat = round( $shippingTax/ $shippingExTax * 100);
+                $shippingOrderline->vat = round( $shipping_tax/ $shipping_total * 100);
                 $bamboraOrderlines[] = $shippingOrderline;
             }
 
@@ -375,6 +418,9 @@ function add_wc_bambora_gateway()
 
         /**
          * Process the payment and return the result
+         *
+         * @param int $order_id
+         * @return string[]
          **/
         function process_payment($order_id)
         {
@@ -389,39 +435,143 @@ function add_wc_bambora_gateway()
         function process_refund($order_id, $amount = null, $reason = '')
         {
             $order = new WC_Order($order_id);
-            $transactionId = get_post_meta($order->id, 'Transaction ID', true);
-            $currency = $order->order_currency;
+            $refunds = $order->get_refunds();
+            $amount = BamboraCurrency::convertPriceToMinorUnits($amount,$minorUnits);
+            $minorUnits = BamboraCurrency::getCurrencyMinorunits($currency);
+
+            $bamboraRefundLines = array();
+            if(!$this->try_create_bambora_refundlines($refunds[0], $bamboraRefundLines, $minorUnits))
+            {
+                return false;
+            }
 
             $api = new BamboraApi(BamboraHelper::generateApiKey($this->merchant, $this->accesstoken, $this->secrettoken));
-            $credit = $api->credit($transactionId, $amount, $currency );
-            if(!is_wp_error($credit))
+            $transactionId = get_post_meta($order->id, 'Transaction ID', true);
+            $currency = $order->order_currency;
+            $credit = $api->credit($transactionId, $amount, $currency, $bamboraRefundLines );
+            if(!is_wp_error($credit) && $credit)
             {
-                if($credit)
+                $rest_result = json_decode($credit, true);
+                if(isset($rest_result) && $rest_result["meta"]["result"])
+                {
                     return true;
+                }
             }
             else
             {
+                $error_string = '';
                 foreach($credit->get_error_messages() as $error)
-                    $reason .= $error->get_error_message();
+                    $error_string .= $error->get_error_message();
+                throw new exception($error_string);
             }
-
             return false;
         }
 
         /**
-         * receipt_page
+         * Try and create refund lines. If there is a negativ amount on one of the refund items, it fails.
+         *
+         * @param WC_Order_Refund $refund
+         * @param BamboraOrderLine[] $bamboraRefundLines
+         * @param int $minorUnits
+         * @param string $reason
+         * @return boolean
+         * */
+        private function try_create_bambora_refundlines($refund,&$bamboraRefundLines,$minorUnits,$reason='')
+        {
+            $wc_tax = new WC_Tax();
+            $lineNumber = 0;
+            $total = $refund->get_total();
+            $items_total = 0;
+
+            $refund_items = $refund->get_items();
+            foreach($refund_items as $item)
+            {
+                $line_total = $refund->get_line_total($item, true, true);
+                if($line_total > 0)
+                {
+                    throw new exception( __( 'Invalid refund amount for item', 'woocommerce-gateway-bambora' ).':'.$item["name"] );
+                }
+                $line = new BamboraOrderLine();
+                $line->description = $item["name"];
+                $line->id = $item["product_id"];
+                $line->linenumber = ++$lineNumber;
+                $line->quantity = $item["qty"];
+                $line->text = $item["name"];
+                $line->totalpriceinclvat = BamboraCurrency::convertPriceToMinorUnits($line_total, $minorUnits, false) * -1;
+                $items_total += $line_total;
+                $line->unit = __("pcs.", 'woocommerce-gateway-bambora');
+                $product = $refund->get_product_from_item($item);
+                $item_tax_class = $product->get_tax_class();
+                $item_tax_rate_array = $wc_tax->get_rates($item_tax_class);
+                $item_tax_rate = array_shift($item_tax_rate_array);
+                if(isset($item_tax_rate["rate"]))
+                {
+                    $line->vat = $item_tax_rate["rate"];
+                }
+                else
+                {
+                    $line->vat = 0;
+                }
+
+                $bamboraRefundLines[] = $line;
+
+            }
+
+            $shipping_methods = $refund->get_shipping_methods();
+
+            if($shipping_methods && count($shipping_methods) != 0)
+            {
+                $shipping_total = $refund->get_total_shipping();
+                $shipping_tax = $refund->get_shipping_tax();
+
+                if($shipping_total > 0 || $shipping_tax > 0)
+                {
+                    throw new exception( __( 'Invalid refund amount for shipping', 'woocommerce-gateway-bambora' ) );
+                }
+
+                $shippingOrderLine = new BamboraOrderLine();
+                $shippingOrderLine->id = __("shipping", 'woocommerce-gateway-bambora');
+                $shippingOrderLine->linenumber = ++$lineNumber;
+                $shippingOrderLine->description = __("Shipping", 'woocommerce-gateway-bambora');
+                $shippingOrderLine->text = __("Shipping", 'woocommerce-gateway-bambora');
+                $shippingOrderLine->quantity = 1;
+                $shippingOrderLine->unit = __("pcs.", 'woocommerce-gateway-bambora');
+                $shippingOrderLine->totalpriceinclvat = BamboraCurrency::convertPriceToMinorUnits($shipping_total + $shipping_tax, $minorUnits) * -1;
+                $shippingOrderLine->vat = 0;
+                $bamboraRefundLines[] = $shippingOrderLine;
+                $items_total += $shipping_total + $shipping_tax;
+            }
+
+            if($items_total < $total)
+            {
+                return false;
+            }
+            else if ($items_total > $total)
+            {
+                $additionalRefundOrderLine = new BamboraOrderLine();
+                $additionalRefundOrderLine->id = __("Refund", 'woocommerce-gateway-bambora');
+                $additionalRefundOrderLine->linenumber = ++$lineNumber;
+                $additionalRefundOrderLine->description = __("Refund", 'woocommerce-gateway-bambora').($reason !== '' ? ': '.$reason : '');
+                $additionalRefundOrderLine->text = __("Refund", 'woocommerce-gateway-bambora');
+                $additionalRefundOrderLine->quantity = 1;
+                $additionalRefundOrderLine->unit = __("pcs.", 'woocommerce-gateway-bambora');
+                $additionalRefundOrderLine->totalpriceinclvat = BamboraCurrency::convertPriceToMinorUnits($total-$items_total, $minorUnits) * -1;
+                $additionalRefundOrderLine->vat = 0;
+                $bamboraRefundLines[] = $additionalRefundOrderLine;
+            }
+
+            return true;
+        }
+
+        /**
+         * Receipt page
+         *
+         * @param WC_Order $order
          **/
         function receipt_page( $order )
         {
             echo $this->generate_bambora_paymentwindow($order);
         }
-
-
-        //function bambora_accepted_payment()
-        //{
-        //    $posted = stripslashes_deep($_GET);
-        //    $this->successful_request($posted);
-        //}
 
         /**
          * Check for Bambora IPN Response
@@ -526,6 +676,7 @@ function add_wc_bambora_gateway()
                 'high'
             );
         }
+
         public function bambora_action()
         {
             if(isset($_GET["bambora_action"]))
@@ -564,27 +715,27 @@ function add_wc_bambora_gateway()
 
                             break;
 
-                        case 'credit':
-                            $amount = str_replace(wc_get_price_decimal_separator(),".",$_GET["amount"]);
-                            $amount = BamboraCurrency::convertPriceToMinorUnits($amount,$minorUnits);
-                            $credit = $api->credit($transactionId, $amount,$currency);
-                            $creditJson = $api->convertJSonResultToArray($credit, "meta");
-                            if(!is_wp_error($credit))
-                            {
-                                if($creditJson["result"])
-                                {
-                                    echo $this->message('updated', __("Payment successfully","woocommerce-gateway-bambora").' <strong>'.__("Refunded","woocommerce-gateway-bambora").'</strong>.');
-                                }else{
-                                    echo $this->message('updated', $creditJson["message"]["merchant"]);
-                                }
-                            }
-                            else
-                            {
-                                foreach($credit->get_error_messages() as $error)
-                                    throw new Exception ($error->get_error_message());
-                            }
+                        //case 'credit':
+                        //    $amount = str_replace(wc_get_price_decimal_separator(),".",$_GET["amount"]);
+                        //    $amount = BamboraCurrency::convertPriceToMinorUnits($amount,$minorUnits);
+                        //    $credit = $api->credit($transactionId, $amount,$currency);
+                        //    $creditJson = $api->convertJSonResultToArray($credit, "meta");
+                        //    if(!is_wp_error($credit))
+                        //    {
+                        //        if($creditJson["result"])
+                        //        {
+                        //            echo $this->message('updated', __("Payment successfully","woocommerce-gateway-bambora").' <strong>'.__("Refunded","woocommerce-gateway-bambora").'</strong>.');
+                        //        }else{
+                        //            echo $this->message('updated', $creditJson["message"]["merchant"]);
+                        //        }
+                        //    }
+                        //    else
+                        //    {
+                        //        foreach($credit->get_error_messages() as $error)
+                        //            throw new Exception ($error->get_error_message());
+                        //    }
 
-                            break;
+                        //    break;
 
                         case 'delete':
                             $delete = $api->delete($transactionId);
@@ -659,7 +810,7 @@ function add_wc_bambora_gateway()
                         $totalCaptured =  BamboraCurrency::convertPriceFromMinorUnits($transInfo["total"]["captured"],$minorUnits);
                         $availableForCapture = BamboraCurrency::convertPriceFromMinorUnits($transInfo["available"]["capture"],$minorUnits);
                         $totalCredited =  BamboraCurrency::convertPriceFromMinorUnits($transInfo["total"]["credited"],$minorUnits);
-                        $availableForCredit =  BamboraCurrency::convertPriceFromMinorUnits($transInfo["available"]["credit"],$minorUnits);
+                        //$availableForCredit =  BamboraCurrency::convertPriceFromMinorUnits($transInfo["available"]["credit"],$minorUnits);
                         $canDelete = $transInfo["candelete"];
 
 
@@ -697,7 +848,7 @@ function add_wc_bambora_gateway()
                         echo '<br/>';
 
 
-                        if($availableForCapture > 0 || $availableForCredit > 0)
+                        if($availableForCapture > 0 )//|| $availableForCredit > 0)
                         {
                             echo '<div class="bambora_action_container">';
 
@@ -712,18 +863,18 @@ function add_wc_bambora_gateway()
                                 echo '</div>';
                                 echo '<br/>';
                             }
-                            if($availableForCredit > 0)
-                            {
-                                echo '<div class="bambora_action">';
-                                echo '<p>'.$order->get_order_currency().'</p>';
-                                echo '<input type="text" value="' . $this->formatNumber($availableForCredit,$minorUnits). '"id="bambora_credit_amount" class="bambora_amount" name="bambora_credit_amount" />';
-                                echo '<a class="button credit" onclick="javascript: (confirm(\'' . __('Are you sure you want to credit?', 'woocommerce-gateway-bambora') . '\') ? (location.href=\'' . admin_url('post.php?post=' . $post->ID . '&action=edit&bambora_action=credit') . '&amount=\' + document.getElementById(\'bambora_credit_amount\').value.replace(\''.wc_get_price_thousand_separator().'\',\'\')) : (false));">';
-                                _e('Refund ', 'woocommerce-gateway-bambora');
-                                echo '</a>';
-                                echo '</div>';
-                                echo '<br/>';
+                            //if($availableForCredit > 0)
+                            //{
+                            //    echo '<div class="bambora_action">';
+                            //    echo '<p>'.$order->get_order_currency().'</p>';
+                            //    echo '<input type="text" value="' . $this->formatNumber($availableForCredit,$minorUnits). '"id="bambora_credit_amount" class="bambora_amount" name="bambora_credit_amount" />';
+                            //    echo '<a class="button credit" onclick="javascript: (confirm(\'' . __('Are you sure you want to credit?', 'woocommerce-gateway-bambora') . '\') ? (location.href=\'' . admin_url('post.php?post=' . $post->ID . '&action=edit&bambora_action=credit') . '&amount=\' + document.getElementById(\'bambora_credit_amount\').value.replace(\''.wc_get_price_thousand_separator().'\',\'\')) : (false));">';
+                            //    _e('Refund ', 'woocommerce-gateway-bambora');
+                            //    echo '</a>';
+                            //    echo '</div>';
+                            //    echo '<br/>';
 
-                            }
+                            //}
 
                             if ($totalCaptured == 0 && $canDelete == true)
                             {
@@ -766,6 +917,13 @@ function add_wc_bambora_gateway()
             return number_format($number,$decimals,wc_get_price_decimal_separator(), wc_get_price_thousand_separator());
         }
 
+        /**
+         * Build transaction log table HTML
+         *
+         * @param string[] $operations
+         * @param int $minorUnits
+         * @return string
+         * */
         private function buildTransactionLogtable($operations, $minorUnits){
 
             $html = "";
@@ -795,6 +953,13 @@ function add_wc_bambora_gateway()
             return $html;
         }
 
+        /**
+         * Build transaction log row HTML
+         *
+         * @param string[] $operation
+         * @param int $minorUnits
+         * @return string
+         * */
         private function buildTransactionLogRow($operation,$minorUnits)
         {
             $zone =  date_default_timezone_get();
@@ -833,6 +998,12 @@ function add_wc_bambora_gateway()
             return $html;
         }
 
+        /**
+         * Convert action
+         *
+         * @param string $action
+         * @return string
+         * */
         private function convertAction($action)
         {
             if($action == "Authorize")
@@ -847,6 +1018,13 @@ function add_wc_bambora_gateway()
                 return $action;
         }
 
+        /**
+         * Get error message from parsed json response
+         *
+         * @param string[] $transMeta
+         * @param string[] $operationsMeta
+         * @return string
+         * */
         private function getErrormessageUsingJSon($transMeta, $operationsMeta){
             $errMessage = 'Could not lookup the transaction. Reason: ';
 
@@ -866,7 +1044,13 @@ function add_wc_bambora_gateway()
             return $errMessage;
         }
 
-
+        /**
+         * Convert message to HTML
+         *
+         * @param string $type
+         * @param string $message
+         * @return string
+         * */
         private function message($type, $message) {
             return '<div id="message" class="'.$type.'">
                 <p>'.$message.'</p>

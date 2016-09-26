@@ -80,13 +80,14 @@ class BamboraApi
         
     }
 
-    public function credit($transactionid, $amount, $currency)
+    public function credit($transactionid, $amount, $currency, $creditLines)
     {       
         $serviceUrl = BamboraendpointConfig::getTransactionEndpoint().'/transactions/'.  sprintf('%.0F',$transactionid) . '/credit';             
 
         $data = array();
         $data["amount"] = $amount;
-        $data["currency"] = $currency; 
+        $data["currency"] = $currency;
+        $data["invoicelines"] = $creditLines;
 
         $jsonData = json_encode($data);
         
