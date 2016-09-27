@@ -226,6 +226,7 @@ function add_wc_bambora_gateway()
             $bamboraUrl = $this->create_bambora_url($order);
 
             $request = new BamboraCheckoutRequest();
+            $request->capturemulti = true; 
             $request->customer = $bamboraCustommer;
             $request->instantcaptureamount = $this->instantcapture == 'yes' ? $bamboraOrder -> total : 0;
             $request->language = str_replace("_","-",get_locale());
