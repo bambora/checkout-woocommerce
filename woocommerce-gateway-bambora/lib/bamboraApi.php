@@ -139,7 +139,7 @@ class BamboraApi
         return $result;        
     }
 
-    public function getAvaliablePaymentcardidsForMerchant($currency, $amount)
+    public function getAvaliablePaymentGroupIdsForMerchant($currency, $amount)
     {
         $res = array();
         $serviceRes = $this -> getPaymentTypes($currency, $amount);
@@ -148,15 +148,10 @@ class BamboraApi
         if ($availablePaymentTypesResjson['meta']['result'] == true)
         {
             foreach($availablePaymentTypesResjson['paymentcollections'] as $payment )
-            {
-                if ($payment['name'] == 'paymentcard')
-                {                    
-                    foreach($payment['paymentgroups'] as $card)
-                    {                         
-                        //enshure unique id:
-                        $cardname = $card['id'];
-                        $res[$cardname] = $card['id'];              
-                    }
+            {                   
+                foreach($payment['paymentgroups'] as $card)
+                {                         
+                    $res[] = $card['id'];              
                 }
             }
 

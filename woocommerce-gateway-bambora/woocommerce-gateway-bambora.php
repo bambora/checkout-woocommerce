@@ -2,7 +2,7 @@
 /*
 Plugin Name: WooCommerce Bambora Checkout Payment Gateway
 Plugin URI: http://www.bambora.com
-Description: A payment gateway for Bambora Checkout (http://www.bambora.com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout/).
+Description: A payment gateway for <a href="http://www.bambora.com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout">Bambora Checkout</a>.
 Version: 1.4.0
 Author: Bambora
 Author URI: http://www.bambora.com
@@ -47,7 +47,7 @@ function add_wc_bambora_gateway()
         {
             $this->id = 'bambora';
             $this->method_title = 'Bambora';
-            $this->icon = WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/Bambora_1_MINI_RGB-slim.png';
+            $this->icon = WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__ )) . '/bambora-logo.png';
             $this->has_fields = false;
 
             $this->supports = array('products', 'refunds');
@@ -70,6 +70,9 @@ function add_wc_bambora_gateway()
 			$this->instantcapture = $this->settings["instantcapture"];
             $this->immediateredirecttoaccept = $this->settings["immediateredirecttoaccept"];
             $this->md5key = $this->settings["md5key"];
+
+            // Set description for checkout page
+            $this->set_bambora_description_for_checkout();
 
             // Actions
             add_action('init', array(& $this, 'check_callback'));
@@ -417,6 +420,34 @@ function add_wc_bambora_gateway()
         }
 
         /**
+         * Set the WC Payment Gateway description for the checkout page  
+         */
+        function set_bambora_description_for_checkout()
+        {
+            global $woocommerce;
+            $cart_total = $woocommerce->cart->total;
+
+            if($cart_total && $cart_total > 0)
+            {
+                $currency = get_woocommerce_currency();
+                if(!$currency)
+                {
+                    return;
+                }
+                $minorUnits = BamboraCurrency::getCurrencyMinorunits($currency);
+                $amount = BamboraCurrency::convertPriceToMinorUnits($cart_total,$minorUnits);
+                $api = new BamboraApi(BamboraHelper::generateApiKey($this->merchant, $this->accesstoken, $this->secrettoken));
+                $paymentTypeIds = $api->getAvaliablePaymentGroupIdsForMerchant($currency, $amount);
+                foreach($paymentTypeIds as $id)
+                {
+                    $this->description .='<img src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/'.$id.'.png" width="45"/>';
+                }
+            }
+        }
+
+
+
+        /**
          * Process the payment and return the result
          *
          * @param int $order_id
@@ -442,7 +473,7 @@ function add_wc_bambora_gateway()
             $amount = BamboraCurrency::convertPriceToMinorUnits($amount,$minorUnits);
 
             $bamboraRefundLines = array();
-            if(!$this->tryCreateBamboraRefundlines($refunds[0], $bamboraRefundLines, $minorUnits))
+            if(!$this->try_create_bambora_refund_lines($refunds[0], $bamboraRefundLines, $minorUnits))
             {
                 return false;
             }
@@ -480,7 +511,7 @@ function add_wc_bambora_gateway()
          * @return boolean
          * @throws Exception
          */
-        private function tryCreateBamboraRefundlines($refund,&$bamboraRefundLines,$minorUnits,$reason='')
+        private function try_create_bambora_refund_lines($refund,&$bamboraRefundLines,$minorUnits,$reason='')
         {
             $wc_tax = new WC_Tax();
             $lineNumber = 0;
