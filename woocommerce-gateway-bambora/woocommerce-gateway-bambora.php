@@ -421,7 +421,8 @@ function add_wc_bambora_gateway()
          *
          * @param int $order_id
          * @return string[]
-         **/
+         * @throws Exception
+         */
         function process_payment($order_id)
         {
             $order = new WC_Order($order_id);
@@ -436,18 +437,18 @@ function add_wc_bambora_gateway()
         {
             $order = new WC_Order($order_id);
             $refunds = $order->get_refunds();
-            $amount = BamboraCurrency::convertPriceToMinorUnits($amount,$minorUnits);
+            $currency = $order->order_currency;
             $minorUnits = BamboraCurrency::getCurrencyMinorunits($currency);
+            $amount = BamboraCurrency::convertPriceToMinorUnits($amount,$minorUnits);
 
             $bamboraRefundLines = array();
-            if(!$this->try_create_bambora_refundlines($refunds[0], $bamboraRefundLines, $minorUnits))
+            if(!$this->tryCreateBamboraRefundlines($refunds[0], $bamboraRefundLines, $minorUnits))
             {
                 return false;
             }
 
             $api = new BamboraApi(BamboraHelper::generateApiKey($this->merchant, $this->accesstoken, $this->secrettoken));
             $transactionId = get_post_meta($order->id, 'Transaction ID', true);
-            $currency = $order->order_currency;
             $credit = $api->credit($transactionId, $amount, $currency, $bamboraRefundLines );
             if(!is_wp_error($credit) && $credit)
             {
@@ -461,7 +462,9 @@ function add_wc_bambora_gateway()
             {
                 $error_string = '';
                 foreach($credit->get_error_messages() as $error)
+                {
                     $error_string .= $error->get_error_message();
+                }
                 throw new exception($error_string);
             }
             return false;
@@ -475,8 +478,9 @@ function add_wc_bambora_gateway()
          * @param int $minorUnits
          * @param string $reason
          * @return boolean
-         * */
-        private function try_create_bambora_refundlines($refund,&$bamboraRefundLines,$minorUnits,$reason='')
+         * @throws Exception
+         */
+        private function tryCreateBamboraRefundlines($refund,&$bamboraRefundLines,$minorUnits,$reason='')
         {
             $wc_tax = new WC_Tax();
             $lineNumber = 0;
@@ -512,9 +516,7 @@ function add_wc_bambora_gateway()
                 {
                     $line->vat = 0;
                 }
-
                 $bamboraRefundLines[] = $line;
-
             }
 
             $shipping_methods = $refund->get_shipping_methods();
