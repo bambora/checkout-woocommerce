@@ -412,7 +412,7 @@ function add_wc_bambora_gateway()
                 $shippingOrderline->totalpriceinclvat = BamboraCurrency::convertPriceToMinorUnits($shipping_total + $shipping_tax, $minorUnits);
                 $shippingOrderline->totalpricevatamount = BamboraCurrency::convertPriceToMinorUnits($shipping_tax, $minorUnits);
 
-                $shippingOrderline->vat = round( $shipping_tax/ $shipping_total * 100);
+                $shippingOrderline->vat = $shipping_total > 0 ? round( $shipping_tax/ $shipping_total * 100) : 0;
                 $bamboraOrderlines[] = $shippingOrderline;
             }
 
