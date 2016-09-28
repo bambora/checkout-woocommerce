@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Bambora Checkout Payment Gateway
 Plugin URI: http://www.bambora.com
 Description: A payment gateway for <a href="http://www.bambora.com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout">Bambora Checkout</a>.
-Version: 1.4.1
+Version: 1.4.2
 Author: Bambora
 Author URI: http://www.bambora.com
 Text Domain: Bambora
@@ -226,6 +226,7 @@ function add_wc_bambora_gateway()
             $bamboraUrl = $this->create_bambora_url($order);
 
             $request = new BamboraCheckoutRequest();
+            $request->capturemulti = true; 
             $request->customer = $bamboraCustommer;
             $request->instantcaptureamount = $this->instantcapture == 'yes' ? $bamboraOrder -> total : 0;
             $request->language = str_replace("_","-",get_locale());
