@@ -166,7 +166,8 @@ class BamboraApi
             'Content-Type: application/json',
             'Content-Length: '.strlen(@$jsonData),
             'Accept: application/json',
-            'Authorization: '.$this->apiKey
+            'Authorization: '.$this->apiKey,
+            'X-EPay-System: '.$this->getModuleHeaderInfo()
         );
         
         $curl = curl_init();
@@ -182,4 +183,19 @@ class BamboraApi
         $result = curl_exec($curl);
         return $result;        
     }
+
+
+    /**
+     * Returns the module header
+     *
+     * @returns string
+     */
+    private function getModuleHeaderInfo() 
+    {
+      
+        $bamboraVersion = WC_Gateway_Bambora::MODULE_VERSION;
+        $woocommerceVersion = wpbo_get_woo_version_number();
+        $result = 'WooCommerce/' . $woocommerceVersion . ' Module/' . $bamboraVersion;
+        return result;
+    }     
 }

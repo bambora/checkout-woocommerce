@@ -43,6 +43,8 @@ function add_wc_bambora_gateway()
      **/
     class WC_Gateway_Bambora extends WC_Payment_Gateway
     {
+
+        const MODULE_VERSION = '1.4.3'
         public function __construct()
         {
             $this->id = 'bambora';
