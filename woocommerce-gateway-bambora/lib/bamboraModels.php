@@ -39,9 +39,6 @@ class BamboraOrderLine
     public $totalpriceinclvat;
     public $totalpricevatamount;
     public $unit;
-    public $unitprice;
-    public $unitpriceinclvat;
-    public $unitpricevatamount;
     public $vat;
 }
 

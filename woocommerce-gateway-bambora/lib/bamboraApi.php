@@ -188,7 +188,7 @@ class BamboraApi
     /**
      * Returns the module header
      *
-     * @returns string
+     * @return string
      */
     private function getModuleHeaderInfo() 
     {
