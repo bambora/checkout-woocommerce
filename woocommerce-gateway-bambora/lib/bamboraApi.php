@@ -192,10 +192,10 @@ class BamboraApi
      */
     private function getModuleHeaderInfo() 
     {
-      
+        global $woocommerce;
         $bamboraVersion = WC_Gateway_Bambora::MODULE_VERSION;
-        $woocommerceVersion = wpbo_get_woo_version_number();
+        $woocommerceVersion = $woocommerce->version;
         $result = 'WooCommerce/' . $woocommerceVersion . ' Module/' . $bamboraVersion;
-        return result;
+        return $result;
     }     
 }
