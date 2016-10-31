@@ -1,6 +1,14 @@
 <?php
 class BamboraHelper
 {
+    /**
+     * Create Bambora HTML payment script
+     * @param string $paymentWindowUrl
+     * @param int $windowState
+     * @param string $bamboraCheckoutUrl
+     * @param boolean $runOnLoad
+     * @return string
+     */
     public static function create_bambora_paymentscript($paymentWindowUrl, $windowState, $bamboraCheckoutUrl, $runOnLoad)
     {
         return "<script type='text/javascript'>
@@ -18,7 +26,7 @@ class BamboraHelper
                        {
                             bam('open', '".$bamboraCheckoutUrl."', options);
                        }
-                   
+
                        if(".$runOnLoad.")
                        {
                             bam('open', '".$bamboraCheckoutUrl."', options);
@@ -26,6 +34,13 @@ class BamboraHelper
                 </script>";
     }
 
+    /**
+     * Generate Bambora API key
+     * @param string $merchant
+     * @param string $accesstoken
+     * @param string $secrettoken
+     * @return string
+     */
     public static function generateApiKey($merchant, $accesstoken, $secrettoken)
     {
         //Basic (accestoken@merchantnumer:secrettoken) -> base64
@@ -33,6 +48,6 @@ class BamboraHelper
         $encodedKey = base64_encode($combined);
         $apiKey = 'Basic '.$encodedKey;
 
-        return $apiKey;      
+        return $apiKey;
     }
 }

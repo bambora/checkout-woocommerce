@@ -12,6 +12,14 @@ class BamboraCurrency
 {
     private static $currencyMinorUnits = null;
 
+    /**
+     * Converts an amount to the specified minor units format
+     * @param float|int $amount
+     * @param int $minorUnits
+     * @param int $defaultMinorUnits
+     * @param boolean $round
+     * @return float|int
+     */
     public static function convertPriceToMinorUnits($amount, $minorUnits, $defaultMinorUnits = 2, $round = true)
     {
         if($minorUnits == "" || $minorUnits == null)
@@ -28,6 +36,13 @@ class BamboraCurrency
         return $amount * pow(10,$minorUnits);
     }
 
+    /**
+     * Converts an amount from the specified minor units format
+     * @param float|int $amount
+     * @param int $minorUnits
+     * @param int $defaultMinorUnits
+     * @return float|int
+     */
     public static function convertPriceFromMinorUnits($amount, $minorUnits, $defaultMinorUnits = 2)
     {
         if($minorUnits == "" || $minorUnits == null)
@@ -39,6 +54,11 @@ class BamboraCurrency
         return $amount / pow(10,$minorUnits);
     }
 
+    /**
+     * Get minor unit format for the specified currency
+     * @param string $currencyCode
+     * @return int
+     */
     public static function getCurrencyMinorunits($currencyCode)
     {
         if(self::$currencyMinorUnits == null)

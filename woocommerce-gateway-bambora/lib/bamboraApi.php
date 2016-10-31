@@ -3,7 +3,7 @@ include(bambora_LIB .'bamboraModels.php');
 include(bambora_LIB .'bamboraEndpoints.php');
 
 class BamboraApi
-{    
+{
     private $apiKey = "";
 
     function __construct($apiKey = "")
@@ -11,18 +11,28 @@ class BamboraApi
         $this->apiKey = $apiKey;
     }
 
-    //Helpers
+    /**
+     * Get the specified property of a service result
+     * @param string $result
+     * @param string $objectName
+     * @param string $propertyName
+     * @return mixed
+     */
     public function getPropertyOfServiceResult($result, $objectName ,$propertyName)
-    {      
+    {
         $json = json_decode($result, true);
         $val =  $json[$objectName][$propertyName];
-        return $val; 
+        return $val;
     }
 
     //API Methodes
-
+    /**
+     * Get Bambora Checkout response.
+     * @param BamboraCheckoutRequest $bamboracheckoutrequest
+     * @return mixed
+     */
     public function getcheckoutresponse($bamboracheckoutrequest)
-    {   
+    {
         $serviceUrl = BamboraendpointConfig::getCheckoutEndpoint().'/checkout' ;
         if($bamboracheckoutrequest == null)
         {
@@ -35,19 +45,28 @@ class BamboraApi
         return $expresscheckoutresponse;
     }
 
+    /**
+     * Get Bambora Checkout payment window JavaScript url
+     * @return string
+     */
     public function getcheckoutpaymentwindowjs()
     {
         $url = BamboraendpointConfig::getCheckoutAssets().'/paymentwindow-v1.min.js';
 
-        return $url;   
+        return $url;
     }
 
-
+    /**
+     * Convert JSon string to array
+     * @param string $result
+     * @param string $elementName
+     * @return array|null
+     */
     public function convertJSonResultToArray($result, $elementName)
     {
         $json = json_decode($result, true);
-        $transaction = $json[$elementName];
-        $res = array();            
+        $transaction = array_key_exists($elementName, $json) ? $json[$elementName] : null;
+        $res = array();
 
         if ($transaction == null)
             return null;
@@ -58,31 +77,41 @@ class BamboraApi
         {
             $res[$attr] =  $transaction[$attr];
         }
-        return $res;   
+        return $res;
     }
 
-
-   
-
-    
+    /**
+     * Make a capture request to Bambora
+     * @param string $transactionid
+     * @param int $amount
+     * @param string $currency
+     * @return mixed
+     */
     public function capture($transactionid, $amount, $currency)
-    {           
-        $serviceUrl = BamboraendpointConfig::getTransactionEndpoint().'/transactions/'.  sprintf('%.0F',$transactionid) . '/capture';             
+    {
+        $serviceUrl = BamboraendpointConfig::getTransactionEndpoint().'/transactions/'.  sprintf('%.0F',$transactionid) . '/capture';
 
         $data = array();
         $data["amount"] = $amount;
         $data["currency"] = $currency;
-        
+
         $jsonData = json_encode($data);
-        
+
         $result = $this->_callRestService($serviceUrl, $jsonData, "POST");
         return $result;
-        
     }
 
+    /**
+     * Make a credit request to Bambora
+     * @param string $transactionid
+     * @param int $amount
+     * @param string $currency
+     * @param BamboraOrderLine $creditLines
+     * @return mixed
+     */
     public function credit($transactionid, $amount, $currency, $creditLines)
-    {       
-        $serviceUrl = BamboraendpointConfig::getTransactionEndpoint().'/transactions/'.  sprintf('%.0F',$transactionid) . '/credit';             
+    {
+        $serviceUrl = BamboraendpointConfig::getTransactionEndpoint().'/transactions/'.  sprintf('%.0F',$transactionid) . '/credit';
 
         $data = array();
         $data["amount"] = $amount;
@@ -90,55 +119,82 @@ class BamboraApi
         $data["invoicelines"] = $creditLines;
 
         $jsonData = json_encode($data);
-        
+
         $result = $this->_callRestService($serviceUrl, $jsonData, "POST");
-        return $result;        
+        return $result;
     }
 
+    /**
+     * Make a delete request to Bambora
+     * @param string $transactionid
+     * @return mixed
+     */
     public function delete($transactionid)
-    {                  
-        $serviceUrl = BamboraendpointConfig::getTransactionEndpoint().'/transactions/'.  sprintf('%.0F',$transactionid) . '/delete';             
-        
+    {
+        $serviceUrl = BamboraendpointConfig::getTransactionEndpoint().'/transactions/'.  sprintf('%.0F',$transactionid) . '/delete';
+
         $data = array();
         $jsonData = json_encode($data);
-        
+
         $result = $this->_callRestService($serviceUrl, $jsonData, "POST");
-        return $result;    
+        return $result;
     }
 
+    /**
+     * Get specific transaction from Bambora
+     * @param string $transactionid
+     * @return mixed
+     */
     public function gettransactionInformation($transactionid)
-    {            
-        $serviceUrl = BamboraendpointConfig::getMerchantEndpoint().'/transactions/'. sprintf('%.0F',$transactionid);                         
+    {
+        $serviceUrl = BamboraendpointConfig::getMerchantEndpoint().'/transactions/'. sprintf('%.0F',$transactionid);
 
-        $data = array();    
+        $data = array();
         $jsonData = json_encode($data);
-        
+
         $result = $this->_callRestService($serviceUrl, $jsonData, "GET");
-        return $result;    
+        return $result;
     }
-    
+
+    /**
+     * Get transaction operations for a specific transaction from Bambora
+     * @param string $transactionid
+     * @return mixed
+     */
     public function getTransactionOperations($transactionid)
-    {            
-        $serviceUrl = BamboraendpointConfig::getMerchantEndpoint().'/transactions/'. sprintf('%.0F',$transactionid) .'/transactionoperations';             
+    {
+        $serviceUrl = BamboraendpointConfig::getMerchantEndpoint().'/transactions/'. sprintf('%.0F',$transactionid) .'/transactionoperations';
 
-        $data = array();    
+        $data = array();
         $jsonData = json_encode($data);
-        
+
         $result = $this->_callRestService($serviceUrl, $jsonData, "GET");
-        return $result;    
+        return $result;
     }
 
+    /**
+     * Get available payment types for the amount and currency from Bambora
+     * @param string $currency
+     * @param int $amount
+     * @return mixed
+     */
     public function getPaymentTypes($currency, $amount)
-    {   
+    {
         $serviceUrl = BamboraendpointConfig::getMerchantEndpoint().'/paymenttypes?currency='. $currency .'&amount='.$amount;
         $data = array();
-        
+
         $jsonData = json_encode($data);
-        
+
         $result = $this->_callRestService($serviceUrl, $jsonData, "GET");
-        return $result;        
+        return $result;
     }
 
+    /**
+     * Get the ids of the available payment groups for the amount and currency from Bambora
+     * @param string $currency
+     * @param int $amount
+     * @return array
+     */
     public function getAvaliablePaymentGroupIdsForMerchant($currency, $amount)
     {
         $res = array();
@@ -148,28 +204,36 @@ class BamboraApi
         if ($availablePaymentTypesResjson['meta']['result'] == true)
         {
             foreach($availablePaymentTypesResjson['paymentcollections'] as $payment )
-            {                   
+            {
                 foreach($payment['paymentgroups'] as $card)
-                {                         
-                    $res[] = $card['id'];              
+                {
+                    $res[] = $card['id'];
                 }
             }
 
             ksort($res);
         }
-        return $res;               
+        return $res;
     }
 
+    /**
+     * Call the rest service at the specified Url
+     * @param string $serviceUrl
+     * @param mixed $jsonData
+     * @param string $postOrGet
+     * @return mixed
+     */
     private function _callRestService($serviceUrl,  $jsonData, $postOrGet)
-    {    
+    {
         $headers = array(
             'Content-Type: application/json',
             'Content-Length: '.strlen(@$jsonData),
             'Accept: application/json',
             'Authorization: '.$this->apiKey,
-            'X-EPay-System: '.$this->getModuleHeaderInfo()
+            //'X-EPay-System: '.$this->getModuleHeaderInfo()
+
         );
-        
+
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST,$postOrGet);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
@@ -179,23 +243,22 @@ class BamboraApi
         curl_setopt($curl, CURLOPT_FAILONERROR, false);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
-        
-        $result = curl_exec($curl);
-        return $result;        
-    }
 
+        $result = curl_exec($curl);
+        return $result;
+    }
 
     /**
      * Returns the module header
      *
      * @return string
      */
-    private function getModuleHeaderInfo() 
+    private function getModuleHeaderInfo()
     {
         global $woocommerce;
         $bamboraVersion = WC_Gateway_Bambora::MODULE_VERSION;
         $woocommerceVersion = $woocommerce->version;
         $result = 'WooCommerce/' . $woocommerceVersion . ' Module/' . $bamboraVersion;
         return $result;
-    }     
+    }
 }
