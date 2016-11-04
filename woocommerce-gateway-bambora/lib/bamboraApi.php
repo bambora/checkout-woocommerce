@@ -230,8 +230,7 @@ class BamboraApi
             'Content-Length: '.strlen(@$jsonData),
             'Accept: application/json',
             'Authorization: '.$this->apiKey,
-            //'X-EPay-System: '.$this->getModuleHeaderInfo()
-
+            'X-EPay-System: '.$this->getModuleHeaderInfo()
         );
 
         $curl = curl_init();
