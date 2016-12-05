@@ -700,14 +700,21 @@ function add_wc_bambora_gateway()
 
         public function bambora_meta_boxes()
         {
-            add_meta_box(
-                'bambora-payment-actions',
-                __('Bambora Payment Solutions', 'woocommerce-gateway-bambora'),
-                array(&$this, 'bambora_meta_box_payment'),
-                'shop_order',
-                'side',
-                'high'
-            );
+            global $post;
+            $orderId = $post->ID;
+
+            $paymentMethod = get_post_meta( $orderId, '_payment_method', true );
+            if($this->id === $paymentMethod)
+            {
+                add_meta_box(
+                    'bambora-payment-actions',
+                    __('Bambora Payment Solutions', 'woocommerce-gateway-bambora'),
+                    array(&$this, 'bambora_meta_box_payment'),
+                    'shop_order',
+                    'side',
+                    'high'
+                );
+            }
         }
 
         public function bambora_action()
@@ -806,9 +813,8 @@ function add_wc_bambora_gateway()
         public function bambora_meta_box_payment()
         {
             global $post;
-
-            $order = new WC_Order($post->ID);
-
+            $orderId = $post->ID;
+            $order = new WC_Order($orderId);
             $transactionId = get_post_meta($order->id, 'Transaction ID', true);
 
             if(strlen($transactionId) > 0)
