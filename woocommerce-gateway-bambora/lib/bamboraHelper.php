@@ -2,40 +2,44 @@
 class BamboraHelper
 {
     /**
-     * Create Bambora HTML payment script
-     * @param string $paymentWindowUrl
+     * Create Bambora Checkout payment HTML
+     *
+     * @param string $bamboraCheckoutJsUrl
      * @param int $windowState
      * @param string $bamboraCheckoutUrl
-     * @param boolean $runOnLoad
+     * @param string $cancelUrl
      * @return string
      */
-    public static function create_bambora_paymentscript($paymentWindowUrl, $windowState, $bamboraCheckoutUrl, $runOnLoad)
+    public static function createBamboraCheckoutPaymentHtml($bamboraCheckoutJsUrl, $windowState, $bamboraCheckoutUrl, $cancelUrl)
     {
-        return "<script type='text/javascript'>
+        $html = '<section>';
+        $html .=  '<h3>'.__('Thank you for using Bambora Checkout.', 'woocommerce-gateway-bambora').'</h3>';
+        $html .= '<p>'.__('Please wait...', 'woocommerce-gateway-bambora').'</p>';
+        $html .= "<script type='text/javascript'>
                      (function (n, t, i, r, u, f, e) { n[u] = n[u] || function() {
                         (n[u].q = n[u].q || []).push(arguments)}; f = t.createElement(i);
                         e = t.getElementsByTagName(i)[0]; f.async = 1; f.src = r; e.parentNode.insertBefore(f, e)
-                        })(window, document, 'script','".$paymentWindowUrl."', 'bam');
-                        var windowstate = ".$windowState.";
+                        })(window, document, 'script','{$bamboraCheckoutJsUrl}', 'bam');
 
-                       var options = {
-                            'windowstate': windowstate,
-                       }
+                        var onClose = function(){
+                            window.location.href = '{$cancelUrl}';
+                        };
 
-                       function openPaymentWindow()
-                       {
-                            bam('open', '".$bamboraCheckoutUrl."', options);
-                       }
+                        var options = {
+                            'windowstate': {$windowState},
+                            'onClose': onClose
+                        };
 
-                       if(".$runOnLoad.")
-                       {
-                            bam('open', '".$bamboraCheckoutUrl."', options);
-                       }
+                        bam('open', '{$bamboraCheckoutUrl}', options);
                 </script>";
+        $html .= "</section>";
+
+        return $html;
     }
 
     /**
      * Generate Bambora API key
+     * 
      * @param string $merchant
      * @param string $accesstoken
      * @param string $secrettoken
@@ -43,11 +47,25 @@ class BamboraHelper
      */
     public static function generateApiKey($merchant, $accesstoken, $secrettoken)
     {
-        //Basic (accestoken@merchantnumer:secrettoken) -> base64
         $combined = $accesstoken . '@' . $merchant .':'. $secrettoken;
         $encodedKey = base64_encode($combined);
         $apiKey = 'Basic '.$encodedKey;
 
         return $apiKey;
+    }
+
+    /**
+     * Returns the module header
+     *
+     * @return string
+     */
+    public static function getModuleHeaderInfo()
+    {
+        global $woocommerce;
+
+        $bamboraVersion = WC_Gateway_Bambora::MODULE_VERSION;
+        $woocommerceVersion = $woocommerce->version;
+        $result = 'WooCommerce/' . $woocommerceVersion . ' Module/' . $bamboraVersion;
+        return $result;
     }
 }

@@ -20,20 +20,14 @@ class BamboraCurrency
      * @param boolean $round
      * @return float|int
      */
-    public static function convertPriceToMinorUnits($amount, $minorUnits, $defaultMinorUnits = 2, $round = true)
+    public static function convertPriceToMinorUnits($amount, $minorUnits)
     {
-        if($minorUnits == "" || $minorUnits == null)
-            $minorUnits = $defaultMinorUnits;
-
         if($amount == "" || $amount == null)
-            return 0;
-
-        if($round)
         {
-            $amount = round($amount,$minorUnits);
+            return 0;
         }
 
-        return $amount * pow(10,$minorUnits);
+        return $amount * pow(10, $minorUnits);
     }
 
     /**
@@ -43,15 +37,14 @@ class BamboraCurrency
      * @param int $defaultMinorUnits
      * @return float|int
      */
-    public static function convertPriceFromMinorUnits($amount, $minorUnits, $defaultMinorUnits = 2)
+    public static function convertPriceFromMinorUnits($amount, $minorUnits, $decimalSeperator = '.')
     {
-        if($minorUnits == "" || $minorUnits == null)
-            $minorUnits = $defaultMinorUnits;
-
         if($amount == "" || $amount == null)
+        {
             return 0;
+        }
 
-        return $amount / pow(10,$minorUnits);
+        return number_format($amount / pow(10, $minorUnits), $minorUnits, $decimalSeperator, "");
     }
 
     /**

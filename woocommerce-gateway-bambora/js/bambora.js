@@ -8,4 +8,46 @@
             return reg.test(digit);
         }
     });
+
+
+    jQuery("#bambora_capture_submit")
+        .click(function (e) {
+            e.preventDefault();
+            var inputField = jQuery("#bambora_capture_amount");
+            var reg = new RegExp(/^(?:[\d]+([,.]?[\d]{0,3}))$/);
+            var amount = inputField.val();
+            if (inputField.length > 0 && !reg.test(amount)) {
+                jQuery("#bambora-format-error").toggle();
+                return false;
+            }
+
+            var messagDialogText = jQuery("#bambora_capture_message").val();
+
+            var confirmResult = confirm(messagDialogText);
+            if (confirmResult === false) {
+                return false;
+            }
+            var currency = jQuery("#bambora_currency").val();
+            var params = "&bambora_action=capture&amount=" + amount + "&currency=" + currency;
+            var url = window.location.href + params;
+
+            window.location.href = url;
+            //return true;
+        });
+
+    jQuery("#bambora_delete_submit")
+        .click(function (e) {
+            e.preventDefault();
+            var messagDialogText = jQuery("#bambora_delete_message").val();
+            var confirmResult = confirm(messagDialogText);
+            if (confirmResult === false) {
+                return false;
+            }
+
+            var params = "&bambora_action=delete";
+            var url = window.location.href + params;
+
+            window.location.href = url;
+            return true;
+        });
 });

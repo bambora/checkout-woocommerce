@@ -31,7 +31,7 @@ class BamboraApi
      * @param BamboraCheckoutRequest $bamboracheckoutrequest
      * @return mixed
      */
-    public function getcheckoutresponse($bamboracheckoutrequest)
+    public function getCheckoutResponse($bamboracheckoutrequest)
     {
         $serviceUrl = BamboraendpointConfig::getCheckoutEndpoint().'/checkout' ;
         if($bamboracheckoutrequest == null)
@@ -40,9 +40,9 @@ class BamboraApi
         }
 
         $jsonData = json_encode($bamboracheckoutrequest);
-        $expresscheckoutresponse = $this->_callRestService($serviceUrl, $jsonData, "POST");
+        $checkoutresponse = $this->_callRestService($serviceUrl, $jsonData, "POST");
 
-        return $expresscheckoutresponse;
+        return json_decode($checkoutresponse, true);
     }
 
     /**
@@ -56,29 +56,7 @@ class BamboraApi
         return $url;
     }
 
-    /**
-     * Convert JSon string to array
-     * @param string $result
-     * @param string $elementName
-     * @return array|null
-     */
-    public function convertJSonResultToArray($result, $elementName)
-    {
-        $json = json_decode($result, true);
-        $transaction = array_key_exists($elementName, $json) ? $json[$elementName] : null;
-        $res = array();
 
-        if ($transaction == null)
-            return null;
-
-        $properties = array_keys($transaction);
-
-        foreach($properties as $attr )
-        {
-            $res[$attr] =  $transaction[$attr];
-        }
-        return $res;
-    }
 
     /**
      * Make a capture request to Bambora
@@ -98,7 +76,7 @@ class BamboraApi
         $jsonData = json_encode($data);
 
         $result = $this->_callRestService($serviceUrl, $jsonData, "POST");
-        return $result;
+        return json_decode($result, true);
     }
 
     /**
@@ -106,7 +84,7 @@ class BamboraApi
      * @param string $transactionid
      * @param int $amount
      * @param string $currency
-     * @param BamboraOrderLine $creditLines
+     * @param BamboraOrderLine[] $creditLines
      * @return mixed
      */
     public function credit($transactionid, $amount, $currency, $creditLines)
@@ -121,7 +99,7 @@ class BamboraApi
         $jsonData = json_encode($data);
 
         $result = $this->_callRestService($serviceUrl, $jsonData, "POST");
-        return $result;
+        return json_decode($result, true);
     }
 
     /**
@@ -137,7 +115,7 @@ class BamboraApi
         $jsonData = json_encode($data);
 
         $result = $this->_callRestService($serviceUrl, $jsonData, "POST");
-        return $result;
+        return json_decode($result, true);
     }
 
     /**
@@ -145,7 +123,7 @@ class BamboraApi
      * @param string $transactionid
      * @return mixed
      */
-    public function gettransactionInformation($transactionid)
+    public function getTransaction($transactionid)
     {
         $serviceUrl = BamboraendpointConfig::getMerchantEndpoint().'/transactions/'. sprintf('%.0F',$transactionid);
 
@@ -153,7 +131,7 @@ class BamboraApi
         $jsonData = json_encode($data);
 
         $result = $this->_callRestService($serviceUrl, $jsonData, "GET");
-        return $result;
+        return json_decode($result, true);
     }
 
     /**
@@ -169,7 +147,7 @@ class BamboraApi
         $jsonData = json_encode($data);
 
         $result = $this->_callRestService($serviceUrl, $jsonData, "GET");
-        return $result;
+        return json_decode($result, true);
     }
 
     /**
@@ -230,7 +208,7 @@ class BamboraApi
             'Content-Length: '.strlen(@$jsonData),
             'Accept: application/json',
             'Authorization: '.$this->apiKey,
-            'X-EPay-System: '.$this->getModuleHeaderInfo()
+            'X-EPay-System: '.BamboraHelper::getModuleHeaderInfo()
         );
 
         $curl = curl_init();
@@ -247,17 +225,5 @@ class BamboraApi
         return $result;
     }
 
-    /**
-     * Returns the module header
-     *
-     * @return string
-     */
-    private function getModuleHeaderInfo()
-    {
-        global $woocommerce;
-        $bamboraVersion = WC_Gateway_Bambora::MODULE_VERSION;
-        $woocommerceVersion = $woocommerce->version;
-        $result = 'WooCommerce/' . $woocommerceVersion . ' Module/' . $bamboraVersion;
-        return $result;
-    }
+
 }

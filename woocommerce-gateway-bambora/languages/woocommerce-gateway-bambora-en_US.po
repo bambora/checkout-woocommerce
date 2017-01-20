@@ -1,0 +1,175 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Bambora Checkout Payment Gateway\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-01-20 12:21+0000\n"
+"PO-Revision-Date: 2017-01-20 12:32+0000\n"
+"Last-Translator: admin <allan.wamming.lie@bambora.com>\n"
+"Language-Team: English (United States)\n"
+"Language: en-US\n"
+"Plural-Forms: nplurals=2; plural=n != 1\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco - https://localise.biz/"
+
+#: woocommerce-gateway-bambora.php:202
+msgid ""
+"<a href=\"http://dev.bambora.com/carts.html#woo-commerce\" target=\"_blank\">"
+"Documentation can be found here</a>"
+msgstr ""
+"<a href=\"http://dev.bambora.com/carts.html#woo-commerce\" target=\"_blank\">"
+"Documentation can be found here</a>"
+
+#: woocommerce-gateway-bambora.php:241
+msgid "Could not retrive the payment window. Reason:"
+msgstr "Could not retrive the payment window. Reason:"
+
+#: woocommerce-gateway-bambora.php:372 woocommerce-gateway-bambora.php:400
+#: woocommerce-gateway-bambora.php:712 woocommerce-gateway-bambora.php:746
+#: woocommerce-gateway-bambora.php:765
+msgid "pcs."
+msgstr "pcs."
+
+#: woocommerce-gateway-bambora.php:396 woocommerce-gateway-bambora.php:397
+#: woocommerce-gateway-bambora.php:399 woocommerce-gateway-bambora.php:743
+#: woocommerce-gateway-bambora.php:744
+msgid "Shipping"
+msgstr "Shipping"
+
+#: woocommerce-gateway-bambora.php:509
+msgid "Unknown error"
+msgstr "Unknown error"
+
+#: woocommerce-gateway-bambora.php:511
+msgid "Callback failed! Reason:"
+msgstr "Callback failed! Reason:"
+
+#: woocommerce-gateway-bambora.php:602
+msgid "Surcharge Fee"
+msgstr "Surcharge Fee"
+
+#: woocommerce-gateway-bambora.php:623
+msgid "Callback completed"
+msgstr "Callback completed"
+
+#: woocommerce-gateway-bambora.php:659
+msgid "Could not create refund invoice lines"
+msgstr "Could not create refund invoice lines"
+
+#: woocommerce-gateway-bambora.php:670 woocommerce-gateway-bambora.php:1004
+#: woocommerce-gateway-bambora.php:1019
+msgid "No connection to Bambora"
+msgstr "No connection to Bambora"
+
+#: woocommerce-gateway-bambora.php:702
+msgid "Invalid refund amount for item"
+msgstr "Invalid refund amount for item"
+
+#: woocommerce-gateway-bambora.php:737
+msgid "Invalid refund amount for shipping"
+msgstr "Invalid refund amount for shipping"
+
+#: woocommerce-gateway-bambora.php:741
+msgid "shipping"
+msgstr "shipping"
+
+#: woocommerce-gateway-bambora.php:760 woocommerce-gateway-bambora.php:762
+#: woocommerce-gateway-bambora.php:763
+msgid "Refund"
+msgstr "Refund"
+
+#: woocommerce-gateway-bambora.php:778
+msgid "Bambora Payment Solutions"
+msgstr "Bambora Online Checkout"
+
+#: woocommerce-gateway-bambora.php:826
+msgid "Transaction ID"
+msgstr "Transaction ID"
+
+#: woocommerce-gateway-bambora.php:832
+msgid "Authorized:"
+msgstr "Authorized:"
+
+#: woocommerce-gateway-bambora.php:837
+msgid "Captured:"
+msgstr "Captured:"
+
+#: woocommerce-gateway-bambora.php:842
+msgid "Refunded:"
+msgstr "Refunded:"
+
+#: woocommerce-gateway-bambora.php:856
+msgid "Are you sure you want to capture the payment?"
+msgstr "Are you sure you want to capture the payment?"
+
+#: woocommerce-gateway-bambora.php:866
+msgid "Are you sure you want to delete the payment?"
+msgstr "Are you sure you want to delete the payment?"
+
+#: woocommerce-gateway-bambora.php:872
+msgid "The amount you entered was in the wrong format."
+msgstr "The amount you entered was in the wrong format."
+
+#: woocommerce-gateway-bambora.php:874
+msgid "Correct format is: 1234.56"
+msgstr "Correct format is: 1234.56"
+
+#: woocommerce-gateway-bambora.php:904
+msgid "No transaction was found"
+msgstr "No transaction was found"
+
+#: woocommerce-gateway-bambora.php:917
+msgid "TRANSACTION HISTORY"
+msgstr "TRANSACTION HISTORY"
+
+#: woocommerce-gateway-bambora.php:1010 woocommerce-gateway-bambora.php:1024
+msgid "Payment successfully"
+msgstr "Payment successfully"
+
+#: woocommerce-gateway-bambora.php:1010 woocommerce-gateway-bambora.php:1063
+msgid "Captured"
+msgstr "Captured"
+
+#: woocommerce-gateway-bambora.php:1024 woocommerce-gateway-bambora.php:1071
+msgid "Deleted"
+msgstr "Deleted"
+
+#: woocommerce-gateway-bambora.php:1059
+msgid "Authorized"
+msgstr "Authorized"
+
+#: woocommerce-gateway-bambora.php:1067
+msgid "Refunded"
+msgstr "Refunded"
+
+#: lib/bamboraHelper.php:16
+msgid "Thank you for using Bambora Checkout."
+msgstr "Thank you for using Bambora Checkout."
+
+#: lib/bamboraHelper.php:17
+msgid "Please wait..."
+msgstr "Please wait..."
+
+#. Name of the plugin
+msgid "WooCommerce Bambora Checkout Payment Gateway"
+msgstr "WooCommerce Bambora Checkout Payment Gateway"
+
+#. Description of the plugin
+msgid ""
+"A payment gateway for <a href=\"http://www.bambora."
+"com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout\">Bambora "
+"Checkout</a>."
+msgstr ""
+"A payment gateway for <a href=\"http://www.bambora."
+"com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout\">Bambora "
+"Checkout</a>."
+
+#. URI of the plugin
+#. Author URI of the plugin
+msgid "http://www.bambora.com"
+msgstr "http://www.bambora.com"
+
+#. Author of the plugin
+msgid "Bambora"
+msgstr "Bambora"

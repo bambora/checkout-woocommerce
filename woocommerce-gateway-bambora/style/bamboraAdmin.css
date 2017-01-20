@@ -1,5 +1,4 @@
-﻿
-.bambora_transactionid p {
+﻿.bambora_transactionid p {
     line-height: 6px;
 }
 
@@ -74,16 +73,21 @@
     }
 
     .bambora_action .capture,
-    .bambora_action .credit {
-        border-radius: 0 4px 4px 0 !important;
-        width: 34%;
-        text-align: center;
+    .bambora_action .delete {
+        box-shadow: none !important;
+        height: inherit !important;
+        color: #ffffff !important;
     }
 
     .bambora_action .capture {
         background-color: #67b168 !important;
         border-color: #67b168;
         padding: 0;
+        -ms-border-radius: 0 4px 4px 0 !important;
+        border-radius: 0 4px 4px 0 !important;
+        width: 34%;
+        text-align: center;
+        line-height: 24px;
     }
 
         .bambora_action .capture:hover {
@@ -91,20 +95,10 @@
             border-color: #88a755 !important;
         }
 
-    .bambora_action .credit {
-        background-color: #f3c022 !important;
-        border-color: #f3c022 !important;
-        padding: 0;
-    }
-
-        .bambora_action .credit:hover {
-            background-color: #e4ba00 !important;
-            border-color: #e4ba00 !important;
-        }
-
     .bambora_action .delete {
-        background-color: #fa8564;
-        border-color: #fa8564;
+        background-color: #fa8564 !important;
+        border-color: #fa8564 !important;
+        -ms-border-radius: 4px !important;
         border-radius: 4px !important;
         float: right;
         margin: 0 0 10px 0;
@@ -114,10 +108,9 @@
     }
 
         .bambora_action .delete:hover {
-            background-color: #ec6459;
-            border-color: #ec6459;
+            background-color: #ec6459 !important;
+            border-color: #ec6459 !important;
         }
-
 
 .bambora_amount {
     width: 45%;
@@ -129,16 +122,20 @@
     border-collapse: collapse;
 }
 
-.bambora_transaction_date {
+.bambora_transaction_row_header {
     font-size: 11px;
     font-weight: 400;
     color: grey;
     line-height: 9px;
 }
 
-    .bambora_transaction_date td {
+    .bambora_transaction_row_header td {
         padding: 12px 10px 0 10px;
     }
+
+        .bambora_transaction_row_header td:nth-child(even) {
+            float: right;
+        }
 
 .bambora_transaction {
     border-bottom: 1px solid #C1C1C1;
@@ -150,6 +147,30 @@
         padding: 0 10px 7px 10px;
     }
 
+
         .bambora_transaction td:last-child {
             float: right;
         }
+
+#bambora-format-error {
+    display: none;
+}
+
+.bambora_message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.bambora_error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.bambora_success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
