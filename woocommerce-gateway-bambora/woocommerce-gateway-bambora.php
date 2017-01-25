@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Bambora Checkout Payment Gateway
 Plugin URI: http://www.bambora.com
 Description: A payment gateway for <a href="http://www.bambora.com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout">Bambora Checkout</a>.
-Version: 1.4.6
+Version: 1.4.7
 Author: Bambora
 Author URI: http://www.bambora.com
 Text Domain: Bambora
@@ -27,7 +27,7 @@ function add_wc_bambora_gateway()
      **/
     class WC_Gateway_Bambora extends WC_Payment_Gateway
     {
-        const MODULE_VERSION = '1.4.6';
+        const MODULE_VERSION = '1.4.7';
         const PSP_REFERENCE = 'Transaction ID';
 
         private $apiKey;
@@ -109,81 +109,80 @@ function add_wc_bambora_gateway()
         {
             $this->form_fields = array(
                 'enabled' => array(
-                                'title' => 'Enable/Disable',
+                                'title' => 'Activate module',
                                 'type' => 'checkbox',
-                                'label' => 'Enable Bambora Checkout',
+                                'label' => 'Set to Yes to allow your customers to use Bambora Checkout as a payment option.',
                                 'default' => 'yes'
                             ),
                 'title' => array(
                                 'title' => 'Title',
                                 'type' => 'text',
-                                'description' => 'This controls the title which the user sees during checkout',
+                                'description' => 'The title of the payment method displayed to the customers.',
                                 'default' => 'Bambora Checkout'
                             ),
                 'description' => array(
                                 'title' => 'Description',
                                 'type' => 'textarea',
-                                'description' => 'This controls the description which the user sees during checkout.',
+                                'description' => 'The description of the payment method displayed to the customers.',
                                 'default' => "Pay using Bambora Checkout"
                             ),
                 'merchant' => array(
                                 'title' => 'Merchant number',
                                 'type' => 'text',
-                                'description' => 'Get your Merchant number from the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> Merchant numbers. If you haven\'t got a Merchant number, please contact <a href="http://www.bambora.com/da/dk/bamboraone/" target="_blank">Bambora</a> to get one. <br/><b>Note:</b> This field is mandatory to enable payments.',
+                                'description' => 'The number identifying your Bambora merchant account.',
                                 'default' => ''
                             ),
                 'accesstoken' => array(
                                 'title' => 'Access token',
                                 'type' => 'text',
-                                'description' => 'Get your Access token from the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> API users. Copy the Access token from the API user into this field.<br/><b>Note:</b> This field is mandatory in order to enable payments.',
+                                'description' => 'The Access token for the API user received from the Bambora administration.',
                                 'default' => ''
                             ),
                 'secrettoken' => array(
                                 'title' => 'Secret token',
                                 'type' => 'password',
-                                'description' => 'Get your Secret token from the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> API users.<br/>The secret token is only displayed once when an API user is created! Please save this token in a safe place as Bambora will not be able to recover it.<br/><b>Note: </b> This field is mandatory in order to enable payments.',
+                                'description' => 'The Secret token for the API user received from the Bambora administration.',
                                 'default' => ''
                             ),
                 'md5key' => array(
                                 'title' => 'MD5 Key',
                                 'type' => 'text',
-                                'description' => 'We recommend using MD5 to secure the data sent between your system and Bambora.<br/>If you have generated a MD5 key in the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> Edit merchant, you have to enter the MD5 key here as well. <br/><b>Note:</b> The keys must be identical in the two systems.',
+                                'description' => 'The MD5 key is used to stamp data sent between Magento and Bambora to prevent it from being tampered with. The MD5 key is optional but if used here, must be the same as in the Bambora administration.',
                                 'default' => ''
                             ),
                 'paymentwindowid' => array(
                                 'title' => 'Payment Window ID',
                                 'type' => 'text',
-                                'description' => 'Choose which payment window to use. You can create multiple payment windows in the <a href="https://merchant.bambora.com/" target="_blank">Bambora Administration</a> via Settings -> Payment windows.<br/>This is useful if you want to show different layouts, payment types or transaction fees for various customers.',
+                                'description' => 'The ID of the payment window to use.',
                                 'default' => '1'
                             ),
                 'windowstate' => array(
-                                'title' => 'Display window as',
+                                'title' => 'Window state',
                                 'type' => 'select',
                                 'description' => 'Please select if you want the Payment window shown as an overlay or as full screen.',
                                 'options' => array(2 => 'Overlay',1 => 'Full screen'),
-                                'label' => 'How to open the Bambora Checkout',
+                                'label' => 'Window state',
                                 'default' => 2
                             ),
-
                 'instantcapture' => array(
                                 'title' => 'Instant capture',
                                 'type' => 'checkbox',
-                                'description' => 'Enable this to capture the payment immediately.<br/>You should only use this setting, if your customer receives the goods immediately e.g. via downloads or services.',
-                                'label' => 'Enable instant capture',
+                                'description' => 'Capture the payments at the same time they are authorized. In some countries, this is only permitted if the consumer receives the products right away Ex. digital products.',
+                                'label' => 'Enable Instant Capture',
                                 'default' => 'no'
                             ),
                 'immediateredirecttoaccept' => array(
-                                'title' => 'Immediate redirect to order confirmation page',
+                                'title' => 'Immediate Redirect',
                                 'type' => 'checkbox',
-                                'description' => 'Please select if you to go directly to the order confirmation page when payment is completed.',
+                                'description' => 'Immediately redirect your customer back to you shop after the payment completed.',
                                 'label' => 'Enable Immediate redirect',
                                 'default' =>  'no'
                             ),
                 'addsurchargetoshipment' => array(
-                                'title' => 'Add surcharge fee to shipping amount',
+                                'title' => 'Add Surcharge',
                                 'type' => 'checkbox',
-                                'description' => 'Please select if you to add the surcharge fee to the shipment amount',
-                                'label' => 'Enable Surcharge fee',
+                                'description' => 'Display surcharge amount on the order as an item',
+                                'label' => 'Enable Surcharge',
                                 'default' =>  'no'
                             ),
                 );
