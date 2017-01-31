@@ -1,4 +1,4 @@
-=== WooCommerce Bambora Online Checkout ===
+=== Bambora Online Checkout ===
 Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp
 Requires at least: 4.0.0
