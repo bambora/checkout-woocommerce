@@ -3,21 +3,40 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp
 Requires at least: 4.0.0
 Tested up to: 4.7.2
-Stable tag: 1.4.7
+Stable tag: 2.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Integrates Bambora Online Checkout payment gateway into your WooCommerce installation.
 
 == Description ==
-With Bambora online checkout for WooCommerce, you are able to integrate the Bambora Checkout payment window into your WooCommerce installation and start receiving secure online payments.
 
-**Features**
+= All you need to accept payments on your online store =
+[Bambora Online Checkout](https://www.bambora.com/sv/se/betalningslosningar/e-handel/produkter/bambora-checkout/) is quick and easy to set up. While your customers enjoy a convenient shopping experience, you get an effective, practical solution with a high conversion rate.
+
+= Fast payments =
+Safe, fast, direct daily deposits are made to the account of your choice.
+
+= All major payment cards accepted =
+Major payment cards, including Visa and MasterCard, are always accepted.
+ 
+[To get started with Bambora Online Checkout head over to our boarding page and signup for a Merchant account.](https://boarding.bambora.com/CheckoutTestaccount-se?_ga=1.136833008.1582953268.1485518719)
+ 
+With this extension, you will get the Bambora Online Checkout payment window integrated into your WooCommerce store and with a few clicks you are able to start receiving secure online payments.
+
+
+= Features =
 * Receive payments securely through the Bambora Checkout payment window
 * Get an overview over the status for your payments directly from your WooCommerce order page.
 * Capture your payments directly from your WooCommerce order page.
 * Credit your payments directly from your WooCommerce order page.
 * Delete your payments directly from your WooCommerce order page.
+
+
+[Click here for documentation:](http://dev.bambora.com/carts.html#woocommerce)
+ 
+For support, please send an email to [support@bambora.com](mailto:support@bambora.com)
+
 
 == Installation ==
 1. Go to your WordPress administration page and log in. Example url: http://www.yourshop.com/wp-admin
@@ -40,9 +59,13 @@ With Bambora online checkout for WooCommerce, you are able to integrate the Bamb
 
 10. Click **Save Changes** when done and you are ready to use Bambora Checkout
 
-<a href="http://dev.bambora.com/carts.html#settings24">Click here for more information about **Settings**</a>
+[Click here for more information about **Settings**](http://dev.bambora.com/carts.html#settings24)
 
 == Changelog ==
+
+= 2.0 =
+* Module name changed from woocommerce-gateway-bambora to bambora-online-checkout
+* Code refactored to comply with WordPress code standard
 
 = 1.4.7 =
 * Updates configurations
