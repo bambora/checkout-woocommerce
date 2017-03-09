@@ -3,7 +3,7 @@
  * Plugin Name: Bambora Online Checkout
  * Plugin URI: http://www.bambora.com
  * Description: A payment gateway for WooCommerce
- * Version: 2.0
+ * Version: 2.0.1
  * Author: Bambora
  * Author URI: http://www.bambora.com
  * Text Domain: Bambora
@@ -37,7 +37,7 @@ function add_bambora_online_checkout() {
 	 **/
 	class Bambora_Online_Checkout extends WC_Payment_Gateway {
 
-		const MODULE_VERSION = '2.0';
+		const MODULE_VERSION = '2.0.1';
 		const PSP_REFERENCE = 'Transaction ID';
 
 		/**
@@ -211,7 +211,7 @@ function add_bambora_online_checkout() {
 			$version = $plugin_data['Version'];
 
 			$html = "<h3>Bambora Online Checkout v{$version}</h3>";
-			$html .= '<a href="http://dev.bambora.com/carts.html#woocommerce" target="_blank">' . __( 'Documentation can be found here', 'bambora-online-checkout' ) . '</a>';
+			$html .= '<a href="http://dev.bambora.com/shopping-carts/guides/shopping-carts/woocommerce" target="_blank">' . __( 'Documentation can be found here', 'bambora-online-checkout' ) . '</a>';
 			$html .= '<table class="form-table">';
 
 			// Generate the HTML For the settings form.!
@@ -247,7 +247,7 @@ function add_bambora_online_checkout() {
 			$checkout_response = $api->get_checkout_response( $checkout_request );
 
 			if ( ! isset( $checkout_response ) || ! $checkout_response['meta']['result'] ) {
-				$error_message = isset( $checkout_response ) ? $checkout_response['meta']['message']['enduser'] : 'No connection to Bambora';
+				$error_message = isset( $checkout_response ) ? $checkout_response['meta']['message']['enduser'] : __( 'No connection to Bambora' );
 				$message = __( 'Could not retrive the payment window. Reason:', 'bambora-online-checkout' ) . ' ' . $error_message;
 				return $this->message_to_html( 'error', $message );
 			}
@@ -509,12 +509,12 @@ function add_bambora_online_checkout() {
 			} else {
 				$message = empty( $message ) ? __( 'Unknown error', 'bambora-online-checkout' ) : $message;
 				$woo_order_id = array_key_exists( 'wooorderid', $params ) ? $params['wooorderid'] : 'Unknown';
-				$error_message = "WooCommerce-OrderId: {$woo_order_id} " . __( 'Callback failed! Reason:', 'bambora-online-checkout' ) . ' ' . $message;
+				$message = "WooCommerce-OrderId: {$woo_order_id} " . __( 'Callback failed! Reason:', 'bambora-online-checkout' ) . ' ' . $message;
 				if ( isset( $order ) ) {
-					$order->add_order_note( $error_message );
+					$order->add_order_note( $message );
 				}
 
-				error_log( $error_message );
+				error_log( $message );
 			}
 
 			$header = 'X-EPay-System: ' . Bambora_Helper::get_module_header_info();
@@ -560,22 +560,23 @@ function add_bambora_online_checkout() {
 				}
 			}
 
-			// Validate bambora transaction!
-			$api_key = $this->get_api_key();
-			$api = new Bambora_Api( $api_key );
-			$get_transaction = $api->get_transaction( $params['txnid'] );
-			if ( ! isset( $get_transaction ) || ! $get_transaction['meta']['result'] ) {
-				$message = isset( $get_transaction ) ? $get_transaction['meta']['message']['enduser'] : 'No connection to Bambora';
-				return false;
-			}
-			$transaction = $get_transaction['transaction'];
-
-			// Validate woocommerce order!
+            // Validate woocommerce order!
 			$order = wc_get_order( $params['wooorderid'] );
 			if ( ! isset( $order ) ) {
 				$message = "Could not find order with wooorderid {$params["wooorderid"]}";
 				return false;
 			}
+
+			// Validate bambora transaction!
+			$api_key = $this->get_api_key();
+			$api = new Bambora_Api( $api_key );
+			$get_transaction = $api->get_transaction( $params['txnid'] );
+			if ( ! isset( $get_transaction ) || ! $get_transaction['meta']['result'] ) {
+				$message = "Get Transaction - ";
+                $message .= isset( $get_transaction ) ? $get_transaction['meta']['message']['merchant'] : 'No connection to Bambora';
+				return false;
+			}
+			$transaction = $get_transaction['transaction'];
 
 			return true;
 		}
@@ -795,8 +796,9 @@ function add_bambora_online_checkout() {
 					$get_transaction = $api->get_transaction( $transaction_id );
 
 					if ( ! isset( $get_transaction ) || ! $get_transaction['meta']['result'] ) {
-						$error_message = isset( $get_transaction ) ? $get_transaction['meta']['message']['merchant'] : 'No connection to Bambora';
-						echo $this->message_to_html( 'error', $error_message );
+						$error_message = isset( $get_transaction ) ? $get_transaction['meta']['message']['merchant'] : __( 'No connection to Bambora' );
+						echo $html;
+                        echo $this->message_to_html( 'error', $error_message );
 						return null;
 					}
 
@@ -863,9 +865,11 @@ function add_bambora_online_checkout() {
 
 					$get_transaction_operation = $api->get_transaction_operations( $transaction_id );
 
-					if ( ! isset( $get_transaction_operation ) && ! $get_transaction_operation['meta']['result'] ) {
-						$error_message = isset( $get_transaction_operation ) ? $get_transaction_operation['meta']['message']['merchant'] : 'No connection to Bambora';
-						return $this->message_to_html( 'error', $error_message );
+					if ( ! isset( $get_transaction_operation ) || ! $get_transaction_operation['meta']['result'] ) {
+						$error_message = __( 'Get transactions' ). ' - ' . $get_transaction_operation['meta']['message']['merchant'];
+						echo $html;
+                        echo $this->message_to_html( 'error', $error_message );
+                        return null;
 					}
 
 					$transaction_operations = $get_transaction_operation['transactionoperations'];
@@ -927,7 +931,7 @@ function add_bambora_online_checkout() {
 				$html .= '<tr class="bambora_transaction_row_header">';
 				$html .= '<td>' . $this->format_date( $operation['createddate'] ) . '</td>';
 
-				if ( key_exists( 'ecis', $operation ) && is_array( $operation['ecis'] ) && count( $operation['ecis'] ) > 0 ) {
+				if ( array_key_exists( 'ecis', $operation ) && is_array( $operation['ecis'] ) && count( $operation['ecis'] ) > 0 ) {
 					$html .= '<td>ECI: ' . $operation['ecis'][0]['value'] . '</td>';
 				} else {
 					$html .= '<td>ECI: -</td>';
@@ -947,7 +951,7 @@ function add_bambora_online_checkout() {
 
 				$html .= '</tr>';
 
-				if ( key_exists( 'transactionoperations', $operation ) && count( $operation['transactionoperations'] ) > 0 ) {
+				if ( array_key_exists( 'transactionoperations', $operation ) && count( $operation['transactionoperations'] ) > 0 ) {
 					$html .= $this->build_transaction_log_rows( $operation['transactionoperations'], $minorunits );
 				}
 			}

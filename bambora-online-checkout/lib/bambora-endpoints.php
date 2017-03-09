@@ -1,14 +1,21 @@
 <?php
 /**
- * Bambora Online Checkout for WooCommerce
+ * Copyright (c) 2017. All rights reserved Bambora Online.
  *
- * @author Bambora
- * @package bambora_online_checkout
+ * This program is free software. You are allowed to use the software but NOT allowed to modify the software.
+ * It is also not legal to do any changes to the software and distribute it in your own name / brand.
+ *
+ * All use of the payment modules happens at your own risk. We offer a free test account that you can use to test the module.
+ *
+ * @author    Bambora Online
+ * @copyright Bambora Online (http://bambora.com)
+ * @license   Bambora Online
+ *
  */
 
-define( 'BAMBORA_ENDPOINT_TRANSACTION', 'https://transaction-v1.api.epay.eu' );
-define( 'BAMBORA_ENDPOINT_MERCHANT', 'https://merchant-v1.api.epay.eu' );
-define( 'BAMBORA_ENDPOINT_DATA', 'https://data-v1.api.epay.eu/' );
+define( 'BAMBORA_ENDPOINT_TRANSACTION', 'https://transaction-v1.api-eu.bambora.com' );
+define( 'BAMBORA_ENDPOINT_MERCHANT', 'https://merchant-v1.api-eu.bambora.com' );
+define( 'BAMBORA_ENDPOINT_DATA', 'https://data-v1.api-eu.bambora.com' );
 define( 'BAMBORA_ENDPOINT_CHECKOUT', 'https://api.v1.checkout.bambora.com' );
 define( 'BAMBORA_CHECKOUT_ASSETS', 'https://v1.checkout.bambora.com/Assets' );
 
