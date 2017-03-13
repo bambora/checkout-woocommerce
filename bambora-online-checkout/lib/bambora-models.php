@@ -112,16 +112,18 @@ class Bambora_Callback {
 	public $url;
 }
 
+
+
 /**
- * Bambora Ui Message
+ * Bambora Checkout Request
  */
-class Bambora_Ui_Message {
-	/** @var string */
-	public $type;
-	/** @var string */
-	public $title;
-	/** @var string */
-	public $message;
+class Bambora_Subscription {
+    /** @var string */
+    public $action;
+    /** @var string */
+    public $decription;
+    /** @var string */
+    public $reference;
 }
 
 /**
@@ -137,8 +139,22 @@ class Bambora_Checkout_Request {
 	public $language;
 	/** @var Bambora_Order */
 	public $order;
+    /** @var Bambora_Subscription */
+    public $subscription;
 	/** @var Bambora_Url */
 	public $url;
 	/** @var int */
 	public $paymentwindowid;
+}
+
+/**
+ * Bambora Ui Message
+ */
+class Bambora_Ui_Message {
+	/** @var string */
+	public $type;
+	/** @var string */
+	public $title;
+	/** @var string */
+	public $message;
 }

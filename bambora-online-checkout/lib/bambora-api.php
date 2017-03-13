@@ -23,6 +23,7 @@ class Bambora_Api {
 
 	const GET = 'GET';
 	const POST = 'POST';
+    const DELETE = 'DELETE';
 
 	private $api_key;
 
@@ -195,6 +196,52 @@ class Bambora_Api {
 		}
 		return $res;
 	}
+
+    /**
+     * Authorize subscription by subscription Id
+     *
+     * @param string $subscriptionId
+     * @param int $amount
+     * @param string $currency
+     * @param string $orderId
+     * @return mixed
+     */
+    public function authorize_subscription( $subscriptionId, $amount, $currency, $orderId )
+    {
+        $service_url = Bambora_Endpoints::get_subscription_endpoint() . "/subscriptions/{$subscriptionId}/authorize";
+
+        $data = array();
+        $data['authorize']['currency'] = $currency;
+        $data['authorize']['amount'] = $amount;
+        $data['authorize']['orderid'] = $orderId;
+
+		$json_data = wp_json_encode( $data );
+
+		$result = $this->call_rest_service( $service_url, $json_data, self::POST );
+
+        return json_decode( $result, true );
+    }
+
+    /**
+     * Delete subscription by subscription Id
+     *
+     * @param string $subscriptionId
+     * @return mixed
+     */
+    public function delete_subscription( $subscriptionId )
+    {
+        $service_url = Bambora_Endpoints::get_subscription_endpoint() . "/subscriptions/{$subscriptionId}";
+
+        $data = array();
+
+        $json_data = wp_json_encode( $data );
+
+		$result = $this->call_rest_service( $service_url, $json_data, self::DELETE );
+
+        return json_decode( $result, true );
+    }
+
+
 
 	/**
 	 * Call the rest service at the specified Url

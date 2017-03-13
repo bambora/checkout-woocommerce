@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bambora Online Checkout\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-06 09:03+0000\n"
-"PO-Revision-Date: 2017-02-06 09:03+0000\n"
+"POT-Creation-Date: 2017-03-13 13:44+0000\n"
+"PO-Revision-Date: 2017-03-13 13:44+0000\n"
 "Last-Translator: admin <allan.wamming.lie@bambora.com>\n"
 "Language-Team: English (United States)\n"
 "Language: en-US\n"
@@ -13,136 +13,136 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
 
-#: bambora-online-checkout.php:214
+#: bambora-online-checkout.php:783
+msgid "Subscription activated"
+msgstr "Subscription activated"
+
+#: bambora-online-checkout.php:251
 msgid "Documentation can be found here"
 msgstr "Documentation can be found here"
 
+#: bambora-online-checkout.php:377
+msgid "Could not retrive the payment window. Reason:"
+msgstr "Could not retrive the payment window. Reason:"
+
+#: bambora-online-checkout.php:535 bambora-online-checkout.php:559
+#: bambora-online-checkout.php:867 bambora-online-checkout.php:896
+#: bambora-online-checkout.php:912
+msgid "pcs."
+msgstr "pcs."
+
+#: bambora-online-checkout.php:555 bambora-online-checkout.php:556
+#: bambora-online-checkout.php:558 bambora-online-checkout.php:893
+#: bambora-online-checkout.php:894
+msgid "Shipping"
+msgstr "Shipping"
+
+#: bambora-online-checkout.php:658
+msgid "Unknown error"
+msgstr "Unknown error"
+
+#: bambora-online-checkout.php:660
+msgid "Callback failed! Reason:"
+msgstr "Callback failed! Reason:"
+
+#: bambora-online-checkout.php:756
+msgid "Surcharge Fee"
+msgstr "Surcharge Fee"
+
+#: bambora-online-checkout.php:786
+msgid "Callback completed"
+msgstr "Callback completed"
+
+#: bambora-online-checkout.php:820
+msgid "Could not create refund invoice lines"
+msgstr "Could not create refund invoice lines"
+
+#: bambora-online-checkout.php:830 bambora-online-checkout.php:1142
+#: bambora-online-checkout.php:1150
+msgid "No connection to Bambora"
+msgstr "No connection to Bambora"
+
+#: bambora-online-checkout.php:857
+msgid "Invalid refund amount for item"
+msgstr "Invalid refund amount for item"
+
+#: bambora-online-checkout.php:887
+msgid "Invalid refund amount for shipping"
+msgstr "Invalid refund amount for shipping"
+
+#: bambora-online-checkout.php:891
+msgid "shipping"
+msgstr "shipping"
+
+#: bambora-online-checkout.php:907 bambora-online-checkout.php:909
+#: bambora-online-checkout.php:910
+msgid "Refund"
+msgstr "Refund"
+
 #. Name of the plugin
-#: bambora-online-checkout.php:771
+#: bambora-online-checkout.php:931
 msgid "Bambora Online Checkout"
 msgstr "Bambora Online Checkout"
+
+#: bambora-online-checkout.php:976
+msgid "Transaction ID"
+msgstr "Transaction ID"
+
+#: bambora-online-checkout.php:982
+msgid "Authorized:"
+msgstr "Authorized:"
+
+#: bambora-online-checkout.php:987
+msgid "Captured:"
+msgstr "Captured:"
+
+#: bambora-online-checkout.php:992
+msgid "Refunded:"
+msgstr "Refunded:"
+
+#: bambora-online-checkout.php:1004
+msgid "Are you sure you want to capture the payment?"
+msgstr "Are you sure you want to capture the payment?"
+
+#: bambora-online-checkout.php:1013
+msgid "Are you sure you want to delete the payment?"
+msgstr "Are you sure you want to delete the payment?"
+
+#: bambora-online-checkout.php:1019
+msgid "The amount you entered was in the wrong format."
+msgstr "The amount you entered was in the wrong format."
+
+#: bambora-online-checkout.php:1021
+msgid "Correct format is: 1234.56"
+msgstr "Correct format is: 1234.56"
+
+#: bambora-online-checkout.php:1046
+msgid "No transaction was found"
+msgstr "No transaction was found"
+
+#: bambora-online-checkout.php:1058
+msgid "TRANSACTION HISTORY"
+msgstr "TRANSACTION HISTORY"
+
+#: bambora-online-checkout.php:1193
+msgid "Authorized"
+msgstr "Authorized"
+
+#: bambora-online-checkout.php:1195
+msgid "Captured"
+msgstr "Captured"
+
+#: bambora-online-checkout.php:1197
+msgid "Refunded"
+msgstr "Refunded"
+
+#: bambora-online-checkout.php:1199
+msgid "Deleted"
+msgstr "Deleted"
 
 #. Description of the plugin
 msgid "A payment gateway for WooCommerce"
 msgstr "A payment gateway for WooCommerce"
-
-#: bambora-online-checkout.php:251
-msgid "Could not retrive the payment window. Reason:"
-msgstr "Could not retrive the payment window. Reason:"
-
-#: bambora-online-checkout.php:387 bambora-online-checkout.php:411
-#: bambora-online-checkout.php:707 bambora-online-checkout.php:736
-#: bambora-online-checkout.php:752
-msgid "pcs."
-msgstr "pcs."
-
-#: bambora-online-checkout.php:407 bambora-online-checkout.php:408
-#: bambora-online-checkout.php:410 bambora-online-checkout.php:733
-#: bambora-online-checkout.php:734
-msgid "Shipping"
-msgstr "Shipping"
-
-#: bambora-online-checkout.php:510
-msgid "Unknown error"
-msgstr "Unknown error"
-
-#: bambora-online-checkout.php:512
-msgid "Callback failed! Reason:"
-msgstr "Callback failed! Reason:"
-
-#: bambora-online-checkout.php:606
-msgid "Surcharge Fee"
-msgstr "Surcharge Fee"
-
-#: bambora-online-checkout.php:627
-msgid "Callback completed"
-msgstr "Callback completed"
-
-#: bambora-online-checkout.php:660
-msgid "Could not create refund invoice lines"
-msgstr "Could not create refund invoice lines"
-
-#: bambora-online-checkout.php:670 bambora-online-checkout.php:977
-#: bambora-online-checkout.php:988
-msgid "No connection to Bambora"
-msgstr "No connection to Bambora"
-
-#: bambora-online-checkout.php:697
-msgid "Invalid refund amount for item"
-msgstr "Invalid refund amount for item"
-
-#: bambora-online-checkout.php:727
-msgid "Invalid refund amount for shipping"
-msgstr "Invalid refund amount for shipping"
-
-#: bambora-online-checkout.php:731
-msgid "shipping"
-msgstr "shipping"
-
-#: bambora-online-checkout.php:747 bambora-online-checkout.php:749
-#: bambora-online-checkout.php:750
-msgid "Refund"
-msgstr "Refund"
-
-#: bambora-online-checkout.php:815
-msgid "Transaction ID"
-msgstr "Transaction ID"
-
-#: bambora-online-checkout.php:821
-msgid "Authorized:"
-msgstr "Authorized:"
-
-#: bambora-online-checkout.php:826
-msgid "Captured:"
-msgstr "Captured:"
-
-#: bambora-online-checkout.php:831
-msgid "Refunded:"
-msgstr "Refunded:"
-
-#: bambora-online-checkout.php:843
-msgid "Are you sure you want to capture the payment?"
-msgstr "Are you sure you want to capture the payment?"
-
-#: bambora-online-checkout.php:852
-msgid "Are you sure you want to delete the payment?"
-msgstr "Are you sure you want to delete the payment?"
-
-#: bambora-online-checkout.php:858
-msgid "The amount you entered was in the wrong format."
-msgstr "The amount you entered was in the wrong format."
-
-#: bambora-online-checkout.php:860
-msgid "Correct format is: 1234.56"
-msgstr "Correct format is: 1234.56"
-
-#: bambora-online-checkout.php:882
-msgid "No transaction was found"
-msgstr "No transaction was found"
-
-#: bambora-online-checkout.php:894
-msgid "TRANSACTION HISTORY"
-msgstr "TRANSACTION HISTORY"
-
-#: bambora-online-checkout.php:980 bambora-online-checkout.php:991
-msgid "Payment successfully"
-msgstr "Payment successfully"
-
-#: bambora-online-checkout.php:980 bambora-online-checkout.php:1028
-msgid "Captured"
-msgstr "Captured"
-
-#: bambora-online-checkout.php:991 bambora-online-checkout.php:1032
-msgid "Deleted"
-msgstr "Deleted"
-
-#: bambora-online-checkout.php:1026
-msgid "Authorized"
-msgstr "Authorized"
-
-#: bambora-online-checkout.php:1030
-msgid "Refunded"
-msgstr "Refunded"
 
 #. URI of the plugin
 #. Author URI of the plugin

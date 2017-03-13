@@ -16,6 +16,7 @@
 define( 'BAMBORA_ENDPOINT_TRANSACTION', 'https://transaction-v1.api-eu.bambora.com' );
 define( 'BAMBORA_ENDPOINT_MERCHANT', 'https://merchant-v1.api-eu.bambora.com' );
 define( 'BAMBORA_ENDPOINT_DATA', 'https://data-v1.api-eu.bambora.com' );
+define( 'BAMBORA_ENDPOINT_SUBSCRIPTION', 'https://subscription-v1.api-eu.bambora.com' );
 define( 'BAMBORA_ENDPOINT_CHECKOUT', 'https://api.v1.checkout.bambora.com' );
 define( 'BAMBORA_CHECKOUT_ASSETS', 'https://v1.checkout.bambora.com/Assets' );
 
@@ -49,6 +50,15 @@ class Bambora_Endpoints {
 	 */
 	public static function get_data_endpoint() {
 		return constant( 'BAMBORA_ENDPOINT_DATA' );
+	}
+
+    /**
+     * Get Subscription Endpoint
+     *
+     * @return mixed
+     */
+	public static function get_subscription_endpoint() {
+		return constant( 'BAMBORA_ENDPOINT_SUBSCRIPTION' );
 	}
 
 	/**

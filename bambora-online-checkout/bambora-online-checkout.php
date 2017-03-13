@@ -3,7 +3,7 @@
  * Plugin Name: Bambora Online Checkout
  * Plugin URI: http://www.bambora.com
  * Description: A payment gateway for WooCommerce
- * Version: 2.0.1
+ * Version: 2.1.1
  * Author: Bambora
  * Author URI: http://www.bambora.com
  * Text Domain: Bambora
@@ -12,7 +12,7 @@
  * @package bambora_online_checkout
  */
 
-add_action( 'plugins_loaded', 'add_bambora_online_checkout', 0 );
+add_action( 'plugins_loaded', 'init_bambora_online_checkout', 0 );
 
 /**
  * Add Bambora Online Checkout
@@ -20,7 +20,7 @@ add_action( 'plugins_loaded', 'add_bambora_online_checkout', 0 );
  * @return void
  * @throws Exception
  */
-function add_bambora_online_checkout() {
+function init_bambora_online_checkout() {
 	if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
 		return;
 	}
@@ -33,30 +33,54 @@ function add_bambora_online_checkout() {
 	include( BAMBORA_LIB . 'bambora-currency.php' );
 
 	/**
-	 * Bambora Online Checkout
-	 **/
+     * Bambora Online Checkout
+     **/
 	class Bambora_Online_Checkout extends WC_Payment_Gateway {
 
-		const MODULE_VERSION = '2.0.1';
+		const MODULE_VERSION = '2.1.1';
 		const PSP_REFERENCE = 'Transaction ID';
 
-		/**
-		 * Api Key
-		 *
-		 * @var string
-		 */
-		private $api_key;
+        /**
+         * Singleton instance
+         * @var Bambora_Online_Checkout
+         */
+        private static $_instance;
+
+        /**
+         * get_instance
+         *
+         * Returns a new instance of self, if it does not already exist.
+         *
+         * @access public
+         * @static
+         * @return Bambora_Online_Checkout
+         */
+		public static function get_instance() {
+			if (!isset( self::$_instance ) ) {
+				self::$_instance = new self();
+			}
+			return self::$_instance;
+		}
 
 		/**
-		 * Constructor
-		 */
+         * Constructor
+         */
 		public function __construct() {
 			$this->id = 'bambora';
 			$this->method_title = 'Bambora Online Checkout';
 			$this->icon = WP_PLUGIN_URL . '/' . plugin_basename( dirname( __FILE__ ) ) . '/bambora-logo.png';
 			$this->has_fields = false;
 
-			$this->supports = array( 'products', 'refunds' );
+			$this->supports = array(
+                'products',
+                'refunds',
+                'subscriptions',
+                'subscription_cancellation',
+                'subscription_suspension',
+                'subscription_reactivation',
+                'subscription_amount_changes',
+                'subscription_date_changes',
+                'multiple_subscriptions');
 
 			// Load the form fields.!
 			$this->init_form_fields();
@@ -80,25 +104,38 @@ function add_bambora_online_checkout() {
 
 			// Set description for checkout page!
 			$this->set_bambora_description_for_checkout();
+		}
 
-			// Actions!
-			add_action( 'init', array( &$this, 'check_callback' ) );
-			add_action( 'valid_bambora_callback', array( &$this, 'successful_request' ) );
-			add_action( 'add_meta_boxes', array( &$this, 'bambora_meta_boxes' ), 10, 0 );
+        /**
+         * Initilize module hooks
+         */
+        public function init_hooks()
+        {
+            // Actions!
+            //add_action( 'init', array( &$this, 'check_callback' ) );
+			add_action( 'valid_bambora_callback', array( $this, 'successful_request' ) );
 			add_action( 'woocommerce_api_' . strtolower( get_class() ), array( $this, 'check_callback' ) );
-			add_action( 'wp_before_admin_bar_render', array( $this, 'bambora_action' ) );
-			add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
-			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-			add_action( 'woocommerce_receipt_bambora', array( $this, 'receipt_page' ) );
+            add_action( 'woocommerce_receipt_bambora', array( $this, 'receipt_page' ) );
+
+            if(is_admin()) {
+                add_action( 'add_meta_boxes', array( $this, 'bambora_meta_boxes' ) );
+                add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+                add_action( 'wp_before_admin_bar_render', array( $this, 'bambora_action' ) );
+            }
+
+            //Subscriptions
+            add_action('woocommerce_scheduled_subscription_payment_' . $this->id, array($this, 'scheduled_subscription_payment'), 10, 2);
+            add_action('woocommerce_subscription_cancelled_' . $this->id, array($this, 'subscription_cancellation'));
 
 			// Register styles!
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wc_bambora_admin_styles_and_scripts' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_wc_bambora_front_styles' ) );
-		}
+        }
+
 
 		/**
-		 * Enqueue Admin Styles and Scripts
-		 */
+         * Enqueue Admin Styles and Scripts
+         */
 		public function enqueue_wc_bambora_admin_styles_and_scripts() {
 			wp_register_style( 'bambora_admin_style', plugins_url( 'bambora-online-checkout/style/bambora-admin.css' ) );
 			wp_enqueue_style( 'bambora_admin_style' );
@@ -110,16 +147,16 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Enqueue Frontend Styles and Scripts
-		 */
+         * Enqueue Frontend Styles and Scripts
+         */
 		public function enqueue_wc_bambora_front_styles() {
 			wp_enqueue_style( 'bambora_front_style', plugins_url( 'bambora-online-checkout/style/bambora-front.css' ) );
 			wp_enqueue_style( 'bambora_front_style' );
 		}
 
 		/**
-		 * Initialise Gateway Settings Form Fields
-		 */
+         * Initialise Gateway Settings Form Fields
+         */
 		public function init_form_fields() {
 			$this->form_fields = array(
 				'enabled' => array(
@@ -203,9 +240,9 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Admin Panel Options
-		 * - Options for bits like 'title' and availability on a country-by-country basis
-		 */
+         * Admin Panel Options
+         * - Options for bits like 'title' and availability on a country-by-country basis
+         */
 		public function admin_options() {
 			$plugin_data = get_plugin_data( __FILE__, false, false );
 			$version = $plugin_data['Version'];
@@ -222,8 +259,8 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * There are no payment fields for bambora, but we want to show the description if set.
-		 **/
+         * There are no payment fields for bambora, but we want to show the description if set.
+         **/
 		public function payment_fields() {
 			if ( $this->description ) {
 				$text_replace = wptexturize( $this->description );
@@ -233,12 +270,101 @@ function add_bambora_online_checkout() {
 			}
 		}
 
+        private function getSubscription($order)
+        {
+            if(!function_exists('wcs_get_subscriptions_for_renewal_order'))
+            {
+                return null;
+            }
+            $subscriptions = wcs_get_subscriptions_for_renewal_order($order);
+
+            return end($subscriptions);
+        }
+
+        function scheduled_subscription_payment($amount_to_charge, $renewal_order)
+        {
+            try {
+                $subscription = $this->getSubscription($renewal_order);
+                if(isset($subscription)) {
+                    $parentOrder = $subscription->order;
+                    $bamboraSubscriptionId = get_post_meta($parentOrder->id, 'Subscription ID', true);
+                    $orderCurrency = $renewal_order->get_order_currency();
+
+                    $minor_units = Bambora_Currency::get_currency_minorunits( $orderCurrency );
+                    $amount = Bambora_Currency::convert_price_to_minorunits( $amount_to_charge, $minor_units );
+
+                    $api_key = $this->get_api_key();
+                    $api = new Bambora_Api( $api_key );
+                    $authorize_response = $api->authorize_subscription( $bamboraSubscriptionId, $amount, $orderCurrency, $renewal_order->id );
+
+                    if($authorize_response['meta']['result']) {
+                        update_post_meta($renewal_order->id,'Transaction ID', $authorize_response['transactionid']);
+                        $renewal_order->payment_complete();
+                    }else {
+                        $orderNote = __('Subscription could not be authorized', 'woocommerce-gateway-epay-dk');
+                        $orderNote .= " - {$authorize_response['meta']['message']['merchant']}";
+                        $renewal_order->update_status('failed', $orderNote);
+                        $subscription->add_order_note($orderNote . ' ID: ' . $renewal_order->id);
+                    }
+                }else {
+                    $renewal_order->update_status('failed', __('No subscription found', 'woocommerce-gateway-epay-dk'));
+                }
+
+            }
+            catch(Exception $ex)
+            {
+                $renewal_order->update_status('failed', $ex->getMessage());
+                error_log($ex->getMessage());
+            }
+        }
+
+        public function subscription_cancellation($subscription)
+        {
+            try {
+                if(function_exists('wcs_is_subscription') && wcs_is_subscription($subscription)) {
+                    $parentOrder = $subscription->order;
+                    $bamboraSubscriptionId = get_post_meta($parentOrder->id, 'Subscription ID', true);
+                    if(empty($bamboraSubscriptionId)) {
+                        throw new Exception(__('Bambora Subscription ID was not found', 'woocommerce-gateway-epay-dk'));
+                    }
+
+                    $api_key = $this->get_api_key();
+                    $api = new Bambora_Api( $api_key );
+
+                    $delete_response = $api->delete_subscription( $bamboraSubscriptionId );
+
+                    if($delete_response['meta']['result']) {
+                        $subscription->add_order_note(__('Subscription successfully Canceled.', 'woocommerce-gateway-epay-dk'));
+                    }else {
+                        $orderNote = __('Subscription could not be canceled', 'woocommerce-gateway-epay-dk');
+                        $orderNote = " - {$delete_response['meta']['message']['merchant']}";
+
+                        $subscription->add_order_note($orderNote);
+                        throw new Exception($orderNote);
+                    }
+                }
+            }
+            catch(Exception $ex)
+            {
+                $subscription->update_status('failed', $ex->getMessage());
+                error_log($ex->getMessage());
+            }
+        }
+
+        /**
+         * Checks if Woocommerce Subscriptions is enabled or not
+         */
+        private function woocommerce_subscription_plugin_is_active()
+        {
+            return class_exists('WC_Subscriptions') && WC_Subscriptions::$name = 'subscription';
+        }
+
 		/**
-		 * Get Bambora payment window
-		 *
-		 * @param WC_Order $order
-		 * @return string
-		 * */
+         * Get Bambora payment window
+         *
+         * @param WC_Order $order
+         * @return string
+         * */
 		public function get_checkout_payment_window( $order ) {
 			$api_key = $this->get_api_key();
 			$api = new Bambora_Api( $api_key );
@@ -260,11 +386,11 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Create Checkout Request
-		 *
-		 * @param WC_Order $order
-		 * @return Bambora_Checkout_Request
-		 */
+         * Create Checkout Request
+         *
+         * @param WC_Order $order
+         * @return Bambora_Checkout_Request
+         */
 		private function create_checkout_request( $order ) {
 			$order = new WC_Order( $order );
 			$minorunits = Bambora_Currency::get_currency_minorunits( get_woocommerce_currency() );
@@ -278,18 +404,24 @@ function add_bambora_online_checkout() {
 			$request->instantcaptureamount = 'yes' === $this->instantcapture ? $bambora_order->total : 0;
 			$request->language = str_replace( '_', '-', get_locale() );
 			$request->order = $bambora_order;
+            $request->paymentwindowid = $this->paymentwindowid;
 			$request->url = $bambora_url;
-			$request->paymentwindowid = $this->paymentwindowid;
+
+            if($this->woocommerce_subscription_plugin_is_active() && wcs_order_contains_subscription($order))
+            {
+                $bambora_subscription = $this->create_bambora_subscription();
+                $request->subscription = $bambora_subscription;
+            }
 
 			return $request;
 		}
 
 		/**
-		 * Create Bambora customer
-		 *
-		 * @param WC_Order $order
-		 * @return Bambora_Customer
-		 * */
+         * Create Bambora customer
+         *
+         * @param WC_Order $order
+         * @return Bambora_Customer
+         * */
 		private function create_bambora_custommer( $order ) {
 			$bambora_custommer = new Bambora_Customer();
 			$bambora_custommer->email = $order->billing_email;
@@ -300,12 +432,12 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Create Bambora order
-		 *
-		 * @param WC_Order $order
-		 * @param int      $minorunits
-		 * @return Bambora_Order
-		 * */
+         * Create Bambora order
+         *
+         * @param WC_Order $order
+         * @param int      $minorunits
+         * @return Bambora_Order
+         * */
 		private function create_bambora_order( $order, $minorunits ) {
 			$bambora_order = new Bambora_Order();
 			$bambora_order->billingaddress = $this->create_bambora_address( $order );
@@ -322,11 +454,11 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Create Bambora address
-		 *
-		 * @param WC_Order $order
-		 * @return Bambora_Address
-		 * */
+         * Create Bambora address
+         *
+         * @param WC_Order $order
+         * @return Bambora_Address
+         * */
 		private function create_bambora_address( $order ) {
 			$bambora_address = new Bambora_Address();
 			$bambora_address->att = '';
@@ -341,11 +473,11 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Create Bambora Url
-		 *
-		 * @param WC_Order $order
-		 * @return Bambora_Url
-		 * */
+         * Create Bambora Url
+         *
+         * @param WC_Order $order
+         * @return Bambora_Url
+         */
 		private function create_bambora_url( $order ) {
 			$bambora_url = new Bambora_Url();
 			$bambora_url->accept = $this->fix_url( $this->get_return_url( $order ) );
@@ -357,16 +489,32 @@ function add_bambora_online_checkout() {
 
 			$bambora_url->callbacks[] = $callback;
 			$bambora_url->immediateredirecttoaccept = 'yes' === $this->immediateredirecttoaccept ? 1 : 0;
-			return $bambora_url;
+
+            return $bambora_url;
 		}
 
+        /**
+         * Create Bambora subscription
+         *
+         * @return Bambora_Subscription
+         */
+        private function create_bambora_subscription()
+        {
+            $bambora_subscription = new Bambora_Subscription();
+            $bambora_subscription->action = 'create';
+            $bambora_subscription->decription = "WooCommerce Subscription v.". WC_Subscriptions::$version;
+            $bambora_subscription->reference = $this->merchant;
+
+            return $bambora_subscription;
+        }
+
 		/**
-		 * Creates orderlines for an order
-		 *
-		 * @param WC_Order $order
-		 * @param int      $minorunits
-		 * @return Bambora_Orderline[]
-		 */
+         * Creates orderlines for an order
+         *
+         * @param WC_Order $order
+         * @param int      $minorunits
+         * @return Bambora_Orderline[]
+         */
 		private function create_bambora_orderlines( $order, $minorunits ) {
 			$bambora_orderlines = array();
 
@@ -422,11 +570,11 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Fix Url
-		 *
-		 * @param string $url
-		 * @return string
-		 * */
+         * Fix Url
+         *
+         * @param string $url
+         * @return string
+         * */
 		public function fix_url( $url ) {
 			$url = str_replace( '&#038;', '&amp;', $url );
 			$url = str_replace( '&amp;', '&', $url );
@@ -435,8 +583,8 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Set the WC Payment Gateway description for the checkout page
-		 */
+         * Set the WC Payment Gateway description for the checkout page
+         */
 		public function set_bambora_description_for_checkout() {
 			global $woocommerce;
 
@@ -462,11 +610,11 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Process the payment and return the result
-		 *
-		 * @param int $order_id
-		 * @return string[]
-		 */
+         * Process the payment and return the result
+         *
+         * @param int $order_id
+         * @return string[]
+         */
 		public function process_payment( $order_id ) {
 			$order = new WC_Order( $order_id );
 
@@ -477,35 +625,35 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Receipt page
-		 *
-		 * @param WC_Order $order
-		 **/
+         * Receipt page
+         *
+         * @param WC_Order $order
+         **/
 		public function receipt_page( $order ) {
 			$payment_window_html = $this->get_checkout_payment_window( $order );
 			echo $payment_window_html;
 		}
 
 		/**
-		 * Check for Bambora IPN Response
-		 **/
+         * Check for Bambora IPN Response
+         **/
 		public function check_callback() {
 			$params = stripslashes_deep( $_GET );
 			do_action( 'valid_bambora_callback', $params );
 		}
 
 		/**
-		 * Successful Payment!
-		 *
-		 * @param array $params
-		 **/
+         * Successful Payment!
+         *
+         * @param array $params
+         **/
 		public function successful_request( $params ) {
 			$message = '';
 			$response_code = 400;
 			$order = null;
 			$transaction = null;
 			if ( $this->validate_callback( $params, $message, $order, $transaction ) ) {
-				$message = $this->process_callback( $params['wooorderid'], $order, $transaction, $response_code );
+				$message = $this->process_callback( $params, $order, $transaction, $response_code );
 			} else {
 				$message = empty( $message ) ? __( 'Unknown error', 'bambora-online-checkout' ) : $message;
 				$woo_order_id = array_key_exists( 'wooorderid', $params ) ? $params['wooorderid'] : 'Unknown';
@@ -519,18 +667,18 @@ function add_bambora_online_checkout() {
 
 			$header = 'X-EPay-System: ' . Bambora_Helper::get_module_header_info();
 			header( $header, true, $response_code );
-			wp_die( $message );
+			wp_die( $message, "Bambora Callback" );
 		}
 
 		/**
-		 * Validate Callback
-		 *
-		 * @param mixed    $params
-		 * @param string   $message
-		 * @param WC_Order $order
-		 * @param mixed    $transaction
-		 * @return bool
-		 */
+         * Validate Callback
+         *
+         * @param mixed    $params
+         * @param string   $message
+         * @param WC_Order $order
+         * @param mixed    $transaction
+         * @return bool
+         */
 		private function validate_callback( $params, &$message, &$order, &$transaction ) {
 			// Check exists transactionid!
 			if ( ! isset( $params ) || empty( $params['txnid'] ) ) {
@@ -582,17 +730,18 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Process Callback
-		 *
-		 * @param int      $woo_order_id
-		 * @param WC_Order $order
-		 * @param mixed    $transaction
-		 * @param int      $response_code
-		 * @return string
-		 */
-		private function process_callback( $woo_order_id, $order, $transaction, &$response_code ) {
+         * Process Callback
+         *
+         * @param int      $woo_order_id
+         * @param WC_Order $order
+         * @param mixed    $transaction
+         * @param int      $response_code
+         * @return string
+         */
+		private function process_callback( $params, $order, $transaction, &$response_code ) {
 			$message = '';
 			try {
+                $woo_order_id = $params['wooorderid'];
 				$psp_reference = get_post_meta( $woo_order_id, $this::PSP_REFERENCE );
 				if ( empty( $psp_reference ) ) {
 					// Payment completed!
@@ -625,14 +774,24 @@ function add_bambora_online_checkout() {
 					update_post_meta( $woo_order_id, 'Card no', $card_number );
 					update_post_meta( $woo_order_id, 'Card type', $card_type );
 
-					$order->add_order_note( __( 'Callback completed', 'bambora-online-checkout' ) );
-					$message = 'Order created';
+                    //Subscription
+                    $subscriptionId = array_key_exists('subscriptionid', $params) ? $params['subscriptionid'] : null;
+                    if($this->woocommerce_subscription_plugin_is_active() && isset( $subscriptionId ))
+                    {
+                        WC_Subscriptions_Manager::activate_subscriptions_for_order($order);
+                        update_post_meta($woo_order_id, 'Subscription ID', $subscriptionId);
+                        $order->add_order_note( __( 'Subscription activated', 'bambora-online-checkout' ) );
+                    }
+
+                    $order->add_order_note( __( 'Callback completed', 'bambora-online-checkout' ) );
+					$message = 'Callback completed - Order created';
 					$response_code = 200;
 				} else {
-					$message = 'Order was already Created';
+					$message = 'Callback completed - Order was already Created';
 					$response_code = 200;
 				}
-			} catch (Exception $e) {
+			}
+            catch (Exception $e) {
 				$response_code = 500;
 				$message = 'Action Failed: ' . $e->getMessage();
 			}
@@ -641,13 +800,13 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Process Refund
-		 *
-		 * @param int        $order_id
-		 * @param float|null $amount
-		 * @param string     $reason
-		 * @return bool
-		 */
+         * Process Refund
+         *
+         * @param int        $order_id
+         * @param float|null $amount
+         * @param string     $reason
+         * @return bool
+         */
 		public function process_refund( $order_id, $amount = null, $reason = '' ) {
 			$order = new WC_Order( $order_id );
 			$refunds = $order->get_refunds();
@@ -677,14 +836,14 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Try and create refund lines. If there is a negativ amount on one of the refund items, it fails.
-		 *
-		 * @param WC_Order_Refund     $refund
-		 * @param Bambora_Orderline[] $bambora_refund_lines
-		 * @param int                 $minorunits
-		 * @param string              $reason
-		 * @return boolean
-		 */
+         * Try and create refund lines. If there is a negativ amount on one of the refund items, it fails.
+         *
+         * @param WC_Order_Refund     $refund
+         * @param Bambora_Orderline[] $bambora_refund_lines
+         * @param int                 $minorunits
+         * @param string              $reason
+         * @return boolean
+         */
 		private function create_bambora_refund_lines( $refund, &$bambora_refund_lines, $minorunits, $reason = '' ) {
 			$wc_tax = new WC_Tax();
 			$line_number = 0;
@@ -760,8 +919,8 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Bambora Meta Boxes
-		 */
+         * Bambora Meta Boxes
+         */
 		public function bambora_meta_boxes() {
 			global $post;
 			$order_id = $post->ID;
@@ -779,8 +938,8 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Generate the Bambora payment meta box and echos the HTML
-		 */
+         * Generate the Bambora payment meta box and echos the HTML
+         */
 		public function bambora_meta_box_payment() {
 			global $post;
 			$order_id = $post->ID;
@@ -845,7 +1004,7 @@ function add_bambora_online_checkout() {
 							$html .= '<input type="hidden" id="bambora_capture_message" name="bambora_capture_message" value="' . __( 'Are you sure you want to capture the payment?', 'bambora-online-checkout' ) . '" />';
 							$html .= '<div class="bambora_action">';
 							$html .= '<p>' . $curency_code . '</p>';
-							$html .= '<input type="text" value="' . $this->format_number( $available_for_capture, $minorunits ) . '"id="bambora_capture_amount" class="bambora_amount" name="bambora_amount" />';
+							$html .= '<input type="text" value="' . $this->format_number( $available_for_capture, $minorunits, false ) . '"id="bambora_capture_amount" class="bambora_amount" name="bambora_amount" />';
 							$html .= '<input id="bambora_capture_submit" class="button capture" name="bambora_capture" type="submit" value="' . __( 'Capture' ) . '" />';
 							$html .= '</div>';
 							$html .= '<br />';
@@ -878,7 +1037,8 @@ function add_bambora_online_checkout() {
 					$html .= '<br />';
 
 					echo ent2ncr( $html );
-				} catch (Exception $e) {
+				}
+                catch (Exception $e) {
 					echo $this->message_to_html( 'error', $e->getMessage() );
 					return null;
 				}
@@ -888,12 +1048,12 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Build transaction log table HTML
-		 *
-		 * @param array $operations
-		 * @param int   $minorunits
-		 * @return string
-		 * */
+         * Build transaction log table HTML
+         *
+         * @param array $operations
+         * @param int   $minorunits
+         * @return string
+         * */
 		private function build_transaction_log_table( $operations, $minorunits ) {
 			$html = '<h4>' . __( 'TRANSACTION HISTORY', 'bambora-online-checkout' ) . '</h4>';
 			$html .= '<table class="bambora-table">';
@@ -904,11 +1064,11 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Format date
-		 *
-		 * @param string $raw_date
-		 * @return string
-		 */
+         * Format date
+         *
+         * @param string $raw_date
+         * @return string
+         */
 		private function format_date( $raw_date ) {
 			$date = str_replace( 'T', ' ', substr( $raw_date, 0, 19 ) );
 			$date_stamp = strtotime( $date );
@@ -919,12 +1079,12 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Build transaction log row HTML
-		 *
-		 * @param array $operations
-		 * @param int   $minorunits
-		 * @return string
-		 */
+         * Build transaction log row HTML
+         *
+         * @param array $operations
+         * @param int   $minorunits
+         * @return string
+         */
 		private function build_transaction_log_rows( $operations, $minorunits ) {
 			$html = '';
 			foreach ( $operations as $operation ) {
@@ -960,8 +1120,8 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Bambora Action
-		 */
+         * Bambora Action
+         */
 		public function bambora_action() {
 			if ( isset( $_GET['bambora_action'] ) ) {
 				$order = new WC_Order( $_GET['post'] );
@@ -970,6 +1130,7 @@ function add_bambora_online_checkout() {
 				$minorunits = Bambora_Currency::get_currency_minorunits( $currency );
 				$api_key = $this->get_api_key();
 				$api = new Bambora_Api( $api_key );
+                $success = true;
 				try {
 					switch ( $_GET['bambora_action'] ) {
 						case 'capture':
@@ -980,51 +1141,53 @@ function add_bambora_online_checkout() {
 							if ( ! isset( $capture ) || ! $capture['meta']['result'] ) {
 								$message = isset( $capture ) ? $capture['meta']['message']['merchant'] : __( 'No connection to Bambora', 'bambora-online-checkout' );
 								echo $this->message_to_html( 'error', $message );
-							} else {
-								echo $this->message_to_html( 'success', __( 'Payment successfully', 'bambora-online-checkout' ) . ' ' . __( 'Captured', 'bambora-online-checkout' ) );
+                                $success = false;
 							}
-
 							break;
-
 						case 'delete':
 							$delete = $api->delete( $transaction_id );
 							if ( ! isset( $delete ) || ! $delete['meta']['result'] ) {
 								$message = isset( $delete ) ? $delete['meta']['message']['merchant'] : __( 'No connection to Bambora', 'bambora-online-checkout' );
 								echo $this->message_to_html( 'error', $message );
-							} else {
-								echo $this->message_to_html( 'success', __( 'Payment successfully', 'bambora-online-checkout' ) . ' ' . __( 'Deleted', 'bambora-online-checkout' ) );
+                                $success = false;
 							}
-
 							break;
 					}
-				} catch (Exception $e) {
+				}
+                catch (Exception $e) {
 					echo $this->message_to_html( 'error', $e->getMessage() );
+                    $success = false;
 				}
 
-				global $post;
-				$url = admin_url( 'post.php?post=' . $post->ID . '&action=edit' );
-				wp_safe_redirect( $url );
-				// wp_redirect( $url );
+                if($success) {
+                    global $post;
+                    $url = admin_url( 'post.php?post=' . $post->ID . '&action=edit' );
+                    wp_safe_redirect( $url );
+                }
 			}
 		}
 
 		/**
-		 * Format a number
-		 *
-		 * @param mixed $number
-		 * @param int   $decimals
-		 * @return string
-		 */
-		private function format_number( $number, $decimals ) {
-			return number_format( $number, $decimals, wc_get_price_decimal_separator(), wc_get_price_thousand_separator() );
+         * Format a number
+         *
+         * @param mixed $number
+         * @param int   $decimals
+         * @return string
+         */
+		private function format_number( $number, $decimals, $display_thousand_separator = true ) {
+			if($display_thousand_separator) {
+                return number_format( $number, $decimals, wc_get_price_decimal_separator(), wc_get_price_thousand_separator() );
+            }
+
+            return number_format( $number, $decimals, wc_get_price_decimal_separator(), '' );
 		}
 
 		/**
-		 * Convert action
-		 *
-		 * @param string $action
-		 * @return string
-		 * */
+         * Convert action
+         *
+         * @param string $action
+         * @return string
+         * */
 		private function convert_action( $action ) {
 			if ( 'Authorize' === $action ) {
 				return __( 'Authorized', 'bambora-online-checkout' );
@@ -1040,14 +1203,14 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Convert message to HTML
-		 *
-		 * @param string $type
-		 * @param string $message
-		 * @return string
-		 * */
+         * Convert message to HTML
+         *
+         * @param string $type
+         * @param string $message
+         * @return string
+         * */
 		private function message_to_html( $type, $message ) {
-			$html = '<div class="bambora_message bambora_' . $type . '">
+			$html = '<div id="message" class="bambora_message bambora_' . $type . '">
 						<strong>' . $this->message_type_to_upper( $type ) . '! </strong>'
 						. $message . '</div>';
 
@@ -1055,11 +1218,11 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Convert Message type first letter to upper
-		 *
-		 * @param string $type
-		 * @return string
-		 */
+         * Convert Message type first letter to upper
+         *
+         * @param string $type
+         * @return string
+         */
 		private function message_type_to_upper( $type ) {
 			if ( ! isset( $type ) ) {
 				return '';
@@ -1072,48 +1235,27 @@ function add_bambora_online_checkout() {
 		}
 
 		/**
-		 * Get the Bambora Api Key
-		 */
+         * Get the Bambora Api Key
+         */
 		private function get_api_key() {
-			if ( empty( $this->api_key ) ) {
-				$this->api_key = Bambora_Helper::generate_api_key( $this->merchant, $this->accesstoken, $this->secrettoken );
-			}
-
-			return $this->api_key;
+            return Bambora_Helper::generate_api_key( $this->merchant, $this->accesstoken, $this->secrettoken );
 		}
 	}
 
+    // Load the module into WordPress / WooCommerce
+
+    add_filter( 'woocommerce_payment_gateways', 'add_bambora_online_checkout_woocommerce' );
+    Bambora_Online_Checkout::get_instance()->init_hooks();
 	/**
-	 * Add the Bambora gateway to WooCommerce
-	 *
-	 * @param array $methods
-	 **/
+     * Add the Bambora gateway to WooCommerce
+     *
+     * @param array $methods
+     **/
 	function add_bambora_online_checkout_woocommerce( $methods ) {
 		$methods[] = 'bambora_online_checkout';
 		return $methods;
 	}
 
-	/**
-	 * Initialise the Bambora gateway
-	 */
-	function init_bambora_online_checkout() {
-		$plugin_dir = basename( dirname( __FILE__ ) );
-		load_plugin_textdomain( 'bambora_online_checkout', false, $plugin_dir . '/languages/' );
-	}
-
-	add_filter( 'woocommerce_payment_gateways', 'add_bambora_online_checkout_woocommerce' );
-	add_action( 'plugins_loaded', 'init_bambora_online_checkout' );
-
-	/**
-	 * Get a new WC_Bambora_Gateway instance
-	 *
-	 * @return Bambora_Online_Checkout
-	 */
-	function bambora_online_checkout() {
-		return new Bambora_Online_Checkout();
-	}
-
-	if ( is_admin() ) {
-		add_action( 'load-post.php', 'bambora_online_checkout' );
-	}
+    $plugin_dir = basename( dirname( __FILE__ ) );
+    load_plugin_textdomain( 'bambora_online_checkout', false, $plugin_dir . '/languages/' );
 }
