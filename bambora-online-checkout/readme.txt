@@ -45,6 +45,9 @@ With Bambora online checkout for WooCommerce, you are able to integrate the Bamb
 
 == Changelog ==
 
+= 2.1.2 =
+* Fix for Bambora callback keeps posting when the order is completed
+
 = 2.1.1 =
 * Fix for format error in capture input field
 * Fix for no error message displayed if capture, delete or refund fails
