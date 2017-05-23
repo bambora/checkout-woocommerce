@@ -286,25 +286,27 @@ function init_bambora_online_checkout() {
             try {
                 $subscription = $this->getSubscription($renewal_order);
                 if(isset($subscription)) {
-                    $parentOrder = $subscription->order;
-                    $bamboraSubscriptionId = get_post_meta($parentOrder->id, 'Subscription ID', true);
-                    $orderCurrency = $renewal_order->get_order_currency();
+                    $parent_order = $subscription->order;
+                    $parent_order_id = $this->is_woocommerce_3() ? $parent_order->get_id() : $parent_order->id;
+                    $bambora_subscription_id = get_post_meta($parent_order_id, 'Subscription ID', true);
+                    $order_currency = $this->is_woocommerce_3() ? $renewal_order->get_currency() : $renewal_order->get_order_currency();
 
-                    $minor_units = Bambora_Currency::get_currency_minorunits( $orderCurrency );
+                    $minor_units = Bambora_Currency::get_currency_minorunits( $order_currency );
                     $amount = Bambora_Currency::convert_price_to_minorunits( $amount_to_charge, $minor_units );
 
+                    $renewal_order_id = $this->is_woocommerce_3() ? $renewal_order->get_id() : $renewal_order->id;
                     $api_key = $this->get_api_key();
                     $api = new Bambora_Api( $api_key );
-                    $authorize_response = $api->authorize_subscription( $bamboraSubscriptionId, $amount, $orderCurrency, $renewal_order->id );
+                    $authorize_response = $api->authorize_subscription( $bambora_subscription_id, $amount, $order_currency, $renewal_order_id );
 
                     if($authorize_response['meta']['result']) {
-                        update_post_meta($renewal_order->id,'Transaction ID', $authorize_response['transactionid']);
+                        update_post_meta($renewal_order_id,'Transaction ID', $authorize_response['transactionid']);
                         $renewal_order->payment_complete();
                     }else {
                         $orderNote = __('Subscription could not be authorized', 'woocommerce-gateway-epay-dk');
                         $orderNote .= " - {$authorize_response['meta']['message']['merchant']}";
                         $renewal_order->update_status('failed', $orderNote);
-                        $subscription->add_order_note($orderNote . ' ID: ' . $renewal_order->id);
+                        $subscription->add_order_note($orderNote . ' ID: ' . $renewal_order_id);
                     }
                 }else {
                     $renewal_order->update_status('failed', __('No subscription found', 'woocommerce-gateway-epay-dk'));
@@ -322,8 +324,9 @@ function init_bambora_online_checkout() {
         {
             try {
                 if(function_exists('wcs_is_subscription') && wcs_is_subscription($subscription)) {
-                    $parentOrder = $subscription->order;
-                    $bamboraSubscriptionId = get_post_meta($parentOrder->id, 'Subscription ID', true);
+                    $parent_order = $subscription->order;
+                    $parent_order_id = $this->is_woocommerce_3() ? $parent_order->get_id() : $parent_order->id;
+                    $bamboraSubscriptionId = get_post_meta($parent_order_id, 'Subscription ID', true);
                     if(empty($bamboraSubscriptionId)) {
                         throw new Exception(__('Bambora Subscription ID was not found', 'woocommerce-gateway-epay-dk'));
                     }
@@ -362,14 +365,14 @@ function init_bambora_online_checkout() {
 		/**
          * Get Bambora payment window
          *
-         * @param WC_Order $order
+         * @param int $order_id
          * @return string
          * */
-		public function get_checkout_payment_window( $order ) {
+		public function get_checkout_payment_window( $order_id ) {
 			$api_key = $this->get_api_key();
 			$api = new Bambora_Api( $api_key );
 
-			$checkout_request = $this->create_checkout_request( $order );
+			$checkout_request = $this->create_checkout_request( $order_id );
 			$checkout_response = $api->get_checkout_response( $checkout_request );
 
 			if ( ! isset( $checkout_response ) || ! $checkout_response['meta']['result'] ) {
@@ -388,11 +391,11 @@ function init_bambora_online_checkout() {
 		/**
          * Create Checkout Request
          *
-         * @param WC_Order $order
+         * @param int $order_id
          * @return Bambora_Checkout_Request
          */
-		private function create_checkout_request( $order ) {
-			$order = new WC_Order( $order );
+		private function create_checkout_request( $order_id ) {
+			$order = wc_get_order( $order_id);
 			$minorunits = Bambora_Currency::get_currency_minorunits( get_woocommerce_currency() );
 
 			$bambora_custommer = $this->create_bambora_custommer( $order );
@@ -424,9 +427,16 @@ function init_bambora_online_checkout() {
          * */
 		private function create_bambora_custommer( $order ) {
 			$bambora_custommer = new Bambora_Customer();
-			$bambora_custommer->email = $order->billing_email;
-			$bambora_custommer->phonenumber = $order->billing_phone;
-			$bambora_custommer->phonenumbercountrycode = $order->billing_country;
+            if($this->is_woocommerce_3())
+            {
+                $bambora_custommer->email = $order->get_billing_email();
+                $bambora_custommer->phonenumber = $order->get_billing_phone();
+                $bambora_custommer->phonenumbercountrycode = $order->get_billing_country();
+            } else {
+                $bambora_custommer->email = $order->billing_email;
+                $bambora_custommer->phonenumber = $order->billing_phone;
+                $bambora_custommer->phonenumbercountrycode = $order->billing_country;
+            }
 
 			return $bambora_custommer;
 		}
@@ -447,8 +457,9 @@ function init_bambora_online_checkout() {
 			$order_number = str_replace( _x( '#', 'hash before order number', 'woocommerce' ), '', $order->get_order_number() );
 			$bambora_order->ordernumber = ( (int) $order_number);
 			$bambora_order->shippingaddress = $this->create_bambora_address( $order );
-			$bambora_order->total = Bambora_Currency::convert_price_to_minorunits( (float) $order->order_total, $minorunits );
-			$bambora_order->vatamount = Bambora_Currency::convert_price_to_minorunits( $order->get_total_tax(), $minorunits );
+            $order_total = $this->is_woocommerce_3() ? $order->get_total() : (float) $order->order_total;
+			$bambora_order->total = Bambora_Currency::convert_price_to_minorunits( $order_total, $minorunits );
+			$bambora_order->vatamount = Bambora_Currency::convert_price_to_minorunits( round($order->get_total_tax(), 2), $minorunits );
 
 			return $bambora_order;
 		}
@@ -462,12 +473,22 @@ function init_bambora_online_checkout() {
 		private function create_bambora_address( $order ) {
 			$bambora_address = new Bambora_Address();
 			$bambora_address->att = '';
-			$bambora_address->city = $order->shipping_city;
-			$bambora_address->country = $order->shipping_country;
-			$bambora_address->firstname = $order->shipping_first_name;
-			$bambora_address->lastname = $order->shipping_last_name;
-			$bambora_address->street = $order->shipping_address_1;
-			$bambora_address->zip = $order->shipping_postcode;
+            if($this->is_woocommerce_3())
+            {
+                $bambora_address->city = $order->get_shipping_city();
+                $bambora_address->country = $order->get_shipping_country();
+                $bambora_address->firstname = $order->get_shipping_first_name();
+                $bambora_address->lastname = $order->get_shipping_last_name();
+                $bambora_address->street = $order->get_shipping_address_1();
+                $bambora_address->zip = $order->get_shipping_postcode();
+            } else {
+                $bambora_address->city = $order->shipping_city;
+                $bambora_address->country = $order->shipping_country;
+                $bambora_address->firstname = $order->shipping_first_name;
+                $bambora_address->lastname = $order->shipping_last_name;
+                $bambora_address->street = $order->shipping_address_1;
+                $bambora_address->zip = $order->shipping_postcode;
+            }
 
 			return $bambora_address;
 		}
@@ -483,9 +504,10 @@ function init_bambora_online_checkout() {
 			$bambora_url->accept = $this->fix_url( $this->get_return_url( $order ) );
 			$bambora_url->decline = $this->fix_url( $order->get_cancel_order_url() );
 
+            $order_id = $this->is_woocommerce_3() ? $order->get_id(): $order->id;
 			$bambora_url->callbacks = array();
 			$callback = new Bambora_Callback();
-			$callback->url = $this->fix_url( add_query_arg( 'wooorderid', $order->id, add_query_arg( 'wc-api', 'Bambora_Online_Checkout', $this->get_return_url( $order ) ) ) );
+			$callback->url = $this->fix_url( add_query_arg( 'wooorderid', $order_id, add_query_arg( 'wc-api', 'Bambora_Online_Checkout', $this->get_return_url( $order ) ) ) );
 
 			$bambora_url->callbacks[] = $callback;
 			$bambora_url->immediateredirecttoaccept = 'yes' === $this->immediateredirecttoaccept ? 1 : 0;
@@ -549,7 +571,7 @@ function init_bambora_online_checkout() {
 
 			$shipping_methods = $order->get_shipping_methods();
 			if ( $shipping_methods && count( $shipping_methods ) !== 0 ) {
-				$shipping_total = $order->get_total_shipping();
+				$shipping_total = $this->is_woocommerce_3() ? $order->get_shipping_total() : $order->get_total_shipping();
 				$shipping_tax = $order->get_shipping_tax();
 				$shipping_orderline = new Bambora_Orderline();
 				$shipping_orderline->id = __( 'Shipping', 'bambora-online-checkout' );
@@ -588,7 +610,7 @@ function init_bambora_online_checkout() {
 		public function set_bambora_description_for_checkout() {
 			global $woocommerce;
 
-			$cart = $woocommerce->cart;
+			$cart = $this->is_woocommerce_3() ? WC()->cart : $woocommerce->cart;
 			if ( ! $cart ) {
 				return;
 			}
@@ -616,7 +638,7 @@ function init_bambora_online_checkout() {
          * @return string[]
          */
 		public function process_payment( $order_id ) {
-			$order = new WC_Order( $order_id );
+			$order = wc_get_order( $order_id );
 
 			return array(
 				'result'     => 'success',
@@ -680,7 +702,19 @@ function init_bambora_online_checkout() {
          * @return bool
          */
 		private function validate_callback( $params, &$message, &$order, &$transaction ) {
-			// Check exists transactionid!
+            // Validate woocommerce order!
+            if(empty( $params['wooorderid'] ))
+            {
+                $message = "No wooorderid was supplied to the system!";
+				return false;
+            }
+			$order = wc_get_order( $params['wooorderid'] );
+			if ( ! isset( $order ) ) {
+				$message = "Could not find order with wooorderid {$params["wooorderid"]}";
+				return false;
+			}
+
+            // Check exists transactionid!
 			if ( ! isset( $params ) || empty( $params['txnid'] ) ) {
 				$message = isset( $params ) ? 'No GET(txnid) was supplied to the system!' : 'Response is null';
 				return false;
@@ -706,13 +740,6 @@ function init_bambora_online_checkout() {
 					$message = 'Hash validation failed - Please check your MD5 key';
 					return false;
 				}
-			}
-
-            // Validate woocommerce order!
-			$order = wc_get_order( $params['wooorderid'] );
-			if ( ! isset( $order ) ) {
-				$message = "Could not find order with wooorderid {$params["wooorderid"]}";
-				return false;
 			}
 
 			// Validate bambora transaction!
@@ -750,18 +777,30 @@ function init_bambora_online_checkout() {
 
 					if ( 0 < $fee_amount_in_minorunits && 'yes' === $this->settings['addsurchargetoshipment'] ) {
 						$fee_amount = Bambora_Currency::convert_price_from_minorunits( $fee_amount_in_minorunits, $minorunits );
+                        if($this->is_woocommerce_3())
+                        {
+                            $order_fee = new WC_Order_Item_Fee();
+                            $order_fee->set_total( $fee_amount );
+                            $order_fee->set_tax_status('none');
+                            $order_fee->set_total_tax(0);
+                            $order_fee->save();
 
-						$order_fee              = new stdClass();
-						$order_fee->id          = 'bambora_surcharge_fee';
-						$order_fee->name        = __( 'Surcharge Fee', 'bambora-online-checkout' );
-						$order_fee->amount      = $fee_amount;
-						$order_fee->taxable     = false;
-						$order_fee->tax         = 0;
-						$order_fee->tax_data    = array();
+                            $order->add_item($order_fee);
+                            $order->calculate_totals();
 
-						$order->add_fee( $order_fee );
-						$order_total = $order->order_total + $fee_amount;
-						$order->set_total( $order_total );
+                        } else {
+						    $order_fee              = new stdClass();
+						    $order_fee->id          = 'bambora_surcharge_fee';
+						    $order_fee->name        = __( 'Surcharge Fee', 'bambora-online-checkout' );
+						    $order_fee->amount      = $fee_amount;
+						    $order_fee->taxable     = false;
+						    $order_fee->tax         = 0;
+						    $order_fee->tax_data    = array();
+
+						    $order->add_fee( $order_fee );
+						    $order_total = ($this->is_woocommerce_3() ? $order->get_total() : $order->order_total) + $fee_amount;
+						    $order->set_total( $order_total );
+                        }
 					}
 
 					$order->payment_complete();
@@ -808,9 +847,9 @@ function init_bambora_online_checkout() {
          * @return bool
          */
 		public function process_refund( $order_id, $amount = null, $reason = '' ) {
-			$order = new WC_Order( $order_id );
+			$order = wc_get_order( $order_id );
 			$refunds = $order->get_refunds();
-			$currency = $order->order_currency;
+			$currency = $this->is_woocommerce_3() ? $order->get_currency() : $order->order_currency;
 			$minorunits = Bambora_Currency::get_currency_minorunits( $currency );
 			$amount = Bambora_Currency::convert_price_to_minorunits( $amount, $minorunits );
 
@@ -823,7 +862,7 @@ function init_bambora_online_checkout() {
 
 			$api_key = $this->get_api_key();
 			$api = new Bambora_Api( $api_key );
-			$transaction_id = get_post_meta( $order->id, $this::PSP_REFERENCE, true );
+			$transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
 			$credit = $api->credit( $transaction_id, $amount, $currency, $bambora_refund_lines );
 
 			if ( ! isset( $credit ) || ! $credit['meta']['result'] ) {
@@ -880,7 +919,7 @@ function init_bambora_online_checkout() {
 			$shipping_methods = $refund->get_shipping_methods();
 
 			if ( $shipping_methods && 0 !== count( $shipping_methods ) ) {
-				$shipping_total = $refund->get_total_shipping();
+				$shipping_total = $this->is_woocommerce_3() ? $refund->get_shipping_total() : $refund->get_total_shipping();
 				$shipping_tax = $refund->get_shipping_tax();
 
 				if ( 0 < $shipping_total || 0 < $shipping_tax ) {
@@ -943,9 +982,8 @@ function init_bambora_online_checkout() {
 		public function bambora_meta_box_payment() {
 			global $post;
 			$order_id = $post->ID;
-			$order = new WC_Order( $order_id );
 
-			$transaction_id = get_post_meta( $order->id, $this::PSP_REFERENCE, true );
+			$transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
 			if ( strlen( $transaction_id ) > 0 ) {
 				$html = '';
 				try {
@@ -1124,8 +1162,9 @@ function init_bambora_online_checkout() {
          */
 		public function bambora_action() {
 			if ( isset( $_GET['bambora_action'] ) ) {
-				$order = new WC_Order( $_GET['post'] );
-				$transaction_id = get_post_meta( $order->id, $this::PSP_REFERENCE, true );
+				$order = wc_get_order( $_GET['post'] );
+                $order_id = $this->is_woocommerce_3() ? $order->get_id() : $order->id;
+				$transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
 				$currency = $_GET['currency'];
 				$minorunits = Bambora_Currency::get_currency_minorunits( $currency );
 				$api_key = $this->get_api_key();
@@ -1240,6 +1279,15 @@ function init_bambora_online_checkout() {
 		private function get_api_key() {
             return Bambora_Helper::generate_api_key( $this->merchant, $this->accesstoken, $this->secrettoken );
 		}
+
+        /**
+         * Determines if the current WooCommerce version is 3.x.x
+         *
+         * @return boolean
+         */
+        private function is_woocommerce_3() {
+            return version_compare(WC()->version, '3.0', 'ge');
+        }
 	}
 
     // Load the module into WordPress / WooCommerce
