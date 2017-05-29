@@ -3,7 +3,7 @@
  * Plugin Name: Bambora Online Checkout
  * Plugin URI: http://www.bambora.com
  * Description: A payment gateway for WooCommerce
- * Version: 3.0.0
+ * Version: 3.0.1
  * Author: Bambora
  * Author URI: http://www.bambora.com
  * Text Domain: Bambora
@@ -37,7 +37,7 @@ function init_bambora_online_checkout() {
      **/
 	class Bambora_Online_Checkout extends WC_Payment_Gateway {
 
-		const MODULE_VERSION = '3.0.0';
+		const MODULE_VERSION = '3.0.1';
 		const PSP_REFERENCE = 'Transaction ID';
 
         /**
