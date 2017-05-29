@@ -328,7 +328,9 @@ function init_bambora_online_checkout() {
                     $parent_order_id = $this->is_woocommerce_3() ? $parent_order->get_id() : $parent_order->id;
                     $bamboraSubscriptionId = get_post_meta($parent_order_id, 'Subscription ID', true);
                     if(empty($bamboraSubscriptionId)) {
-                        throw new Exception(__('Bambora Subscription ID was not found', 'woocommerce-gateway-epay-dk'));
+                        $orderNote = __('Bambora Subscription ID was not found', 'woocommerce-gateway-epay-dk');
+                        $subscription->add_order_note($orderNote);
+                        throw new Exception($orderNote);
                     }
 
                     $api_key = $this->get_api_key();
@@ -349,7 +351,6 @@ function init_bambora_online_checkout() {
             }
             catch(Exception $ex)
             {
-                $subscription->update_status('failed', $ex->getMessage());
                 error_log($ex->getMessage());
             }
         }
