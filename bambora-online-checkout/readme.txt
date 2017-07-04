@@ -2,8 +2,8 @@
 Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp
 Requires at least: 4.0.0
-Tested up to: 4.7.5
-Stable tag: 3.0.1
+Tested up to: 4.8.0
+Stable tag: 3.0.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,6 +45,12 @@ With Bambora online checkout for WooCommerce, you are able to integrate the Bamb
 <a href="http://dev.bambora.com/shopping-carts/guides/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+
+= 3.0.2 =
+* Improved quality for Bambora logo
+* Improved quality for Bambora payment type logoes
+* Adds rounding option in module configuration
+* Fix for warning when using get order tax
 
 = 3.0.1 =
 * Fixes bug where a failed subscription cancellation could cause an unhandled exception
