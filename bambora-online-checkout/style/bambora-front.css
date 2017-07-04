@@ -1,18 +1,29 @@
 .bambora_message {
-	padding: 15px;
-	margin-bottom: 20px;
-	border: 1px solid transparent;
-	border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    -ms-border-radius: 4px;
+    border-radius: 4px;
 }
 
 .bambora_error {
-	color: #a94442;
-	background-color: #f2dede;
-	border-color: #ebccd1;
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+.bambora_success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+.payment_method_bambora img {
+    max-width: 100px;
+    float: right;
 }
 
-.bambora_success {
-	color: #3c763d;
-	background-color: #dff0d8;
-	border-color: #d6e9c6;
+.bambora_payment_types {
+    display: inline-block;
+}
+.bambora_payment_type {
+    margin-left: 0!important;
 }

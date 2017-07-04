@@ -1,170 +1,171 @@
 .bambora_transactionid p {
-	line-height: 6px;
+    line-height: 6px;
 }
 
 .bambora_transactionid p:first-child {
-	font-size: 12px;
-	font-weight: 400;
-	color: grey;
+    font-size: 12px;
+    font-weight: 400;
+    color: grey;
 }
 
 .bambora_transactionid p:last-child {
-	font-weight: 600;
+    font-weight: 600;
 }
 
 .bambora_info_overview {
-	font-weight: 600;
+    font-weight: 600;
 }
 
 .bambora_info_overview p {
-	display: inline-block;
-	margin: 0;
+    display: inline-block;
+    margin: 0;
 }
 
 .bambora_info_overview p:last-child {
-	float: right;
+    float: right;
 }
 
 .bambora_action_container {
-	background-color: #eaecf0;
-	border: 1px solid #b9c4e2;
-	padding: 15px 9px 0 9px;
-	margin: 20px 0;
-	-moz-box-shadow: 0 0 3px #ccc;
-	-webkit-box-shadow: 0 0 3px #ccc;
-	box-shadow: 0 0 3px #ccc;
+    background-color: #eaecf0;
+    border: 1px solid #b9c4e2;
+    padding: 15px 9px 0 9px;
+    margin: 20px 0;
+    -moz-box-shadow: 0 0 3px #ccc;
+    -webkit-box-shadow: 0 0 3px #ccc;
+    box-shadow: 0 0 3px #ccc;
 }
 
 .bambora_action {
-	position: relative;
-	display: table;
-	border-collapse: separate;
-	width: 100%;
+    position: relative;
+    display: table;
+    border-collapse: separate;
+    width: 100%;
 }
 
 .bambora_action p,
 .bambora_action input,
 .bambora_action a {
-	display: inline-block;
+    display: inline-block;
 }
 
 .bambora_action p {
-	padding: 6px 0px;
-	font-weight: 400;
-	line-height: 0.9;
-	color: #555;
-	text-align: center;
-	background-color: #eee;
-	border: 1px solid #ccc;
-	border-radius: 4px 0 0 4px;
-	margin: 0;
-	width: 20%;
+    padding: 6px 0px;
+    font-weight: 400;
+    line-height: 0.9;
+    color: #555;
+    text-align: center;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    -ms-border-radius: 4px 0 0 4px;
+    border-radius: 4px 0 0 4px;
+    margin: 0;
+    width: 20%;
 }
 
 .bambora_action input {
-	margin: 0;
+    margin: 0;
 }
 
 .bambora_action a {
-	box-shadow: none !important;
-	height: inherit !important;
-	color: #ffffff !important;
+    box-shadow: none !important;
+    height: inherit !important;
+    color: #ffffff !important;
 }
 
 .bambora_action .capture,
 .bambora_action .delete {
-	box-shadow: none !important;
-	height: inherit !important;
-	color: #ffffff !important;
+    box-shadow: none !important;
+    height: inherit !important;
+    color: #ffffff !important;
 }
 
 .bambora_action .capture {
-	background-color: #67b168 !important;
-	border-color: #67b168;
-	padding: 0;
-	-ms-border-radius: 0 4px 4px 0 !important;
-	border-radius: 0 4px 4px 0 !important;
-	width: 34%;
-	text-align: center;
-	line-height: 24px;
+    background-color: #67b168 !important;
+    border-color: #67b168;
+    padding: 0;
+    -ms-border-radius: 0 4px 4px 0 !important;
+    border-radius: 0 4px 4px 0 !important;
+    width: 34%;
+    text-align: center;
+    line-height: 24px;
 }
 
 .bambora_action .capture:hover {
-	background-color: #88a755 !important;
-	border-color: #88a755 !important;
+    background-color: #88a755 !important;
+    border-color: #88a755 !important;
 }
 
 .bambora_action .delete {
-	background-color: #fa8564 !important;
-	border-color: #fa8564 !important;
-	-ms-border-radius: 4px !important;
-	border-radius: 4px !important;
-	float: right;
-	margin: 0 0 10px 0;
-	padding: 0;
-	width: 34%;
-	text-align: center;
+    background-color: #fa8564 !important;
+    border-color: #fa8564 !important;
+    -ms-border-radius: 4px !important;
+    border-radius: 4px !important;
+    float: right;
+    margin: 0 0 10px 0;
+    padding: 0;
+    width: 34%;
+    text-align: center;
 }
 
 .bambora_action .delete:hover {
-	background-color: #ec6459 !important;
-	border-color: #ec6459 !important;
+    background-color: #ec6459 !important;
+    border-color: #ec6459 !important;
 }
 
 .bambora_amount {
-	width: 45%;
+    width: 45%;
 }
 
 .bambora-table {
-	width: 100%;
-	border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .bambora_transaction_row_header {
-	font-size: 11px;
-	font-weight: 400;
-	color: grey;
-	line-height: 9px;
+    font-size: 11px;
+    font-weight: 400;
+    color: grey;
+    line-height: 9px;
 }
 
 .bambora_transaction_row_header td {
-	padding: 12px 10px 0 10px;
+    padding: 12px 10px 0 10px;
 }
 
 .bambora_transaction_row_header td:nth-child(even) {
-	float: right;
+    float: right;
 }
 
 .bambora_transaction {
-	border-bottom: 1px solid #C1C1C1;
-	font-weight: 600;
-	padding-bottom: 10px;
+    border-bottom: 1px solid #C1C1C1;
+    font-weight: 600;
+    padding-bottom: 10px;
 }
 
 .bambora_transaction td {
-	padding: 0 10px 7px 10px;
+    padding: 0 10px 7px 10px;
 }
 
 .bambora_transaction td:last-child {
-	float: right;
+    float: right;
 }
 
 #bambora-format-error {
-	display: none;
+    display: none;
 }
 
 .bambora_message {
     padding: 15px;
-	margin-bottom: 20px;
-	border: 1px solid transparent;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
     -ms-border-radius: 4px;
     border-radius: 4px;
 }
 
 .bambora_error {
     color: #a94442;
-	background-color: #f2dede;
-	border-color: #ebccd1;
+    background-color: #f2dede;
+    border-color: #ebccd1;
     padding: 5px;
     -ms-border-radius: 4px;
     border-radius: 4px;
@@ -172,8 +173,8 @@
 
 .bambora_success {
     color: #3c763d;
-	background-color: #dff0d8;
-	border-color: #d6e9c6;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
     padding: 5px;
     -ms-border-radius: 4px;
     border-radius: 4px;
