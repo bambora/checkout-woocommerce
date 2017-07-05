@@ -3,7 +3,7 @@
  * Plugin Name: Bambora Online Checkout
  * Plugin URI: http://www.bambora.com
  * Description: A payment gateway for WooCommerce
- * Version: 3.0.2
+ * Version: 3.0.3
  * Author: Bambora
  * Author URI: http://www.bambora.com
  * Text Domain: Bambora
@@ -37,7 +37,7 @@ function init_bambora_online_checkout() {
      **/
     class Bambora_Online_Checkout extends WC_Payment_Gateway {
 
-        const MODULE_VERSION = '3.0.2';
+        const MODULE_VERSION = '3.0.3';
         const PSP_REFERENCE = 'Transaction ID';
 
         /**
@@ -198,7 +198,7 @@ function init_bambora_online_checkout() {
                 'md5key' => array(
                                 'title' => 'MD5 Key',
                                 'type' => 'text',
-                                'description' => 'The MD5 key is used to stamp data sent between Magento and Bambora to prevent it from being tampered with. The MD5 key is optional but if used here, must be the same as in the Bambora administration.',
+                                'description' => 'The MD5 key is used to stamp data sent between WooCommerce and Bambora to prevent it from being tampered with. The MD5 key is optional but if used here, must be the same as in the Bambora administration.',
                                 'default' => '',
                             ),
                 'paymentwindowid' => array(
