@@ -3,7 +3,7 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp
 Requires at least: 4.0.0
 Tested up to: 4.8.2
-Stable tag: 3.0.4
+Stable tag: 3.0.5
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,6 +45,9 @@ With Bambora online checkout for WooCommerce, you are able to integrate the Bamb
 <a href="http://dev.bambora.com/shopping-carts/guides/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+= 3.0.5 =
+* Fix for transaction id not found on capture, credit and delete
+
 = 3.0.4 =
 * Fix for transaction id not being saved in Woocommerce 3.x
 * Adds check for bambora subscription id
