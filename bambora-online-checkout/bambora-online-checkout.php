@@ -3,7 +3,7 @@
  * Plugin Name: Bambora Online Checkout
  * Plugin URI: http://www.bambora.com
  * Description: A payment gateway for WooCommerce
- * Version: 3.0.4
+ * Version: 3.0.5
  * Author: Bambora
  * Author URI: http://www.bambora.com
  * Text Domain: Bambora
@@ -312,7 +312,7 @@ function init_bambora_online_checkout() {
                                 $renewal_order->set_transaction_id( $authorize_response['transactionid'] );
                                 $renewal_order->save();
                             } else {
-                                update_post_meta($renewal_order_id, 'Transaction ID', $authorize_response['transactionid']);
+                                update_post_meta($renewal_order_id, $this::PSP_REFERENCE, $authorize_response['transactionid']);
                             }
 
                             $renewal_order->payment_complete();
@@ -322,12 +322,13 @@ function init_bambora_online_checkout() {
                             $renewal_order->update_status('failed', $orderNote);
                             $subscription->add_order_note($orderNote . ' ID: ' . $renewal_order_id);
                         }
-                    }else {
-                        $renewal_order->update_status('failed', __('No subscription found', 'woocommerce-gateway-epay-dk'));
+                    } else {
+                        $renewal_order->update_status('failed', __('Bambora Subscription id was not found', 'woocommerce-gateway-epay-dk'));
                     }
-                } else {
-                    $renewal_order->update_status('failed', __('Bambora Subscription id was not found', 'woocommerce-gateway-epay-dk'));
+                }else {
+                    $renewal_order->update_status('failed', __('No subscription found', 'woocommerce-gateway-epay-dk'));
                 }
+
 
             }
             catch(Exception $ex)
@@ -344,7 +345,7 @@ function init_bambora_online_checkout() {
                     $parent_order = $subscription->order;
                     $parent_order_id = $this->is_woocommerce_3() ? $parent_order->get_id() : $parent_order->id;
                     $bamboraSubscriptionId = get_post_meta($parent_order_id, 'Subscription ID', true);
-                    if(empty($bamboraSubscriptionId)) {
+                    if( strlen( $bamboraSubscriptionId ) === 0) {
                         $orderNote = __('Bambora Subscription ID was not found', 'woocommerce-gateway-epay-dk');
                         $subscription->add_order_note($orderNote);
                         throw new Exception($orderNote);
@@ -369,7 +370,9 @@ function init_bambora_online_checkout() {
             catch(Exception $ex)
             {
                 error_log($ex->getMessage());
+                return false;
             }
+            return true;
         }
 
         /**
@@ -565,7 +568,7 @@ function init_bambora_online_checkout() {
                 $itemTotal = $order->get_line_total( $item, false, true );
                 $itemTotalInclVat = $order->get_line_total( $item, true, true );
                 $itemVatAmount = $order->get_line_tax( $item );
-               
+
                 $line = new Bambora_Orderline();
                 $line->description = $item['name'];
                 $line->id = $item['product_id'];
@@ -667,10 +670,10 @@ function init_bambora_online_checkout() {
         /**
          * Receipt page
          *
-         * @param WC_Order $order
+         * @param int $order
          **/
-        public function receipt_page( $order ) {
-            $payment_window_html = $this->get_checkout_payment_window( $order );
+        public function receipt_page( $order_id ) {
+            $payment_window_html = $this->get_checkout_payment_window( $order_id );
             echo $payment_window_html;
         }
 
@@ -701,7 +704,6 @@ function init_bambora_online_checkout() {
                 if ( isset( $order ) ) {
                     $order->add_order_note( $message );
                 }
-
                 error_log( $message );
             }
 
@@ -787,12 +789,7 @@ function init_bambora_online_checkout() {
             $message = '';
             try {
                 $woo_order_id = $params['wooorderid'];
-                $psp_reference = "";
-                if($this->is_woocommerce_3()) {
-                    $psp_reference = $order->get_transaction_id();
-                } else {
-                    $psp_reference = get_post_meta( $woo_order_id, $this::PSP_REFERENCE );
-                }
+                $psp_reference = $this->get_bambora_transaction_id($order);
 
                 if ( empty( $psp_reference ) ) {
                     // Payment completed!
@@ -897,7 +894,9 @@ function init_bambora_online_checkout() {
 
             $api_key = $this->get_api_key();
             $api = new Bambora_Api( $api_key );
-            $transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
+
+
+            $transaction_id = $this->get_bambora_transaction_id($order);
             $credit = $api->credit( $transaction_id, $amount, $currency, $bambora_refund_lines );
 
             if ( ! isset( $credit ) || ! $credit['meta']['result'] ) {
@@ -919,14 +918,16 @@ function init_bambora_online_checkout() {
          * @return boolean
          */
         private function create_bambora_refund_lines( $refund, &$bambora_refund_lines, $minorunits, $reason = '' ) {
-            $wc_tax = new WC_Tax();
             $line_number = 0;
             $total = $refund->get_total();
             $items_total = 0;
 
             $refund_items = $refund->get_items();
             foreach ( $refund_items as $item ) {
-                $line_total = $refund->get_line_total( $item, true, true );
+                $line_total_with_vat = $refund->get_line_total( $item, true, true );
+                $line_total = $refund->get_line_total( $item, false, true);
+                $line_vat = $refund->get_line_tax( $item );
+
                 if ( 0 < $line_total ) {
                     throw new exception( __( 'Invalid refund amount for item', 'bambora-online-checkout' ) . ':' . $item['name'] );
                 }
@@ -936,18 +937,11 @@ function init_bambora_online_checkout() {
                 $line->linenumber = ++$line_number;
                 $line->quantity = abs( $item['qty'] );
                 $line->text = $item['name'];
-                $line->totalpriceinclvat = Bambora_Currency::convert_price_to_minorunits( abs( $line_total ), $minorunits, $this->roundingmode );
-                $items_total += $line_total;
+                $line->totalpriceinclvat = Bambora_Currency::convert_price_to_minorunits( abs( $line_total_with_vat ), $minorunits, $this->roundingmode );
+                $items_total += $line_total_with_vat;
                 $line->unit = __( 'pcs.', 'bambora-online-checkout' );
-                $product = $refund->get_product_from_item( $item );
-                $item_tax_class = $product->get_tax_class();
-                $item_tax_rate_array = $wc_tax->get_rates( $item_tax_class );
-                $item_tax_rate = array_shift( $item_tax_rate_array );
-                if ( isset( $item_tax_rate['rate'] ) ) {
-                    $line->vat = $item_tax_rate['rate'];
-                } else {
-                    $line->vat = 0;
-                }
+                $line->vat = (float)($line_vat > 0 ? ($line_vat / $line_total) * 100 : 0);
+
                 $bambora_refund_lines[] = $line;
             }
 
@@ -969,7 +963,7 @@ function init_bambora_online_checkout() {
                 $shipping_orderline->quantity = 1;
                 $shipping_orderline->unit = __( 'pcs.', 'bambora-online-checkout' );
                 $shipping_orderline->totalpriceinclvat = abs( Bambora_Currency::convert_price_to_minorunits( ( $shipping_total + $shipping_tax ), $minorunits, $this->roundingmode ) );
-                $shipping_orderline->vat = 0;
+                $shipping_orderline->vat = (float)($shipping_tax > 0 ? ($shipping_tax / $shipping_total) * 100 : 0);
                 $bambora_refund_lines[] = $shipping_orderline;
                 $items_total += $shipping_total + $shipping_tax;
             }
@@ -1019,16 +1013,7 @@ function init_bambora_online_checkout() {
             $order_id = $post->ID;
             $order = wc_get_order( $order_id );
             if ( isset( $order ) ) {
-                $transaction_id = "";
-                if( $this->is_woocommerce_3() ) {
-                    $transaction_id = $order->get_transaction_id();
-                    // For backward compability
-                    if( strlen( $transaction_id ) === 0 ) {
-                        $transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
-                    }
-                } else {
-                    $transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
-                }
+                $transaction_id = $this->get_bambora_transaction_id($order);
 
                 if ( strlen( $transaction_id ) > 0 ) {
                     $html = '';
@@ -1212,8 +1197,7 @@ function init_bambora_online_checkout() {
         public function bambora_action() {
             if ( isset( $_GET['bambora_action'] ) ) {
                 $order = wc_get_order( $_GET['post'] );
-                $order_id = $this->is_woocommerce_3() ? $order->get_id() : $order->id;
-                $transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
+                $transaction_id = $this->get_bambora_transaction_id( $order );
                 $currency = $_GET['currency'];
                 $minorunits = Bambora_Currency::get_currency_minorunits( $currency );
                 $api_key = $this->get_api_key();
@@ -1253,6 +1237,23 @@ function init_bambora_online_checkout() {
                     wp_safe_redirect( $url );
                 }
             }
+        }
+
+        private function get_bambora_transaction_id($order)
+        {
+            $order_id = $this->is_woocommerce_3() ? $order->get_id() : $order->id;
+            $transaction_id = "";
+            if( $this->is_woocommerce_3() ) {
+                $transaction_id = $order->get_transaction_id();
+                // For backward compability
+                if( strlen( $transaction_id ) === 0 ) {
+                    $transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
+                }
+            } else {
+                $transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
+            }
+
+            return $transaction_id;
         }
 
         /**
