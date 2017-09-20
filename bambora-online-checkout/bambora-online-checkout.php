@@ -38,7 +38,7 @@ function init_bambora_online_checkout() {
     class Bambora_Online_Checkout extends WC_Payment_Gateway {
 
         const MODULE_VERSION = '3.0.3';
-        const PSP_REFERENCE = 'Transaction ID';
+        const PSP_REFERENCE = 'bambora_transaction_id';
 
         /**
          * Singleton instance
@@ -308,7 +308,7 @@ function init_bambora_online_checkout() {
                     $authorize_response = $api->authorize_subscription( $bambora_subscription_id, $amount, $order_currency, $renewal_order_id );
 
                     if($authorize_response['meta']['result']) {
-                        update_post_meta($renewal_order_id,'Transaction ID', $authorize_response['transactionid']);
+                        update_post_meta($renewal_order_id,'bambora_transaction_id', $authorize_response['transactionid']);
                         $renewal_order->payment_complete();
                     }else {
                         $orderNote = __('Subscription could not be authorized', 'woocommerce-gateway-epay-dk');
@@ -407,12 +407,12 @@ function init_bambora_online_checkout() {
             $order = wc_get_order( $order_id);
             $minorunits = Bambora_Currency::get_currency_minorunits( get_woocommerce_currency() );
 
-            $bambora_custommer = $this->create_bambora_custommer( $order );
+            $bambora_customer = $this->create_bambora_customer( $order );
             $bambora_order = $this->create_bambora_order( $order, $minorunits );
             $bambora_url = $this->create_bambora_url( $order );
 
             $request = new Bambora_Checkout_Request();
-            $request->customer = $bambora_custommer;
+            $request->customer = $bambora_customer;
             $request->instantcaptureamount = 'yes' === $this->instantcapture ? $bambora_order->total : 0;
             $request->language = str_replace( '_', '-', get_locale() );
             $request->order = $bambora_order;
@@ -434,20 +434,20 @@ function init_bambora_online_checkout() {
          * @param WC_Order $order
          * @return Bambora_Customer
          * */
-        private function create_bambora_custommer( $order ) {
-            $bambora_custommer = new Bambora_Customer();
+        private function create_bambora_customer( $order ) {
+            $bambora_customer = new Bambora_Customer();
             if($this->is_woocommerce_3())
             {
-                $bambora_custommer->email = $order->get_billing_email();
-                $bambora_custommer->phonenumber = $order->get_billing_phone();
-                $bambora_custommer->phonenumbercountrycode = $order->get_billing_country();
+                $bambora_customer->email = $order->get_billing_email();
+                $bambora_customer->phonenumber = $order->get_billing_phone();
+                $bambora_customer->phonenumbercountrycode = $order->get_billing_country();
             } else {
-                $bambora_custommer->email = $order->billing_email;
-                $bambora_custommer->phonenumber = $order->billing_phone;
-                $bambora_custommer->phonenumbercountrycode = $order->billing_country;
+                $bambora_customer->email = $order->billing_email;
+                $bambora_customer->phonenumber = $order->billing_phone;
+                $bambora_customer->phonenumbercountrycode = $order->billing_country;
             }
 
-            return $bambora_custommer;
+            return $bambora_customer;
         }
 
         /**
