@@ -3,7 +3,7 @@
  * Plugin Name: Bambora Online Checkout
  * Plugin URI: http://www.bambora.com
  * Description: A payment gateway for WooCommerce
- * Version: 3.0.3
+ * Version: 3.0.4
  * Author: Bambora
  * Author URI: http://www.bambora.com
  * Text Domain: Bambora
@@ -37,7 +37,7 @@ function init_bambora_online_checkout() {
      **/
     class Bambora_Online_Checkout extends WC_Payment_Gateway {
 
-        const MODULE_VERSION = '3.0.3';
+        const MODULE_VERSION = '3.0.4';
         const PSP_REFERENCE = 'Transaction ID';
 
         /**
@@ -297,27 +297,36 @@ function init_bambora_online_checkout() {
                     $parent_order = $subscription->order;
                     $parent_order_id = $this->is_woocommerce_3() ? $parent_order->get_id() : $parent_order->id;
                     $bambora_subscription_id = get_post_meta($parent_order_id, 'Subscription ID', true);
-                    $order_currency = $this->is_woocommerce_3() ? $renewal_order->get_currency() : $renewal_order->get_order_currency();
+                    if( strlen( $bambora_subscription_id ) > 0) {
+                        $order_currency = $this->is_woocommerce_3() ? $renewal_order->get_currency() : $renewal_order->get_order_currency();
+                        $minor_units = Bambora_Currency::get_currency_minorunits( $order_currency );
+                        $amount = Bambora_Currency::convert_price_to_minorunits( $amount_to_charge, $minor_units, $this->roundingmode );
 
-                    $minor_units = Bambora_Currency::get_currency_minorunits( $order_currency );
-                    $amount = Bambora_Currency::convert_price_to_minorunits( $amount_to_charge, $minor_units, $this->roundingmode );
+                        $renewal_order_id = $this->is_woocommerce_3() ? $renewal_order->get_id() : $renewal_order->id;
+                        $api_key = $this->get_api_key();
+                        $api = new Bambora_Api( $api_key );
+                        $authorize_response = $api->authorize_subscription( $bambora_subscription_id, $amount, $order_currency, $renewal_order_id );
 
-                    $renewal_order_id = $this->is_woocommerce_3() ? $renewal_order->get_id() : $renewal_order->id;
-                    $api_key = $this->get_api_key();
-                    $api = new Bambora_Api( $api_key );
-                    $authorize_response = $api->authorize_subscription( $bambora_subscription_id, $amount, $order_currency, $renewal_order_id );
+                        if($authorize_response['meta']['result']) {
+                            if( $this->is_woocommerce_3() ) {
+                                $renewal_order->set_transaction_id( $authorize_response['transactionid'] );
+                                $renewal_order->save();
+                            } else {
+                                update_post_meta($renewal_order_id, 'Transaction ID', $authorize_response['transactionid']);
+                            }
 
-                    if($authorize_response['meta']['result']) {
-                        update_post_meta($renewal_order_id,'Transaction ID', $authorize_response['transactionid']);
-                        $renewal_order->payment_complete();
+                            $renewal_order->payment_complete();
+                        }else {
+                            $orderNote = __('Subscription could not be authorized', 'woocommerce-gateway-epay-dk');
+                            $orderNote .= " - {$authorize_response['meta']['message']['merchant']}";
+                            $renewal_order->update_status('failed', $orderNote);
+                            $subscription->add_order_note($orderNote . ' ID: ' . $renewal_order_id);
+                        }
                     }else {
-                        $orderNote = __('Subscription could not be authorized', 'woocommerce-gateway-epay-dk');
-                        $orderNote .= " - {$authorize_response['meta']['message']['merchant']}";
-                        $renewal_order->update_status('failed', $orderNote);
-                        $subscription->add_order_note($orderNote . ' ID: ' . $renewal_order_id);
+                        $renewal_order->update_status('failed', __('No subscription found', 'woocommerce-gateway-epay-dk'));
                     }
-                }else {
-                    $renewal_order->update_status('failed', __('No subscription found', 'woocommerce-gateway-epay-dk'));
+                } else {
+                    $renewal_order->update_status('failed', __('Bambora Subscription id was not found', 'woocommerce-gateway-epay-dk'));
                 }
 
             }
@@ -407,12 +416,12 @@ function init_bambora_online_checkout() {
             $order = wc_get_order( $order_id);
             $minorunits = Bambora_Currency::get_currency_minorunits( get_woocommerce_currency() );
 
-            $bambora_custommer = $this->create_bambora_custommer( $order );
+            $bambora_customer = $this->create_bambora_customer( $order );
             $bambora_order = $this->create_bambora_order( $order, $minorunits );
             $bambora_url = $this->create_bambora_url( $order );
 
             $request = new Bambora_Checkout_Request();
-            $request->customer = $bambora_custommer;
+            $request->customer = $bambora_customer;
             $request->instantcaptureamount = 'yes' === $this->instantcapture ? $bambora_order->total : 0;
             $request->language = str_replace( '_', '-', get_locale() );
             $request->order = $bambora_order;
@@ -434,20 +443,20 @@ function init_bambora_online_checkout() {
          * @param WC_Order $order
          * @return Bambora_Customer
          * */
-        private function create_bambora_custommer( $order ) {
-            $bambora_custommer = new Bambora_Customer();
+        private function create_bambora_customer( $order ) {
+            $bambora_customer = new Bambora_Customer();
             if($this->is_woocommerce_3())
             {
-                $bambora_custommer->email = $order->get_billing_email();
-                $bambora_custommer->phonenumber = $order->get_billing_phone();
-                $bambora_custommer->phonenumbercountrycode = $order->get_billing_country();
+                $bambora_customer->email = $order->get_billing_email();
+                $bambora_customer->phonenumber = $order->get_billing_phone();
+                $bambora_customer->phonenumbercountrycode = $order->get_billing_country();
             } else {
-                $bambora_custommer->email = $order->billing_email;
-                $bambora_custommer->phonenumber = $order->billing_phone;
-                $bambora_custommer->phonenumbercountrycode = $order->billing_country;
+                $bambora_customer->email = $order->billing_email;
+                $bambora_customer->phonenumber = $order->billing_phone;
+                $bambora_customer->phonenumbercountrycode = $order->billing_country;
             }
 
-            return $bambora_custommer;
+            return $bambora_customer;
         }
 
         /**
@@ -549,32 +558,25 @@ function init_bambora_online_checkout() {
          */
         private function create_bambora_orderlines( $order, $minorunits ) {
             $bambora_orderlines = array();
-
-            $wc_tax = new WC_Tax();
-
             $items = $order->get_items();
             $line_number = 0;
             foreach ( $items as $item ) {
+
+                $itemTotal = $order->get_line_total( $item, false, true );
+                $itemTotalInclVat = $order->get_line_total( $item, true, true );
+                $itemVatAmount = $order->get_line_tax( $item );
+               
                 $line = new Bambora_Orderline();
                 $line->description = $item['name'];
                 $line->id = $item['product_id'];
                 $line->linenumber = ++$line_number;
                 $line->quantity = $item['qty'];
                 $line->text = $item['name'];
-                $line->totalprice = Bambora_Currency::convert_price_to_minorunits( $order->get_line_total( $item, false, true ), $minorunits, $this->roundingmode );
-                $line->totalpriceinclvat = Bambora_Currency::convert_price_to_minorunits( $order->get_line_total( $item, true, true ), $minorunits, $this->roundingmode );
-                $line->totalpricevatamount = Bambora_Currency::convert_price_to_minorunits( $order->get_line_tax( $item ), $minorunits, $this->roundingmode );
+                $line->totalprice = Bambora_Currency::convert_price_to_minorunits( $itemTotal, $minorunits, $this->roundingmode );
+                $line->totalpriceinclvat = Bambora_Currency::convert_price_to_minorunits( $itemTotalInclVat, $minorunits, $this->roundingmode );
+                $line->totalpricevatamount = Bambora_Currency::convert_price_to_minorunits( $itemVatAmount, $minorunits, $this->roundingmode );
                 $line->unit = __( 'pcs.', 'bambora-online-checkout' );
-
-                $product = $order->get_product_from_item( $item );
-                $item_tax_class = $product->get_tax_class();
-                $item_tax_rate_array = $wc_tax->get_rates( $item_tax_class );
-                $item_tax_rate = array_shift( $item_tax_rate_array );
-                if ( isset( $item_tax_rate['rate'] ) ) {
-                    $line->vat = $item_tax_rate['rate'];
-                } else {
-                    $line->vat = 0;
-                }
+                $line->vat = (float)($itemTotal > 0 ? ($itemVatAmount / $itemTotal) * 100 : 0);
 
                 $bambora_orderlines[] = $line;
             }
@@ -594,8 +596,8 @@ function init_bambora_online_checkout() {
                 $shipping_orderline->totalprice = Bambora_Currency::convert_price_to_minorunits( $shipping_total, $minorunits, $this->roundingmode );
                 $shipping_orderline->totalpriceinclvat = Bambora_Currency::convert_price_to_minorunits( ($shipping_total + $shipping_tax), $minorunits, $this->roundingmode );
                 $shipping_orderline->totalpricevatamount = Bambora_Currency::convert_price_to_minorunits( $shipping_tax, $minorunits, $this->roundingmode );
+                $shipping_orderline->vat = (float)($shipping_total > 0 ? ($shipping_tax / $shipping_total) * 100 : 0);
 
-                $shipping_orderline->vat = $shipping_orderline->totalpricevatamount > 0 ? ($shipping_orderline->totalpricevatamount / $shipping_orderline->totalprice) * 100 : 0;
                 $bambora_orderlines[] = $shipping_orderline;
             }
 
@@ -785,7 +787,13 @@ function init_bambora_online_checkout() {
             $message = '';
             try {
                 $woo_order_id = $params['wooorderid'];
-                $psp_reference = get_post_meta( $woo_order_id, $this::PSP_REFERENCE );
+                $psp_reference = "";
+                if($this->is_woocommerce_3()) {
+                    $psp_reference = $order->get_transaction_id();
+                } else {
+                    $psp_reference = get_post_meta( $woo_order_id, $this::PSP_REFERENCE );
+                }
+
                 if ( empty( $psp_reference ) ) {
                     // Payment completed!
                     $minorunits = $transaction['currency']['minorunits'];
@@ -825,7 +833,12 @@ function init_bambora_online_checkout() {
                     $card_number = $transaction['information']['primaryaccountnumbers'][0]['number'];
                     $card_type = $transaction['information']['paymenttypes'][0]['displayname'];
 
-                    update_post_meta( $woo_order_id, $this::PSP_REFERENCE, $transaction_id );
+                    if($this->is_woocommerce_3()) {
+                        $order->set_transaction_id( $transaction_id );
+                    } else {
+                        update_post_meta( $woo_order_id, $this::PSP_REFERENCE, $transaction_id );
+                    }
+
                     update_post_meta( $woo_order_id, 'Card no', $card_number );
                     update_post_meta( $woo_order_id, 'Card type', $card_type );
 
@@ -834,7 +847,9 @@ function init_bambora_online_checkout() {
                     if($this->woocommerce_subscription_plugin_is_active() && isset( $subscriptionId ))
                     {
                         WC_Subscriptions_Manager::activate_subscriptions_for_order($order);
+
                         update_post_meta($woo_order_id, 'Subscription ID', $subscriptionId);
+
                         $order->add_order_note( __( 'Subscription activated', 'bambora-online-checkout' ) );
                     }
 
@@ -844,6 +859,10 @@ function init_bambora_online_checkout() {
                 } else {
                     $message = 'Callback completed - Order was already Created';
                     $response_code = 200;
+                }
+
+                if($this->is_woocommerce_3()) {
+                    $order->save();
                 }
             }
             catch (Exception $e) {
@@ -998,106 +1017,120 @@ function init_bambora_online_checkout() {
         public function bambora_meta_box_payment() {
             global $post;
             $order_id = $post->ID;
-
-            $transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
-            if ( strlen( $transaction_id ) > 0 ) {
-                $html = '';
-                try {
-                    $api_key = $this->get_api_key();
-                    $api = new Bambora_Api( $api_key );
-
-                    $get_transaction = $api->get_transaction( $transaction_id );
-
-                    if ( ! isset( $get_transaction ) || ! $get_transaction['meta']['result'] ) {
-                        $error_message = isset( $get_transaction ) ? $get_transaction['meta']['message']['merchant'] : __( 'No connection to Bambora' );
-                        echo $html;
-                        echo $this->message_to_html( 'error', $error_message );
-                        return null;
+            $order = wc_get_order( $order_id );
+            if ( isset( $order ) ) {
+                $transaction_id = "";
+                if( $this->is_woocommerce_3() ) {
+                    $transaction_id = $order->get_transaction_id();
+                    // For backward compability
+                    if( strlen( $transaction_id ) === 0 ) {
+                        $transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
                     }
+                } else {
+                    $transaction_id = get_post_meta( $order_id, $this::PSP_REFERENCE, true );
+                }
 
-                    $transaction_info = $get_transaction['transaction'];
-                    $minorunits = $transaction_info['currency']['minorunits'];
-                    $total_authorized = Bambora_Currency::convert_price_from_minorunits( $transaction_info['total']['authorized'], $minorunits );
-                    $total_captured = Bambora_Currency::convert_price_from_minorunits( $transaction_info['total']['captured'], $minorunits );
-                    $available_for_capture = Bambora_Currency::convert_price_from_minorunits( $transaction_info['available']['capture'], $minorunits );
+                if ( strlen( $transaction_id ) > 0 ) {
+                    $html = '';
+                    try {
+                        $api_key = $this->get_api_key();
+                        $api = new Bambora_Api( $api_key );
 
-                    $total_credited = Bambora_Currency::convert_price_from_minorunits( $transaction_info['total']['credited'], $minorunits );
-                    $can_delete = $transaction_info['candelete'];
-                    $curency_code = $transaction_info['currency']['code'];
+                        $get_transaction = $api->get_transaction( $transaction_id );
 
-                    $html = '<div class="bambora_info">';
-                    $html .= '<div class="bambora_transactionid">';
-                    $html .= '<p>' . __( 'Transaction ID', 'bambora-online-checkout' ) . '</p>';
-                    $html .= '<p>' . $transaction_info['id'] . '</p>';
-                    $html .= '</div>';
-                    $html .= '<br />';
+                        if ( ! isset( $get_transaction ) || ! $get_transaction['meta']['result'] ) {
+                            $error_message = isset( $get_transaction ) ? $get_transaction['meta']['message']['merchant'] : __( 'No connection to Bambora' );
+                            echo $html;
+                            echo $this->message_to_html( 'error', $error_message );
+                            return null;
+                        }
 
-                    $html .= '<div class="bambora_info_overview">';
-                    $html .= '<p>' . __( 'Authorized:', 'bambora-online-checkout' ) . '</p>';
-                    $html .= '<p>' . $this->format_number( $total_authorized, $minorunits ) . ' ' . $curency_code . '</p>';
-                    $html .= '</div>';
+                        $transaction_info = $get_transaction['transaction'];
+                        $minorunits = $transaction_info['currency']['minorunits'];
+                        $total_authorized = Bambora_Currency::convert_price_from_minorunits( $transaction_info['total']['authorized'], $minorunits );
+                        $total_captured = Bambora_Currency::convert_price_from_minorunits( $transaction_info['total']['captured'], $minorunits );
+                        $available_for_capture = Bambora_Currency::convert_price_from_minorunits( $transaction_info['available']['capture'], $minorunits );
 
-                    $html .= '<div class="bambora_info_overview">';
-                    $html .= '<p>' . __( 'Captured:', 'bambora-online-checkout' ) . '</p>';
-                    $html .= '<p>' . $this->format_number( $total_captured, $minorunits ) . ' ' . $curency_code . '</p>';
-                    $html .= '</div>';
+                        $total_credited = Bambora_Currency::convert_price_from_minorunits( $transaction_info['total']['credited'], $minorunits );
+                        $can_delete = $transaction_info['candelete'];
+                        $curency_code = $transaction_info['currency']['code'];
 
-                    $html .= '<div class="bambora_info_overview">';
-                    $html .= '<p>' . __( 'Refunded:', 'bambora-online-checkout' ) . '</p>';
-                    $html .= '<p>' . $this->format_number( $total_credited, $minorunits ) . ' ' . $curency_code . '</p>';
-                    $html .= '</div>';
+                        $html = '<div class="bambora_info">';
+                        $html .= '<div class="bambora_transactionid">';
+                        $html .= '<p>' . __( 'Transaction ID', 'bambora-online-checkout' ) . '</p>';
+                        $html .= '<p>' . $transaction_info['id'] . '</p>';
+                        $html .= '</div>';
+                        $html .= '<br />';
 
-                    $html .= '</div>';
-                    $html .= '<br />';
+                        $html .= '<div class="bambora_info_overview">';
+                        $html .= '<p>' . __( 'Authorized:', 'bambora-online-checkout' ) . '</p>';
+                        $html .= '<p>' . $this->format_number( $total_authorized, $minorunits ) . ' ' . $curency_code . '</p>';
+                        $html .= '</div>';
 
-                    if ( 0 < $available_for_capture || true === $can_delete ) {
-                        $html .= '<div class="bambora_action_container">';
+                        $html .= '<div class="bambora_info_overview">';
+                        $html .= '<p>' . __( 'Captured:', 'bambora-online-checkout' ) . '</p>';
+                        $html .= '<p>' . $this->format_number( $total_captured, $minorunits ) . ' ' . $curency_code . '</p>';
+                        $html .= '</div>';
 
-                        if ( 0 < $available_for_capture ) {
-                            $html .= '<input type="hidden" id="bambora_currency" name="bambora_currency" value="' . $curency_code . '">';
-                            $html .= '<input type="hidden" id="bambora_capture_message" name="bambora_capture_message" value="' . __( 'Are you sure you want to capture the payment?', 'bambora-online-checkout' ) . '" />';
-                            $html .= '<div class="bambora_action">';
-                            $html .= '<p>' . $curency_code . '</p>';
-                            $html .= '<input type="text" value="' . $this->format_number( $available_for_capture, $minorunits, false ) . '"id="bambora_capture_amount" class="bambora_amount" name="bambora_amount" />';
-                            $html .= '<input id="bambora_capture_submit" class="button capture" name="bambora_capture" type="submit" value="' . __( 'Capture' ) . '" />';
+                        $html .= '<div class="bambora_info_overview">';
+                        $html .= '<p>' . __( 'Refunded:', 'bambora-online-checkout' ) . '</p>';
+                        $html .= '<p>' . $this->format_number( $total_credited, $minorunits ) . ' ' . $curency_code . '</p>';
+                        $html .= '</div>';
+
+                        $html .= '</div>';
+                        $html .= '<br />';
+
+                        if ( 0 < $available_for_capture || true === $can_delete ) {
+                            $html .= '<div class="bambora_action_container">';
+
+                            if ( 0 < $available_for_capture ) {
+                                $html .= '<input type="hidden" id="bambora_currency" name="bambora_currency" value="' . $curency_code . '">';
+                                $html .= '<input type="hidden" id="bambora_capture_message" name="bambora_capture_message" value="' . __( 'Are you sure you want to capture the payment?', 'bambora-online-checkout' ) . '" />';
+                                $html .= '<div class="bambora_action">';
+                                $html .= '<p>' . $curency_code . '</p>';
+                                $html .= '<input type="text" value="' . $this->format_number( $available_for_capture, $minorunits, false ) . '"id="bambora_capture_amount" class="bambora_amount" name="bambora_amount" />';
+                                $html .= '<input id="bambora_capture_submit" class="button capture" name="bambora_capture" type="submit" value="' . __( 'Capture' ) . '" />';
+                                $html .= '</div>';
+                                $html .= '<br />';
+                            }
+                            if ( true === $can_delete ) {
+                                $html .= '<input type="hidden" id="bambora_delete_message" name="bambora_delete_message" value="' . __( 'Are you sure you want to delete the payment?', 'bambora-online-checkout' ) . '" />';
+                                $html .= '<div class="bambora_action">';
+                                $html .= '<input id="bambora_delete_submit" class="button delete" name="bambora_delete" type="submit" value="' . __( 'Delete' ) . '" />';
+                                $html .= '</div>';
+                            }
                             $html .= '</div>';
+                            $warning_message = __( 'The amount you entered was in the wrong format.', 'bambora-online-checkout' );
+
+                            $html .= '<div id="bambora-format-error" class="bambora bambora_error"><strong>' . __( 'Warning' ) . ' </strong>' . $warning_message . '<br /><strong>' . __( 'Correct format is: 1234.56', 'bambora-online-checkout' ) . '</strong></div>';
                             $html .= '<br />';
                         }
-                        if ( true === $can_delete ) {
-                            $html .= '<input type="hidden" id="bambora_delete_message" name="bambora_delete_message" value="' . __( 'Are you sure you want to delete the payment?', 'bambora-online-checkout' ) . '" />';
-                            $html .= '<div class="bambora_action">';
-                            $html .= '<input id="bambora_delete_submit" class="button delete" name="bambora_delete" type="submit" value="' . __( 'Delete' ) . '" />';
-                            $html .= '</div>';
+
+                        $get_transaction_operation = $api->get_transaction_operations( $transaction_id );
+
+                        if ( ! isset( $get_transaction_operation ) || ! $get_transaction_operation['meta']['result'] ) {
+                            $error_message = __( 'Get transactions' ). ' - ' . $get_transaction_operation['meta']['message']['merchant'];
+                            echo $html;
+                            echo $this->message_to_html( 'error', $error_message );
+                            return null;
                         }
-                        $html .= '</div>';
-                        $warning_message = __( 'The amount you entered was in the wrong format.', 'bambora-online-checkout' );
 
-                        $html .= '<div id="bambora-format-error" class="bambora bambora_error"><strong>' . __( 'Warning' ) . ' </strong>' . $warning_message . '<br /><strong>' . __( 'Correct format is: 1234.56', 'bambora-online-checkout' ) . '</strong></div>';
+                        $transaction_operations = $get_transaction_operation['transactionoperations'];
+
+                        $html .= $this->build_transaction_log_table( $transaction_operations, $minorunits );
                         $html .= '<br />';
+
+                        echo ent2ncr( $html );
                     }
-
-                    $get_transaction_operation = $api->get_transaction_operations( $transaction_id );
-
-                    if ( ! isset( $get_transaction_operation ) || ! $get_transaction_operation['meta']['result'] ) {
-                        $error_message = __( 'Get transactions' ). ' - ' . $get_transaction_operation['meta']['message']['merchant'];
-                        echo $html;
-                        echo $this->message_to_html( 'error', $error_message );
+                    catch (Exception $e) {
+                        echo $this->message_to_html( 'error', $e->getMessage() );
                         return null;
                     }
-
-                    $transaction_operations = $get_transaction_operation['transactionoperations'];
-
-                    $html .= $this->build_transaction_log_table( $transaction_operations, $minorunits );
-                    $html .= '<br />';
-
-                    echo ent2ncr( $html );
-                }
-                catch (Exception $e) {
-                    echo $this->message_to_html( 'error', $e->getMessage() );
-                    return null;
+                } else {
+                    esc_attr_e( 'No transaction was found', 'bambora-online-checkout' );
                 }
             } else {
-                esc_attr_e( 'No transaction was found', 'bambora-online-checkout' );
+                esc_attr_e( 'Could not load the order', 'bambora-online-checkout' );
             }
         }
 
