@@ -29,8 +29,8 @@ class Bambora_Helper {
      */
     public static function create_bambora_checkout_payment_html( $bambora_checkout_js_url, $window_state, $bambora_checkout_url, $cancel_url ) {
         $html = '<section>';
-        $html .= '<h3>' . __( 'Thank you for using Bambora Checkout.', 'woocommerce-gateway-bambora' ) . '</h3>';
-        $html .= '<p>' . __( 'Please wait...', 'woocommerce-gateway-bambora' ) . '</p>';
+        $html .= '<h3>' . __( 'Thank you for using Bambora Checkout.', 'bambora-online-checkout' ) . '</h3>';
+        $html .= '<p>' . __( 'Please wait...', 'bambora-online-checkout' ) . '</p>';
         $html .= "<script type='text/javascript'>
                      (function (n, t, i, r, u, f, e) { n[u] = n[u] || function() {
                         (n[u].q = n[u].q || []).push(arguments)}; f = t.createElement(i);

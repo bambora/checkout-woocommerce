@@ -6,7 +6,7 @@
  * Version: 3.0.5
  * Author: Bambora
  * Author URI: http://www.bambora.com
- * Text Domain: Bambora
+ * Text Domain: bambora-online-checkout
  *
  * @author Bambora
  * @package bambora_online_checkout
@@ -1355,5 +1355,5 @@ function init_bambora_online_checkout() {
     }
 
     $plugin_dir = basename( dirname( __FILE__ ) );
-    load_plugin_textdomain( 'bambora_online_checkout', false, $plugin_dir . '/languages/' );
+    load_plugin_textdomain( 'bambora-online-checkout', false, $plugin_dir . '/languages/' );
 }
