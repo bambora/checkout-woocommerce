@@ -1,4 +1,4 @@
 Bambora Checkout for WooCommerce 
 ========================
 
-Documentation: http://dev.bambora.com/carts.html#woo-commerce
+Documentation: https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce
