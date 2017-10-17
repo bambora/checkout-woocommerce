@@ -73,7 +73,7 @@ function init_bambora_online_checkout() {
             $this->id = 'bambora';
             $this->method_title = 'Bambora Online Checkout';
             $this->icon = WP_PLUGIN_URL . '/' . plugin_basename( dirname( __FILE__ ) ) . '/bambora-logo.svg';
-            $this->has_fields = true;
+            $this->has_fields = false;
 
             $this->supports = array(
                 'products',
@@ -367,7 +367,7 @@ function init_bambora_online_checkout() {
             $renewal_order_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $renewal_order->get_id() : $renewal_order->id;
 
             // Remove the Bambora Online Checkout subscription id copyid from the subscription
-            delete_post_meta($renewal_order_id, Bambora_Online_Checkout_Helper::BAMBORA_CHECKOUT_SUBSCRIPTION_ID );
+            delete_post_meta($renewal_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID );
 
             if ( is_wp_error( $result ) ) {
                 $message = sprintf( __( 'Bambora Online Checkout Subscription could not be authorized for renewal order # %s - %s', 'bambora-online-checkout' ), $renewal_order_id, $result->get_error_message( 'bambora_online_checkout_error' ) );
@@ -387,7 +387,7 @@ function init_bambora_online_checkout() {
          */
         public function process_subscription_payment($amount, $renewal_order, $subscription) {
             try {
-                $bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_subscription_id( $subscription );
+                $bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_subscription_id( $subscription );
                 if( strlen( $bambora_subscription_id ) === 0) {
                     return new WP_Error( 'bambora_online_checkout_error', __( 'Bambora Online Checkout Subscription id was not found', 'bambora-online-checkout' ) );
                 }
@@ -444,7 +444,7 @@ function init_bambora_online_checkout() {
         protected function process_subscription_cancellation( $subscription ) {
             try {
                 if( Bambora_Online_Checkout_Helper::order_is_subscription( $subscription ) ) {
-                    $bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_subscription_id( $subscription );
+                    $bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_subscription_id( $subscription );
                     if( strlen( $bambora_subscription_id ) === 0) {
                         $orderNote = __( 'Bambora Online Checkout Subscription ID was not found', 'bambora-online-checkout' );
                         return new WP_Error( 'bambora_online_checkout_error', $orderNote );
@@ -657,7 +657,7 @@ function init_bambora_online_checkout() {
             $bambora_url->decline = Bambora_Online_Checkout_Helper::get_decline_url( $order );
             $bambora_url->callbacks = array();
             $callback = new Bambora_Online_Checkout_Callback();
-            $callback->url = apply_filters( 'bambora_online_checkout_callback_url', Bambora_Online_Checkout_Helper::get_bambora_checkout_callback_url( $order_id ) );
+            $callback->url = apply_filters( 'bambora_online_checkout_callback_url', Bambora_Online_Checkout_Helper::get_bambora_online_checkout_callback_url( $order_id ) );
 
             $bambora_url->callbacks[] = $callback;
             $bambora_url->immediateredirecttoaccept = 'yes' === $this->immediateredirecttoaccept ? 1 : 0;
@@ -811,7 +811,7 @@ function init_bambora_online_checkout() {
 
         protected function process_standard_payments( $order, $bambora_transaction ) {
             $action = '';
-            $old_transaction_id = Bambora_Online_Checkout_Helper::get_bambora_transaction_id( $order );
+            $old_transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
             if( empty( $old_transaction_id ) ) {
                 $this->add_surcharge_fee_to_order( $order, $bambora_transaction);
                 $order->add_order_note( sprintf( __( 'Bambora Online Checkout Payment completed with transaction id %s', 'bambora-online-checkout' ), $bambora_transaction->id ) );
@@ -834,7 +834,7 @@ function init_bambora_online_checkout() {
             $action = '';
             if( Bambora_Online_Checkout_Helper::order_is_subscription( $order ) ) {
                 // Do not cancel subscription if the callback is called more than once !
-                $old_bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_subscription_id( $order );
+                $old_bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_subscription_id( $order );
                 if( $bambora_subscription_id != $old_bambora_subscription_id ) {
                     $this->subscription_cancellation( $order, true );
                     $action = 'changed';
@@ -846,7 +846,7 @@ function init_bambora_online_checkout() {
                 }
             } else {
                 // Do not add surcharge if the callback is called more than once!
-                $old_transaction_id = Bambora_Online_Checkout_Helper::get_bambora_transaction_id( $order );
+                $old_transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
                 if( $bambora_transaction->id != $old_transaction_id ) {
                     $this->add_surcharge_fee_to_order( $order, $bambora_transaction);
                     $action = 'activated';
@@ -905,13 +905,13 @@ function init_bambora_online_checkout() {
             $bambora_subscription_id = wc_clean( $bambora_subscription_id );
             $order_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id;
             if( $is_subscription ) {
-                update_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
+                update_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
             } else {
                 // Also store it on the subscriptions being purchased in the order
                 $subscriptions = Bambora_Online_Checkout_Helper::get_subscriptions_for_order( $order_id );
                 foreach ( $subscriptions as $subscription ) {
                     $wc_subscription_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $subscription->get_id() : $subscription->id;
-                    update_post_meta( $wc_subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
+                    update_post_meta( $wc_subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
                     $subscription->add_order_note( sprintf( __( 'Bambora Online Checkout Subscription activated with subscription id: %s by order %s', 'bambora-online-checkout' ), $bambora_subscription_id, $order_id ) );
                 }
             }
@@ -941,7 +941,7 @@ function init_bambora_online_checkout() {
 
             $api_key = $this->get_api_key();
             $api = new Bambora_Online_Checkout_Api( $api_key );
-            $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_transaction_id( $order );
+            $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
             $credit = $api->credit( $transaction_id, $amount, $currency, $bambora_refund_lines );
 
             if ( ! isset( $credit ) || ! $credit->meta->result ) {
@@ -1059,7 +1059,7 @@ function init_bambora_online_checkout() {
             $order_id = $post->ID;
             $order = wc_get_order( $order_id );
             if ( isset( $order ) ) {
-                $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_transaction_id( $order );
+                $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
 
                 if ( strlen( $transaction_id ) > 0 ) {
                     $html = '';
@@ -1235,7 +1235,7 @@ function init_bambora_online_checkout() {
         public function bambora_action() {
             if ( isset( $_GET['bambora_action'] ) ) {
                 $order = wc_get_order( $_GET['post'] );
-                $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_transaction_id( $order );
+                $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
                 $currency = $_GET['currency'];
                 $minorunits = Bambora_Online_Checkout_Currency::get_currency_minorunits( $currency );
                 $api_key = $this->get_api_key();

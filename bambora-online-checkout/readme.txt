@@ -43,7 +43,7 @@ With Bambora Online Checkout for WooCommerce, you are able to integrate the Bamb
 
 10. Click **Save Changes** when done and you are ready to use Bambora Online Checkout
 
-<a href="http://dev.bambora.com/shopping-carts/guides/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
+<a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
 

@@ -18,9 +18,9 @@
  */
 class Bambora_Online_Checkout_Helper {
 
-    const BAMBORA_CHECKOUT_TRANSACTION_ID_LEGACY = 'Transaction ID';
-    const BAMBORA_CHECKOUT_SUBSCRIPTION_ID = 'bambora_checkout_subscription_id';
-    const BAMBORA_CHECKOUT_SUBSCRIPTION_ID_LEGACY = 'Subscription ID';
+    const BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY = 'Transaction ID';
+    const BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID = 'bambora_online_checkout_subscription_id';
+    const BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY = 'Subscription ID';
 
     /**
      * Create Bambora Online Checkout payment HTML
@@ -90,7 +90,7 @@ class Bambora_Online_Checkout_Helper {
 
     /**
      * Create the admin debug section
-     * 
+     *
      * @return string
      */
     public static function create_admin_debug_section() {
@@ -98,7 +98,7 @@ class Bambora_Online_Checkout_Helper {
         $html = '<h3 class="wc-settings-sub-title">Debug</h3>';
         $html .= sprintf( '<a id="boc-admin-documentation" class="button button-primary" href="%s" target="_blank">Module documentation</a>', $documentation_link );
         $html .= sprintf( '<a if="boc-admin-log" class="button" href="%s" target="_blank">View debug logs</a>', Bambora_Online_Checkout::get_instance()->get_boc_logger()->get_admin_link() );
-        
+
         return $html;
     }
 
@@ -131,7 +131,7 @@ class Bambora_Online_Checkout_Helper {
      * @return bool
      */
     public static function order_contains_switch( $order ) {
-        if (function_exists('wcs_order_contains_switch')) {
+        if (function_exists( 'wcs_order_contains_switch' )) {
             return wcs_order_contains_switch( $order );
         }
         return false;
@@ -161,8 +161,6 @@ class Bambora_Online_Checkout_Helper {
             return wcs_get_subscriptions_for_order( $order_id, array( 'order_type' => 'any' ) );
         }
         return array();
-
-
     }
 
     /**
@@ -199,7 +197,7 @@ class Bambora_Online_Checkout_Helper {
      * @return boolean
      */
     public static function is_woocommerce_3() {
-        return version_compare(WC()->version, '3.0', '>');
+        return version_compare( WC()->version, '3.0', '>' );
     }
 
     /**
@@ -263,7 +261,7 @@ class Bambora_Online_Checkout_Helper {
      *
      * @param WC_Order $order
      */
-    public static function get_bambora_checkout_callback_url( $order_id ) {
+    public static function get_bambora_online_checkout_callback_url( $order_id ) {
         $args = array( 'wc-api' => 'Bambora_Online_Checkout', 'wcorderid' => $order_id);
         return add_query_arg( $args , site_url( '/' ) );
     }
@@ -358,23 +356,23 @@ class Bambora_Online_Checkout_Helper {
     }
 
     /**
-     * Get the Bambora Subscription id from the order
+     * Get the Bambora Online Checkout Subscription id from the order
      *
      * @param WC_Subscription $subscription
      */
-    public static function get_bambora_subscription_id( $subscription ) {
+    public static function get_bambora_online_checkout_subscription_id( $subscription ) {
 
         $subscription_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $subscription->get_id() : $subscription->id;
-        $bambora_subscription_id = get_post_meta($subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_CHECKOUT_SUBSCRIPTION_ID, true );
+        $bambora_subscription_id = get_post_meta( $subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, true );
 
         //For Legacy
         if( empty( $bambora_subscription_id ) ) {
             $parent_order_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $subscription->get_parent_id() : $subscription->parent_id;
-            $bambora_subscription_id = get_post_meta($parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_CHECKOUT_SUBSCRIPTION_ID_LEGACY, true);
+            $bambora_subscription_id = get_post_meta( $parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY, true);
             if( !empty( $bambora_subscription_id ) ) {
                 //Transform Legacy to new standards
-                update_post_meta( $subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
-                delete_post_meta( $parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_CHECKOUT_SUBSCRIPTION_ID_LEGACY );
+                update_post_meta( $subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
+                delete_post_meta( $parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY );
             }
         }
 
@@ -382,19 +380,19 @@ class Bambora_Online_Checkout_Helper {
     }
 
     /**
-     * get the Bambora Transaction id from the order
+     * get the Bambora Online Checkout Transaction id from the order
      *
      * @param WC_Order $order
      */
-    public static function get_bambora_transaction_id($order) {
+    public static function get_bambora_online_checkout_transaction_id($order) {
         $transaction_id = $order->get_transaction_id();
         //For Legacy
         if( empty( $transaction_id ) ) {
             $order_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id;
-            $transaction_id = get_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_CHECKOUT_TRANSACTION_ID_LEGACY, true );
+            $transaction_id = get_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY, true );
             if( !empty( $transaction_id ) ) {
                 //Transform Legacy to new standards
-                delete_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_CHECKOUT_TRANSACTION_ID_LEGACY );
+                delete_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY );
                 $order->set_transaction_id( $transaction_id );
                 $order->save();
             }
