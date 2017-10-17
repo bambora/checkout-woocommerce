@@ -8,7 +8,7 @@
  * All use of the payment modules happens at your own risk. We offer a free test account that you can use to test the module.
  *
  * @author    Bambora Online
- * @copyright Bambora Online (http://bambora.com)
+ * @copyright Bambora Online (https://bambora.com)
  * @license   Bambora Online
  *
  */
@@ -17,13 +17,14 @@ define( 'BAMBORA_ENDPOINT_TRANSACTION', 'https://transaction-v1.api-eu.bambora.c
 define( 'BAMBORA_ENDPOINT_MERCHANT', 'https://merchant-v1.api-eu.bambora.com' );
 define( 'BAMBORA_ENDPOINT_DATA', 'https://data-v1.api-eu.bambora.com' );
 define( 'BAMBORA_ENDPOINT_SUBSCRIPTION', 'https://subscription-v1.api-eu.bambora.com' );
-define( 'BAMBORA_ENDPOINT_CHECKOUT', 'https://api.v1.checkout.bambora.com' );
+define( 'BAMBORA_ENDPOINT_CHECKOUT', 'https://v1.checkout.bambora.com');
+define( 'BAMBORA_ENDPOINT_CHECKOUT_API', 'https://api.v1.checkout.bambora.com' );
 define( 'BAMBORA_CHECKOUT_ASSETS', 'https://v1.checkout.bambora.com/Assets' );
 
 /**
- * Bambora Endpoints
+ * Bambora Online Checkout Endpoints
  */
-class Bambora_Endpoints {
+class Bambora_Online_Checkout_Endpoints {
 
     /**
      * Get Transaction Endpoint
@@ -68,6 +69,15 @@ class Bambora_Endpoints {
      */
     public static function get_checkout_endpoint() {
         return constant( 'BAMBORA_ENDPOINT_CHECKOUT' );
+    }
+
+    /**
+     * Get Checkout Endpoint
+     *
+     * @return mixed
+     */
+    public static function get_checkout_api_endpoint() {
+        return constant( 'BAMBORA_ENDPOINT_CHECKOUT_API' );
     }
 
     /**

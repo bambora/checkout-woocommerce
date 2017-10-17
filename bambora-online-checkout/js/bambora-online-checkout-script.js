@@ -7,7 +7,7 @@
  * All use of the payment modules happens at your own risk. We offer a free test account that you can use to test the module.
  *
  * @author    Bambora Online
- * @copyright Bambora Online (http://bambora.com)
+ * @copyright Bambora Online (https://bambora.com)
  * @license   Bambora Online
  *
  */

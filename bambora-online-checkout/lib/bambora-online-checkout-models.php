@@ -8,15 +8,15 @@
  * All use of the payment modules happens at your own risk. We offer a free test account that you can use to test the module.
  *
  * @author    Bambora Online
- * @copyright Bambora Online (http://bambora.com)
+ * @copyright Bambora Online (https://bambora.com)
  * @license   Bambora Online
  *
  */
 
 /**
- * Bambora Customer
+ * Bambora Online Checkout Customer
  */
-class Bambora_Customer {
+class Bambora_Online_Checkout_Customer {
     /** @var string */
     public $email;
     /** @var string */
@@ -26,19 +26,19 @@ class Bambora_Customer {
 }
 
 /**
- * Bambora Order
+ * Bambora Online Checkout Order
  */
-class Bambora_Order {
+class Bambora_Online_Checkout_Order {
 
-    /** @var Bambora_Address */
+    /** @var Bambora_Online_Checkout_Address */
     public $billingaddress;
     /** @var string */
     public $currency;
-    /** @var Bambora_Orderline[] */
+    /** @var Bambora_Online_Checkout_Orderline[] */
     public $lines;
     /** @var string */
     public $ordernumber;
-    /** @var Bambora_Address */
+    /** @var Bambora_Online_Checkout_Address */
     public $shippingaddress;
     /** @var long */
     public $total;
@@ -47,9 +47,9 @@ class Bambora_Order {
 }
 
 /**
- * Bambora Address
+ * Bambora Online Checkout Address
  */
-class Bambora_Address {
+class Bambora_Online_Checkout_Address {
     /** @var string */
     public $att;
     /** @var string */
@@ -67,9 +67,9 @@ class Bambora_Address {
 }
 
 /**
- * Bambora Orderline
+ * Bambora Online Checkout Orderline
  */
-class Bambora_Orderline {
+class Bambora_Online_Checkout_Orderline {
     /** @var string */
     public $description;
     /** @var string */
@@ -93,21 +93,21 @@ class Bambora_Orderline {
 }
 
 /**
- * Bambora Url
+ * Bambora Online Checkout Url
  */
-class Bambora_Url {
+class Bambora_Online_Checkout_Url {
     /** @var string */
     public $accept;
-    /** @var  Bambora_Callback[]  */
+    /** @var  Bambora_Online_Checkout_Callback[]  */
     public $callbacks;
     /** @var string */
     public $decline;
 }
 
 /**
- * Bambora Callback
+ * Bambora Online Checkout Callback
  */
-class Bambora_Callback {
+class Bambora_Online_Checkout_Callback {
     /** @var string */
     public $url;
 }
@@ -115,9 +115,9 @@ class Bambora_Callback {
 
 
 /**
- * Bambora Checkout Request
+ * Bambora Online Checkout Request
  */
-class Bambora_Subscription {
+class Bambora_Online_Checkout_Subscription {
     /** @var string */
     public $action;
     /** @var string */
@@ -127,34 +127,22 @@ class Bambora_Subscription {
 }
 
 /**
- * Bambora Checkout Request
+ * Bambora Online Checkout Request
  */
-class Bambora_Checkout_Request {
+class Bambora_Online_Checkout_Request {
 
-    /** @var Bambora_Customer */
+    /** @var Bambora_Online_Checkout_Customer */
     public $customer;
     /** @var long */
     public $instantcaptureamount;
     /** @var string */
     public $language;
-    /** @var Bambora_Order */
+    /** @var Bambora_Online_Checkout_Order */
     public $order;
-    /** @var Bambora_Subscription */
+    /** @var Bambora_Online_Checkout_Subscription */
     public $subscription;
-    /** @var Bambora_Url */
+    /** @var Bambora_Online_Checkout_Url */
     public $url;
     /** @var int */
     public $paymentwindowid;
-}
-
-/**
- * Bambora Ui Message
- */
-class Bambora_Ui_Message {
-    /** @var string */
-    public $type;
-    /** @var string */
-    public $title;
-    /** @var string */
-    public $message;
 }

@@ -8,15 +8,15 @@
  * All use of the payment modules happens at your own risk. We offer a free test account that you can use to test the module.
  *
  * @author    Bambora Online
- * @copyright Bambora Online (http://bambora.com)
+ * @copyright Bambora Online (https://bambora.com)
  * @license   Bambora Online
  *
  */
 
 /**
- * Bambora Currency
+ * Bambora Online Checkout Currency
  */
-class Bambora_Currency {
+class Bambora_Online_Checkout_Currency {
 
     const ROUND_UP = "round_up";
     const ROUND_DOWN = "round_down";
@@ -25,7 +25,7 @@ class Bambora_Currency {
     /**
      * Converts an amount to the specified minor units format
      *
-     * @param float|int $amount
+     * @param mixed $amount
      * @param int $minorunits
      * @param string $rounding
      * @return int
@@ -36,10 +36,10 @@ class Bambora_Currency {
         }
 
         switch($rounding) {
-            case Bambora_Currency::ROUND_UP:
+            case Bambora_Online_Checkout_Currency::ROUND_UP:
                 $amount = ceil( $amount * pow( 10, $minorunits ));
                 break;
-            case Bambora_Currency::ROUND_DOWN:
+            case Bambora_Online_Checkout_Currency::ROUND_DOWN:
                 $amount = floor( $amount * pow( 10, $minorunits ));
                 break;
             default:
