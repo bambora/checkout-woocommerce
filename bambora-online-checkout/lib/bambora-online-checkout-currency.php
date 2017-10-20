@@ -51,22 +51,21 @@ class Bambora_Online_Checkout_Currency {
     }
 
     /**
-     * Converts an amount from the specified minor units format
+     * Convert an amount from minorunits
      *
-     * @param float|int $amount
-     * @param int       $minorunits
-     * @param string    $decimal_seperator
-     * @return string
+     * @param float $amount_in_minorunits
+     * @param int $minorunits
+     * @return float
      */
-    public static function convert_price_from_minorunits( $amount, $minorunits, $decimal_seperator = '.' ) {
-        if ( ! isset( $amount ) ) {
+    public static function convert_price_from_minorunits( $amount_in_minorunits, $minorunits ) {
+        if ( empty( $amount_in_minorunits ) || $amount_in_minorunits === 0 ) {
             return 0;
         }
 
-        return number_format( $amount / pow( 10, $minorunits ), $minorunits, $decimal_seperator, '' );
+        return (float) ( $amount_in_minorunits / pow( 10, $minorunits ) );
     }
 
-    
+
     /**
      * Get minor unit format for the specified currency
      *

@@ -97,7 +97,7 @@ class Bambora_Online_Checkout_Helper {
         $documentation_link = 'https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce';
         $html = '<h3 class="wc-settings-sub-title">Debug</h3>';
         $html .= sprintf( '<a id="boc-admin-documentation" class="button button-primary" href="%s" target="_blank">Module documentation</a>', $documentation_link );
-        $html .= sprintf( '<a if="boc-admin-log" class="button" href="%s" target="_blank">View debug logs</a>', Bambora_Online_Checkout::get_instance()->get_boc_logger()->get_admin_link() );
+        $html .= sprintf( '<a id="boc-admin-log" class="button" href="%s" target="_blank">View debug logs</a>', Bambora_Online_Checkout::get_instance()->get_boc_logger()->get_admin_link() );
 
         return $html;
     }
@@ -177,16 +177,17 @@ class Bambora_Online_Checkout_Helper {
     }
 
     /**
-     * Format date
+     * Format date time
      *
-     * @param string $raw_date
+     * @param string $raw_date_time
      * @return string
      */
-    public static function format_date( $raw_date ) {
-        $date = str_replace( 'T', ' ', substr( $raw_date, 0, 19 ) );
-        $date_stamp = strtotime( $date );
+    public static function format_date_time( $raw_date_time ) {
         $date_format = wc_date_format();
-        $formated_date = date( $date_format, $date_stamp );
+        $time_format = wc_time_format();
+        $date_time_format = "{$date_format} - {$time_format}";
+        $date_time = wc_string_to_datetime( $raw_date_time );
+        $formated_date = wc_format_datetime( $date_time, $date_time_format );
 
         return $formated_date;
     }
@@ -249,7 +250,7 @@ class Bambora_Online_Checkout_Helper {
             $type = str_replace( $first_letter, $first_letter_to_upper, $type );
         }
 
-        $html = '<div id="message" class="bambora_message bambora_' . $type . '">
+        $html = '<div id="message" class=" '.$type. ' bambora_message bambora_' . $type . '">
                         <strong>' . $type . '! </strong>'
                     . $message . '</div>';
 
@@ -311,7 +312,7 @@ class Bambora_Online_Checkout_Helper {
      * @param string $message
      * @return bool
      */
-    public static function validate_bambora_callback_params( $params, $md5_key, &$order, &$message ) {
+    public static function validate_bambora_online_checkout_callback_params( $params, $md5_key, &$order, &$message ) {
 
         if ( ! isset( $params ) || empty( $params ) ) {
             $message = "No GET parameteres supplied to the system";
