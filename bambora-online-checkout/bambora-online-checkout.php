@@ -295,16 +295,13 @@ function init_bambora_online_checkout() {
         /**
          * Set the WC Payment Gateway description for the checkout page
          */
-        public function set_bambora_description_for_checkout() {
+         public function set_bambora_description_for_checkout() {
             global $woocommerce;
             $description = '';
-            $cart = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? WC()->cart : $woocommerce->cart;
-            if ( !$cart ) {
-                return;
-            }
-
             $error_message = __( 'Could not load the payment types', 'bambora-online-checkout' );
-            if ( $cart->total && $cart->total > 0 ) {
+            $cart = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? WC()->cart : $woocommerce->cart;
+            $merchant_number = $this->merchant;
+            if ( $cart && $merchant_number ) {
                 $currency = get_woocommerce_currency();
                 if ( $currency ) {
                     $minorunits = Bambora_Online_Checkout_Currency::get_currency_minorunits( $currency );
@@ -341,10 +338,12 @@ function init_bambora_online_checkout() {
                 }
             } else {
                 $description = " - {$error_message}";
+                $this->_boc_log->add( $error_message );
             }
 
             $this->description .= $description;
         }
+
 
         /**
          * Get the bambora online checkout logger
