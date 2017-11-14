@@ -295,7 +295,7 @@ function init_bambora_online_checkout() {
         /**
          * Set the WC Payment Gateway description for the checkout page
          */
-         public function set_bambora_description_for_checkout() {
+        public function set_bambora_description_for_checkout() {
             global $woocommerce;
             $description = '';
             $error_message = __( 'Could not load the payment types', 'bambora-online-checkout' );
@@ -343,7 +343,6 @@ function init_bambora_online_checkout() {
 
             $this->description .= $description;
         }
-
 
         /**
          * Get the bambora online checkout logger
