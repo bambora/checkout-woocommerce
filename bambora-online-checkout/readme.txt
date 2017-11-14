@@ -47,6 +47,9 @@ With Bambora Online Checkout for WooCommerce, you are able to integrate the Bamb
 
 == Changelog ==
 
+= 4.0.1 =
+* Adds Swedish translations
+
 = 4.0.0 =
 * Refactoring of module to comply with WooCommerce 3.x and WooCommerce Subscription 2.x standards
 * Adds Change payment for subscriptions
