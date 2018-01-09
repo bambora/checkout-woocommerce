@@ -363,15 +363,13 @@ function init_bambora_online_checkout() {
             $result = $this->process_subscription_payment( $amount_to_charge, $renewal_order, $subscription );
             $renewal_order_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $renewal_order->get_id() : $renewal_order->id;
 
-            // Remove the Bambora Online Checkout subscription id copyid from the subscription
+            // Remove the Bambora Online Checkout subscription id copied from the subscription
             delete_post_meta($renewal_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID );
 
             if ( is_wp_error( $result ) ) {
                 $message = sprintf( __( 'Bambora Online Checkout Subscription could not be authorized for renewal order # %s - %s', 'bambora-online-checkout' ), $renewal_order_id, $result->get_error_message( 'bambora_online_checkout_error' ) );
-                $renewal_order->add_order_note( $message );
-                $subscription->add_order_note( $message );
+                $renewal_order->update_status( 'failed', $message );
                 $this->_boc_log->add( $message );
-                WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $renewal_order );
             }
         }
 
