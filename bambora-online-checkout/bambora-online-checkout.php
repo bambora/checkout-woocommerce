@@ -1086,13 +1086,19 @@ function init_bambora_online_checkout() {
                         $total_credited = Bambora_Online_Checkout_Currency::convert_price_from_minorunits( $transaction->total->credited, $minorunits );
                         $can_delete = $transaction->candelete;
                         $curency_code = $transaction->currency->code;
+                        $card_group_id = $transaction->information->paymenttypes[0]->groupid;
+                        $card_name = $transaction->information->paymenttypes[0]->displayname;
 
                         $html = '<div class="bambora_info">';
+                        $html .= '<img class="bambora_paymenttype_img" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $card_group_id . '.svg" alt="' . $card_name . '" title="' . $card_name . '" />';
                         $html .= '<div class="bambora_transactionid">';
                         $html .= '<p>' . __( 'Transaction ID', 'bambora-online-checkout' ) . '</p>';
                         $html .= '<p>' . $transaction->id . '</p>';
                         $html .= '</div>';
-                        $html .= '<br />';
+                        $html .= '<div class="bambora_paymenttype">';
+                        $html .= '<p>' . __( 'Payment Type', 'bambora-online-checkout' ) . '</p>';
+                        $html .= '<p>' . $card_name . '</p>';
+                        $html .= '</div>';
 
                         $html .= '<div class="bambora_info_overview">';
                         $html .= '<p>' . __( 'Authorized:', 'bambora-online-checkout' ) . '</p>';
@@ -1110,7 +1116,6 @@ function init_bambora_online_checkout() {
                         $html .= '</div>';
 
                         $html .= '</div>';
-                        $html .= '<br />';
 
                         if ( 0 < $available_for_capture || true === $can_delete ) {
                             $html .= '<div class="bambora_action_container">';
@@ -1135,7 +1140,7 @@ function init_bambora_online_checkout() {
                             $warning_message = __( 'The amount you entered was in the wrong format.', 'bambora-online-checkout' );
 
                             $html .= '<div id="bambora-format-error" class="bambora bambora_error"><strong>' . __( 'Warning', 'bambora-online-checkout' ) . ' </strong>' . $warning_message . '<br /><strong>' . __( 'Correct format is: 1234.56', 'bambora-online-checkout' ) . '</strong></div>';
-                            $html .= '<br />';
+
                         }
 
                         $transaction_operations_response = $api->get_transaction_operations( $transaction_id );
