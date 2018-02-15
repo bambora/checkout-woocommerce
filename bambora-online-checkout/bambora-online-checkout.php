@@ -3,7 +3,7 @@
  * Plugin Name: Bambora Online Checkout
  * Plugin URI: https://www.bambora.com
  * Description: Bambora Online Checkout payment gateway for WooCommerce
- * Version: 4.0.3
+ * Version: 4.0.4
  * Author: Bambora
  * Author URI: https://www.bambora.com
  * Text Domain: bambora-online-checkout
@@ -26,7 +26,7 @@ function init_bambora_online_checkout() {
     }
 
     define( 'BOC_LIB', dirname( __FILE__ ) . '/lib/' );
-    define( 'BOC_VERSION', '4.0.3' );
+    define( 'BOC_VERSION', '4.0.4' );
 
     // Including Bambora files!
     include( BOC_LIB . 'bambora-online-checkout-api.php' );
@@ -145,7 +145,6 @@ function init_bambora_online_checkout() {
             add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wc_bambora_online_checkout_admin_styles_and_scripts' ) );
             add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_wc_bambora_online_checkout_front_styles' ) );
         }
-
 
         /**
          * Enqueue Admin Styles and Scripts
@@ -298,49 +297,51 @@ function init_bambora_online_checkout() {
         public function set_bambora_description_for_checkout() {
             global $woocommerce;
             $description = '';
-            $error_message = __( 'Could not load the payment types', 'bambora-online-checkout' );
             $cart = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? WC()->cart : $woocommerce->cart;
-            $merchant_number = $this->merchant;
-            if ( $cart && $merchant_number ) {
-                $currency = get_woocommerce_currency();
-                if ( $currency ) {
-                    $minorunits = Bambora_Online_Checkout_Currency::get_currency_minorunits( $currency );
-                    $amount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $cart->total, $minorunits, $this->roundingmode );
-                    $api_key = $this->get_api_key();
-                    $api = new Bambora_Online_Checkout_Api( $api_key );
-                    $get_payment_types_response = $api->get_payment_types( $currency, $amount );
-                    if( isset( $get_payment_types_response ) && $get_payment_types_response->meta->result ) {
-                        $payment_types = array();
-                        foreach ( $get_payment_types_response->paymentcollections as $payment ) {
-                            foreach ( $payment->paymentgroups as $card ) {
-                                $payment_types[] = $card->id;
+            if ( isset( $cart ) ) {
+                $error_message = __( 'Could not load the payment types', 'bambora-online-checkout' );
+                try{
+                    $currency = get_woocommerce_currency();
+                    if ( $currency ) {
+                        $minorunits = Bambora_Online_Checkout_Currency::get_currency_minorunits( $currency );
+                        $amount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $cart->total, $minorunits, $this->roundingmode );
+                        $api_key = $this->get_api_key();
+                        $api = new Bambora_Online_Checkout_Api( $api_key );
+                        $get_payment_types_response = $api->get_payment_types( $currency, $amount );
+                        if( isset( $get_payment_types_response ) && $get_payment_types_response->meta->result ) {
+                            $payment_types = array();
+                            foreach ( $get_payment_types_response->paymentcollections as $payment ) {
+                                foreach ( $payment->paymentgroups as $card ) {
+                                    $payment_types[] = $card->id;
+                                }
                             }
-                        }
-                        ksort( $payment_types );
+                            ksort( $payment_types );
 
-                        $payment_types_html = '<div class="bambora_payment_types">';
-                        foreach ( $payment_types as $id ) {
-                            $payment_types_html .= '<img class="bambora_payment_type" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $id . '.svg" />';
+                            $payment_types_html = '<div class="bambora_payment_types">';
+                            foreach ( $payment_types as $id ) {
+                                $payment_types_html .= '<img class="bambora_payment_type" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $id . '.svg" />';
+                            }
+                            $payment_types_html .= '</div>';
+                            $description = $payment_types_html;
+                        } else {
+                            $get_payment_types_response_error_enduser = isset( $get_payment_types_response ) ? $get_payment_types_response->meta->message->enduser : __( 'No connection to Bambora', 'bambora-online-checkout' );
+                            $get_payment_types_response_error_merchant = isset( $get_payment_types_response ) ? $get_payment_types_response->meta->message->merchant : __( 'No connection to Bambora', 'bambora-online-checkout' );
+
+                            $this->_boc_log->add( "{$error_message} - {$get_payment_types_response_error_merchant}" );
+                            $description =  " - {$error_message} - {$get_payment_types_response_error_enduser}";
                         }
-                        $payment_types_html .= '</div>';
-                        $description = $payment_types_html;
                     } else {
-                        $get_payment_types_response_error_enduser = isset( $get_payment_types_response ) ? $get_payment_types_response->meta->message->enduser : __( 'No connection to Bambora', 'bambora-online-checkout' );
-                        $get_payment_types_response_error_merchant = isset( $get_payment_types_response ) ? $get_payment_types_response->meta->message->merchant : __( 'No connection to Bambora', 'bambora-online-checkout' );
-
-                        $this->_boc_log->add( "{$error_message} - {$get_payment_types_response_error_merchant}" );
-                        $description =  " - {$error_message} - {$get_payment_types_response_error_enduser}";
+                        $message = " - {$error_message} - " . __( 'Could not load the currency', 'bambora-online-checkout' );
+                        $this->_boc_log->add( $message );
+                        $description = $message;
                     }
-                } else {
-                    $message = " - {$error_message} - " . __( 'Could not load the currency', 'bambora-online-checkout' );
-                    $this->_boc_log->add( $message );
-                    $description = $message;
                 }
-            } else {
-                $description = " - {$error_message}";
-                $this->_boc_log->add( $error_message );
+                catch( Exception $ex) {
+                    $description = " - {$error_message}";
+                    $exception_message = $ex->getMessage();
+                    $this->_boc_log->add( "Could not load the payment types - Reason: {$exception_message}"  );
+                }
             }
-
             $this->description .= $description;
         }
 
@@ -1159,7 +1160,8 @@ function init_bambora_online_checkout() {
                         $html .= '<br />';
 
                         echo ent2ncr( $html );
-                    } catch (Exception $e) {
+                    }
+                    catch (Exception $e) {
                         $message = $e->getMessage();
                         echo Bambora_Online_Checkout_Helper::message_to_html( 'error', $message );
                         $this->_boc_log->add( $message );
@@ -1296,14 +1298,14 @@ function init_bambora_online_checkout() {
 
     // Load the module into WordPress / WooCommerce
 
-    add_filter( 'woocommerce_payment_gateways', 'add_bambora_online_checkout_woocommerce' );
+    add_filter( 'woocommerce_payment_gateways', 'add_bambora_online_checkout' );
     Bambora_Online_Checkout::get_instance()->init_hooks();
     /**
      * Add the Bambora gateway to WooCommerce
      *
      * @param array $methods
      **/
-    function add_bambora_online_checkout_woocommerce( $methods ) {
+    function add_bambora_online_checkout( $methods ) {
         $methods[] = 'bambora_online_checkout';
         return $methods;
     }
