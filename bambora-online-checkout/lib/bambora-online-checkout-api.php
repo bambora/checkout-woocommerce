@@ -84,7 +84,7 @@ class Bambora_Online_Checkout_Api {
      * @return mixed
      */
     public function capture( $transaction_id, $amount, $currency ) {
-        $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . '/transactions/' . sprintf( '%.0F', $transaction_id ) . '/capture';
+        $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/capture";
 
         $data = array();
         $data['amount'] = $amount;
@@ -106,7 +106,7 @@ class Bambora_Online_Checkout_Api {
      * @return mixed
      */
     public function credit( $transaction_id, $amount, $currency, $credit_lines ) {
-        $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . '/transactions/' . sprintf( '%.0F', $transaction_id ) . '/credit';
+        $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/credit";
 
         $data = array();
         $data['amount'] = $amount;
@@ -126,7 +126,7 @@ class Bambora_Online_Checkout_Api {
      * @return mixed
      */
     public function delete( $transaction_id ) {
-        $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . '/transactions/' . sprintf( '%.0F', $transaction_id ) . '/delete';
+        $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/delete";
 
         $data = array();
         $json_data = wp_json_encode( $data );
@@ -142,7 +142,7 @@ class Bambora_Online_Checkout_Api {
      * @return mixed
      */
     public function get_transaction( $transaction_id ) {
-        $service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . '/transactions/' . sprintf( '%.0F', $transaction_id );
+        $service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/transactions/{$transaction_id}";
 
         $data = array();
         $json_data = wp_json_encode( $data );
@@ -158,7 +158,7 @@ class Bambora_Online_Checkout_Api {
      * @return mixed
      */
     public function get_transaction_operations( $transaction_id ) {
-        $service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . '/transactions/' . sprintf( '%.0F', $transaction_id ) . '/transactionoperations';
+        $service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/transactions/{$transaction_id}/transactionoperations";
 
         $data = array();
         $json_data = wp_json_encode( $data );
@@ -175,7 +175,7 @@ class Bambora_Online_Checkout_Api {
      * @return mixed
      */
     public function get_payment_types( $currency, $amount ) {
-        $service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . '/paymenttypes?currency=' . $currency . '&amount=' . $amount;
+        $service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/paymenttypes?currency={$currency}&amount={$amount}";
         $data = array();
 
         $json_data = wp_json_encode( $data );
