@@ -31,29 +31,29 @@ class Bambora_Online_Checkout_Helper {
      * @param string $cancel_url
      * @return string
      */
-    public static function create_bambora_online_checkout_payment_html( $bambora_checkout_js_url, $window_state, $bambora_checkout_url, $cancel_url ) {
+    public static function create_bambora_online_checkout_payment_html( $checkout_token, $window_state ) {
         $html = '<section>';
+        $html .= '<script src="https://static.bambora.com/checkout-sdk-web/latest/checkout-sdk-web.min.js"></script>';
         $html .= '<h3>' . __( 'Thank you for using Bambora Online Checkout.', 'bambora-online-checkout' ) . '</h3>';
         $html .= '<p>' . __( 'Please wait...', 'bambora-online-checkout' ) . '</p>';
         $html .= "<script type='text/javascript'>
-                     (function (n, t, i, r, u, f, e) { n[u] = n[u] || function() {
-                        (n[u].q = n[u].q || []).push(arguments)}; f = t.createElement(i);
-                        e = t.getElementsByTagName(i)[0]; f.async = 1; f.src = r; e.parentNode.insertBefore(f, e)
-                        })(window, document, 'script','{$bambora_checkout_js_url}', 'bam');
-
-                        var onClose = function(){
-                            window.location.href = '{$cancel_url}';
-                        };
-
-                        var options = {
-                            'windowstate': {$window_state},
-                            'onClose': onClose
-                        };
-
-                        bam('open', '{$bambora_checkout_url}', options);
+                    var checkoutToken = '{$checkout_token}';
+                    var windowState = {$window_state};
+                    if(windowState === 1) {
+                        new Bambora.RedirectCheckout(checkoutToken);
+                    } else {
+                        var checkout = new Bambora.ModalCheckout(null);
+                        checkout.on(Bambora.Event.Cancel, function(payload) {
+                            window.location.href = payload.declineUrl;
+                        });
+                        checkout.on(Bambora.Event.Close, function(payload) {
+                            window.location.href = payload.acceptUrl;
+                        })
+                        checkout.initialize(checkoutToken).then(()=> {
+                            checkout.show();
+                        });
+                    }
                 </script>";
-        $html .= '</section>';
-
         return $html;
     }
 

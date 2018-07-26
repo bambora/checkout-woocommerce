@@ -3,7 +3,7 @@
  * Plugin Name: Bambora Online Checkout
  * Plugin URI: https://www.bambora.com
  * Description: Bambora Online Checkout payment gateway for WooCommerce
- * Version: 4.0.5
+ * Version: 4.1.0
  * Author: Bambora
  * Author URI: https://www.bambora.com
  * Text Domain: bambora-online-checkout
@@ -26,7 +26,7 @@ function init_bambora_online_checkout() {
     }
 
     define( 'BOC_LIB', dirname( __FILE__ ) . '/lib/' );
-    define( 'BOC_VERSION', '4.0.5' );
+    define( 'BOC_VERSION', '4.1.0' );
 
     // Including Bambora files!
     include( BOC_LIB . 'bambora-online-checkout-api.php' );
@@ -509,31 +509,13 @@ function init_bambora_online_checkout() {
             $params = stripslashes_deep( $_GET );
             if( array_key_exists('checkout_token', $params) && strlen($params['checkout_token']) > 0 ) {
                 $checkout_token = $params['checkout_token'];
-                echo  $this->get_checkout_payment_window_html( $order_id, $checkout_token );
+                $html = Bambora_Online_Checkout_Helper::create_bambora_online_checkout_payment_html( $checkout_token, $this->windowstate );
+                echo $html;  
             } else {
                 $message = sprintf( __( 'Could not open payment window for order id %s - No checkout token provided', 'bambora-online-checkout' ), $order_id );
                 $this->_boc_log->add( $message );
                 wc_add_notice( $message , 'error' );
             }
-        }
-
-        /**
-         * Get Bambora payment window
-         *
-         * @param int $order_id
-         * @return string
-         * */
-        public function get_checkout_payment_window_html($order_id, $checkout_token ) {
-            $api_key = $this->get_api_key();
-            $api = new Bambora_Online_Checkout_Api( $api_key );
-            $order = wc_get_order($order_id);
-            $decline_url = Bambora_Online_Checkout_Helper::get_decline_url($order);
-
-            $checkout_payment_window_js = $api->get_checkout_payment_window_js_url();
-            $bambora_checkout_url = $api->get_checkout_payment_window_url() . '/' . $checkout_token;
-            $bambora_checkout_payment_html = Bambora_Online_Checkout_Helper::create_bambora_online_checkout_payment_html( $checkout_payment_window_js, $this->windowstate, $bambora_checkout_url, $decline_url );
-
-            return $bambora_checkout_payment_html;
         }
 
         /**
