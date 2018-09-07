@@ -1,0 +1,266 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Bambora Online Checkout\n"
+"POT-Creation-Date: 2018-09-07 09:14+0300\n"
+"PO-Revision-Date: 2018-09-07 10:09+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: nb_NO\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.1.1\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: bambora-online-checkout.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: bambora-online-checkout.php:302
+msgid "Could not load the payment types"
+msgstr "Kan ikke laste betalingsmåter"
+
+#: bambora-online-checkout.php:327 bambora-online-checkout.php:328
+#: bambora-online-checkout.php:487 bambora-online-checkout.php:931
+#: bambora-online-checkout.php:1056 bambora-online-checkout.php:1241
+#: bambora-online-checkout.php:1250
+msgid "No connection to Bambora"
+msgstr "Ingen forbindelse til Bambora"
+
+#: bambora-online-checkout.php:334
+msgid "Could not load the currency"
+msgstr "Kunne ikke laste inn valuta"
+
+#: bambora-online-checkout.php:371
+#, php-format
+msgid ""
+"Bambora Online Checkout Subscription could not be authorized for renewal "
+"order # %s - %s"
+msgstr ""
+"Bambora Online Checkout - Abonnement kunne ikke autoriseres for fornyelse, "
+"ordrenr. %s - %s"
+
+#: bambora-online-checkout.php:388
+msgid "Bambora Online Checkout Subscription id was not found"
+msgstr "Bambora Online Checkout - Abonnement-id ble ikke funnet"
+
+#: bambora-online-checkout.php:406
+#, php-format
+msgid ""
+"Bambora Online Checkout Subscription was authorized for renewal order %s "
+"with transaction id %s"
+msgstr ""
+"Bambora Online Checkout - Abonnement ble autorisert for fornyelse, ordre %s "
+"med transaksjons-id %s"
+
+#: bambora-online-checkout.php:428
+#, php-format
+msgid "Bambora Online Checkout Subscription could not be canceled - %s"
+msgstr "Bambora Online Checkout - Abonnement kunne ikke kanselleres - %s"
+
+#: bambora-online-checkout.php:445
+msgid "Bambora Online Checkout Subscription ID was not found"
+msgstr "Bambora Online Checkout - Abonnement-id ble ikke funnet"
+
+#: bambora-online-checkout.php:454
+#, php-format
+msgid ""
+"Subscription successfully Canceled. - Bambora Online Checkout Subscription "
+"Id: %s"
+msgstr ""
+"Abonnementet ble kansellert. Bambora Online Checkout - Abonnement-id: %s"
+
+#: bambora-online-checkout.php:456
+#, php-format
+msgid "Bambora Online Checkout Subscription Id: %s"
+msgstr "Bambora Online Checkout - Abonnement-id: %s"
+
+#: bambora-online-checkout.php:488
+msgid "Could not retrive the payment window. Reason:"
+msgstr "Kunne ikke hente betalingsvinduet. Årsak:"
+
+#: bambora-online-checkout.php:515
+#, php-format
+msgid ""
+"Could not open payment window for order id %s - No checkout token provided"
+msgstr ""
+"Kunne ikke åpne betalingsvindu for ordre-id %s - Ingen utsjekkings-token "
+"angitt"
+
+#: bambora-online-checkout.php:688 bambora-online-checkout.php:705
+#: bambora-online-checkout.php:971 bambora-online-checkout.php:993
+#: bambora-online-checkout.php:1009
+msgid "pcs."
+msgstr "stk."
+
+#: bambora-online-checkout.php:796
+#, php-format
+msgid "Bambora Online Checkout Payment completed with transaction id %s"
+msgstr "Bambora Online Checkout - Betaling fullført med transaksjons-id %s"
+
+#: bambora-online-checkout.php:820
+#, php-format
+msgid "Bambora Online Checkout Subscription changed from: %s to: %s"
+msgstr "Bambora Online Checkout - Abonnement endret fra: %s til: %s"
+
+#: bambora-online-checkout.php:832
+#, php-format
+msgid "Bambora Online Checkout Subscription activated with subscription id: %s"
+msgstr "Bambora Online Checkout - Abonnement aktivert med abonnement-id: %s"
+
+#: bambora-online-checkout.php:849
+msgid "Surcharge Fee"
+msgstr "Tilleggsavgift"
+
+#: bambora-online-checkout.php:894
+#, php-format
+msgid ""
+"Bambora Online Checkout Subscription activated with subscription id: %s by "
+"order %s"
+msgstr ""
+"Bambora Online Checkout - Abonnement aktivert med abonnement-id: %s av ordre "
+"%s"
+
+#: bambora-online-checkout.php:921
+msgid "Could not create refund invoice lines"
+msgstr "Kunne ikke opprette refunderte fakturalinjer"
+
+#: bambora-online-checkout.php:961
+msgid "Invalid refund amount for item"
+msgstr "Ugyldig tilbakebetalingsbeløp for produkt"
+
+#: bambora-online-checkout.php:984
+msgid "Invalid refund amount for shipping"
+msgstr "Ugyldig tilbakebetalingsbeløp for frakt"
+
+#: bambora-online-checkout.php:988
+msgid "shipping"
+msgstr "levering"
+
+#: bambora-online-checkout.php:990 bambora-online-checkout.php:991
+msgid "Shipping"
+msgstr "Levering"
+
+#: bambora-online-checkout.php:1004 bambora-online-checkout.php:1006
+#: bambora-online-checkout.php:1007
+msgid "Refund"
+msgstr "Refunder"
+
+#. Plugin Name of the plugin/theme
+#: bambora-online-checkout.php:1028
+msgid "Bambora Online Checkout"
+msgstr "Bambora Online Checkout"
+
+#: bambora-online-checkout.php:1057
+#, php-format
+msgid "Get transaction failed for order %s - %s"
+msgstr "Henting av transaksjon feilet for ordre %s - %s"
+
+#: bambora-online-checkout.php:1078
+msgid "Transaction ID"
+msgstr "Transaksjons-id"
+
+#: bambora-online-checkout.php:1082
+msgid "Payment Type"
+msgstr "Betalingsmåte"
+
+#: bambora-online-checkout.php:1087
+msgid "Authorized:"
+msgstr "Autorisert:"
+
+#: bambora-online-checkout.php:1092
+msgid "Captured:"
+msgstr "Belastet:"
+
+#: bambora-online-checkout.php:1097
+msgid "Refunded:"
+msgstr "Refundert:"
+
+#: bambora-online-checkout.php:1108
+msgid "Are you sure you want to capture the payment?"
+msgstr "Er du sikker på at du vil belaste betalingen?"
+
+#: bambora-online-checkout.php:1112
+msgid "Capture"
+msgstr "Belast"
+
+#: bambora-online-checkout.php:1117
+msgid "Are you sure you want to delete the payment?"
+msgstr "Er du sikker på at du vil slette betalingen?"
+
+#: bambora-online-checkout.php:1119
+msgid "Delete"
+msgstr "Slett"
+
+#: bambora-online-checkout.php:1123
+msgid "The amount you entered was in the wrong format."
+msgstr "Det angitte beløpet var i feil format."
+
+#: bambora-online-checkout.php:1125
+msgid "Warning"
+msgstr "Advarsel"
+
+#: bambora-online-checkout.php:1125
+msgid "Correct format is: 1234.56"
+msgstr "Riktig format er: 1234,56"
+
+#: bambora-online-checkout.php:1132
+#, php-format
+msgid "Get transaction operations failed - %s"
+msgstr "Henting av transaksjon feilet - %s"
+
+#: bambora-online-checkout.php:1153
+#, php-format
+msgid "No transaction was found for order %s"
+msgstr "Fant ingen transaksjon for ordre %s"
+
+#: bambora-online-checkout.php:1158
+#, php-format
+msgid "Could not load the order with order id %s"
+msgstr "Kunne ikke laste inn ordren med ordre %s"
+
+#: bambora-online-checkout.php:1172
+msgid "TRANSACTION HISTORY"
+msgstr "Transaksjonshistorikk"
+
+#: lib/bambora-online-checkout-helper.php:37
+msgid "Thank you for using Bambora Online Checkout."
+msgstr "Takk for at du bruker Bambora Online Checkout."
+
+#: lib/bambora-online-checkout-helper.php:38
+msgid "Please wait..."
+msgstr "Vennligst vent ..."
+
+#: lib/bambora-online-checkout-helper.php:227
+msgid "Authorized"
+msgstr "Autorisert"
+
+#: lib/bambora-online-checkout-helper.php:229
+msgid "Captured"
+msgstr "Belastet"
+
+#: lib/bambora-online-checkout-helper.php:231
+msgid "Refunded"
+msgstr "Refundert"
+
+#: lib/bambora-online-checkout-helper.php:233
+msgid "Deleted"
+msgstr "Slettet"
+
+#. Plugin URI of the plugin/theme
+#. Author URI of the plugin/theme
+msgid "https://www.bambora.com"
+msgstr "https://www.bambora.com"
+
+#. Description of the plugin/theme
+msgid "Bambora Online Checkout payment gateway for WooCommerce"
+msgstr "Bambora Online Checkout betalingsplatform for WooCommerce"
+
+#. Author of the plugin/theme
+msgid "Bambora"
+msgstr "Bambora"
