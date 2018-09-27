@@ -511,7 +511,7 @@ function init_bambora_online_checkout() {
             if( array_key_exists('checkout_token', $params) && strlen($params['checkout_token']) > 0 ) {
                 $checkout_token = $params['checkout_token'];
                 $html = Bambora_Online_Checkout_Helper::create_bambora_online_checkout_payment_html( $checkout_token, $this->windowstate );
-                echo $html;  
+                echo $html;
             } else {
                 $message = sprintf( __( 'Could not open payment window for order id %s - No checkout token provided', 'bambora-online-checkout' ), $order_id );
                 $this->_boc_log->add( $message );
@@ -580,8 +580,8 @@ function init_bambora_online_checkout() {
             $bambora_order = new Bambora_Online_Checkout_Order();
             $bambora_order->billingaddress = $this->create_bambora_address( $order );
             $bambora_order->currency = $currency;
-            $order_number = str_replace(  '#', '', $order->get_order_number() );
-            $bambora_order->ordernumber = ( (int) $order_number);
+            $order_number = $this->clean_order_number($order->get_order_number());
+            $bambora_order->ordernumber = ( $order_number);
             $bambora_order->shippingaddress = $this->create_bambora_address( $order );
             $order_total = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_total() : $order->order_total;
             $bambora_order->total = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $order_total, $minorunits, $this->roundingmode );
@@ -598,11 +598,21 @@ function init_bambora_online_checkout() {
         }
 
         /**
+         * Removes any special charactors from the order number
+         *
+         * @param string $order_number
+         * @return string
+         */
+        protected function clean_order_number($order_number) {
+            return preg_replace( '/[^a-z\d ]/i', "", $order_number );
+        }
+
+        /**
          * Create Bambora address
          *
          * @param WC_Order $order
          * @return Bambora_Online_Checkout_Address
-         * */
+         */
         protected function create_bambora_address( $order ) {
             $bambora_address = new Bambora_Online_Checkout_Address();
             $bambora_address->att = '';
