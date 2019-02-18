@@ -943,6 +943,8 @@ function init_bambora_online_checkout() {
                 echo Bambora_Online_Checkout_Helper::message_to_html( 'error', $message );
                 $this->_boc_log->add( $message );
                 return false;
+            } else {
+                do_action( 'bambora_online_checkout_after_refund', $order_id );
             }
 
             return true;
@@ -1241,6 +1243,7 @@ function init_bambora_online_checkout() {
                 $api_key = $this->get_api_key();
                 $api = new Bambora_Online_Checkout_Api( $api_key );
                 $success = true;
+                $order_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id;
                 try {
                     switch ( $_GET['bambora_action'] ) {
                         case 'capture':
@@ -1253,7 +1256,9 @@ function init_bambora_online_checkout() {
                                 echo Bambora_Online_Checkout_Helper::message_to_html( 'error', $message );
                                 $this->_boc_log->add( $message );
                                 $success = false;
-                            }
+                            } else {
+							    do_action( 'bambora_online_checkout_after_capture', $order_id );
+						    }
                             break;
                         case 'delete':
                             $delete_response = $api->delete( $transaction_id );
@@ -1262,7 +1267,9 @@ function init_bambora_online_checkout() {
                                 echo Bambora_Online_Checkout_Helper::message_to_html( 'error', $message );
                                 $this->_boc_log->add( $message );
                                 $success = false;
-                            }
+                            } else {
+							    do_action( 'bambora_online_checkout_after_delete', $order_id );
+						    }
                             break;
                     }
                 }
