@@ -2,10 +2,10 @@
 Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
-Tested up to: 4.9.8
-Stable tag: 4.2.0
-License: GPLv2
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tested up to: 5.0.3
+Stable tag: 4.2.1
+License: GPLv3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Integrates Bambora Online Checkout payment gateway into your WooCommerce installation.
 
@@ -19,11 +19,11 @@ With Bambora Online Checkout for WooCommerce, you are able to integrate the Bamb
 * Credit your payments directly from your WooCommerce order page.
 * Delete your payments directly from your WooCommerce order page.
 * Sign up, process, cancel, reactivate and change subscriptions
-* Supports WooCommerce 2.6+ and 3.0
+* Supports WooCommerce 2.6 and up.
 * Supports WooCommerce Subscription 2.x
 
 == Installation ==
-1. Go to your WordPress administration page and log in. Example url: http://www.yourshop.com/wp-admin
+1. Go to your WordPress administration page and log in. Example url: https://www.yourshop.com/wp-admin
 
 2. In the left menu click **Plugins** -> **Add new**.
 
@@ -46,6 +46,10 @@ With Bambora Online Checkout for WooCommerce, you are able to integrate the Bamb
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+= 4.2.1 =
+* Adds hooks for payment actions like capture, refund and delete
+* Code refactoring to comply with WordPress 5.x 
+
 = 4.2.0 =
 * Adds support for multiple subscription sign-up
 * Adds Norwegian Bokmaal translations
