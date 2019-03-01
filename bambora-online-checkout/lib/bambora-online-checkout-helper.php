@@ -186,20 +186,35 @@ class Bambora_Online_Checkout_Helper {
         $date_format = wc_date_format();
         $time_format = wc_time_format();
         $date_time_format = "{$date_format} - {$time_format}";
-        $date_time = wc_string_to_datetime( $raw_date_time );
-        $formated_date = wc_format_datetime( $date_time, $date_time_format );
+        $formated_date = "";
+        if ( self::is_woocommerce_3_1() ) {
+            $date_time = wc_string_to_datetime( $raw_date_time );
+            $formated_date = wc_format_datetime( $date_time, $date_time_format );
+        } else {
+            $formated_date = date( $date_time_format, strtotime($raw_date_time));
+        }
 
         return $formated_date;
     }
 
     /**
-     * Determines if the current WooCommerce version is 3.x.x
+     * Determines if the current WooCommerce version is 3.0 or higher
      *
      * @return boolean
      */
     public static function is_woocommerce_3() {
-        return version_compare( WC()->version, '3.0', '>' );
+        return version_compare( WC()->version, '3.0', '>=' );
     }
+
+    /**
+     * Determines if the current WooCommerce version is 3.1 or higher
+     *
+     * @return boolean
+     */
+    public static function is_woocommerce_3_1() {
+        return version_compare( WC()->version, '3.1', '>=' );
+    }
+
 
     /**
      * Format a number
