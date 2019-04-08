@@ -357,9 +357,8 @@ class Bambora_Online_Checkout_Helper {
         $var = '';
         if ( strlen( $md5_key ) > 0 ) {
             foreach ( $params as $key => $value ) {
-                if ( 'hash' !== $key ) {
-                    $var .= $value;
-                }
+                if ( 'hash' === $key ) break;
+                $var .= $value;
             }
             $genstamp = md5( $var . $md5_key );
             if ( ! hash_equals( $genstamp, $params['hash'] ) ) {
