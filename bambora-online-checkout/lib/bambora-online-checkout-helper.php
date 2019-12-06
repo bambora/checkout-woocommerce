@@ -21,6 +21,10 @@ class Bambora_Online_Checkout_Helper {
     const BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY = 'Transaction ID';
     const BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID = 'bambora_online_checkout_subscription_id';
     const BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY = 'Subscription ID';
+    const BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES = 'bambora_online_checkout_status_messages';
+    const BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST = 'bambora_online_checkout_status_messages_keep_for_post';
+    const ERROR = 'error';
+    const SUCCESS = 'success';
 
     /**
      * Create Bambora Online Checkout payment HTML
@@ -259,16 +263,15 @@ class Bambora_Online_Checkout_Helper {
      * @return string
      * */
     public static function message_to_html( $type, $message ) {
-        if ( !empty( $type ) ) {
-            $first_letter = substr( $type, 0, 1 );
-            $first_letter_to_upper = strtoupper( $first_letter );
-            $type = str_replace( $first_letter, $first_letter_to_upper, $type );
+
+        $class = '';
+        if($type === self::SUCCESS) {
+            $class = "notice-success";
+        } else {
+            $class = "notice-error";
         }
 
-        $html = '<div id="message" class=" '.$type. ' bambora_message bambora_' . $type . '">
-                        <strong>' . $type . '! </strong>'
-                    . $message . '</div>';
-
+        $html = '<div id="message" class="'.$class.' notice"><p><strong>'.ucfirst($type).'! </strong>'.$message.'</p></div>';
         return ent2ncr( $html );
     }
 
@@ -292,7 +295,7 @@ class Bambora_Online_Checkout_Helper {
             $acceptUrlRaw = $order->get_checkout_order_received_url();
             $acceptUrlTemp = str_replace( '&amp;', '&', $acceptUrlRaw );
             $acceptUrl = str_replace( '&#038', '&', $acceptUrlTemp );
-            
+
             return $acceptUrl;
         }
 
@@ -313,7 +316,7 @@ class Bambora_Online_Checkout_Helper {
             $declineUrlRaw = $order->get_cancel_order_url();
             $declineUrlTemp = str_replace( '&amp;', '&', $declineUrlRaw );
             $declineUrl = str_replace( '&#038', '&', $declineUrlTemp );
-            
+
             return $declineUrl;
         }
 
@@ -422,5 +425,44 @@ class Bambora_Online_Checkout_Helper {
         }
 
         return $transaction_id;
+    }
+
+    /**
+     * Build the list of notices to display on the administration
+     *
+     * @param string $type
+     * @param string $message
+     * @param bool $keep_post
+     */
+    public static function add_admin_notices($type, $message, $keep_post = false) {
+        $message = array( "type" => $type, "message" => $message);
+        $messages = get_option(self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, false);
+        if(!$messages) {
+            update_option(self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, array($message));
+        } else {
+            array_push($messages, $message);
+            update_option(self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, $messages);
+        }
+        update_option(self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST, $keep_post);
+    }
+
+    /**
+     * Echo the notices to the Administration
+     *
+     * @return void
+     */
+    public static function echo_admin_notices(){
+        $messages = get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, false );
+        if(!$messages) {
+            return;
+        }
+        foreach($messages as $message) {
+            echo Bambora_Online_Checkout_Helper::message_to_html( $message['type'], $message['message'] );
+        }
+        if(!get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST, false )) {
+            delete_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES );
+        } else {
+            delete_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST );
+        }
     }
 }
