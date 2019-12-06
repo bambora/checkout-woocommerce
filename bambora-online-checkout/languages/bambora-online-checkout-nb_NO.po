@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bambora Online Checkout\n"
-"POT-Creation-Date: 2018-09-07 09:14+0300\n"
-"PO-Revision-Date: 2018-09-07 10:09+0300\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"POT-Creation-Date: 2019-12-06 11:53+0000\n"
+"PO-Revision-Date: 2019-12-06 13:34+0000\n"
+"Last-Translator: admin <allan.wamming.lie@bambora.com>\n"
+"Language-Team: Norwegian (Bokmål)\n"
 "Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.1.1\n"
+"X-Generator: Loco https://localise.biz/\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
@@ -20,23 +20,30 @@ msgstr ""
 "_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
+"Report-Msgid-Bugs-To: \n"
+"X-Loco-Version: 2.3.1; wp-5.3"
 
-#: bambora-online-checkout.php:302
+#: bambora-online-checkout.php:320
+#, php-format
+msgid "The Capture action was a success for order %s"
+msgstr "Opptakshandlingen var en suksess for ordre %s"
+
+#: bambora-online-checkout.php:345
 msgid "Could not load the payment types"
 msgstr "Kan ikke laste betalingsmåter"
 
-#: bambora-online-checkout.php:327 bambora-online-checkout.php:328
-#: bambora-online-checkout.php:487 bambora-online-checkout.php:931
-#: bambora-online-checkout.php:1056 bambora-online-checkout.php:1241
-#: bambora-online-checkout.php:1250
+#: bambora-online-checkout.php:370 bambora-online-checkout.php:371
+#: bambora-online-checkout.php:530 bambora-online-checkout.php:1093
+#: bambora-online-checkout.php:1326 bambora-online-checkout.php:1367
+#: bambora-online-checkout.php:1391
 msgid "No connection to Bambora"
 msgstr "Ingen forbindelse til Bambora"
 
-#: bambora-online-checkout.php:334
+#: bambora-online-checkout.php:377
 msgid "Could not load the currency"
 msgstr "Kunne ikke laste inn valuta"
 
-#: bambora-online-checkout.php:371
+#: bambora-online-checkout.php:414
 #, php-format
 msgid ""
 "Bambora Online Checkout Subscription could not be authorized for renewal "
@@ -45,11 +52,11 @@ msgstr ""
 "Bambora Online Checkout - Abonnement kunne ikke autoriseres for fornyelse, "
 "ordrenr. %s - %s"
 
-#: bambora-online-checkout.php:388
+#: bambora-online-checkout.php:431
 msgid "Bambora Online Checkout Subscription id was not found"
 msgstr "Bambora Online Checkout - Abonnement-id ble ikke funnet"
 
-#: bambora-online-checkout.php:406
+#: bambora-online-checkout.php:449
 #, php-format
 msgid ""
 "Bambora Online Checkout Subscription was authorized for renewal order %s "
@@ -58,16 +65,16 @@ msgstr ""
 "Bambora Online Checkout - Abonnement ble autorisert for fornyelse, ordre %s "
 "med transaksjons-id %s"
 
-#: bambora-online-checkout.php:428
+#: bambora-online-checkout.php:471
 #, php-format
 msgid "Bambora Online Checkout Subscription could not be canceled - %s"
 msgstr "Bambora Online Checkout - Abonnement kunne ikke kanselleres - %s"
 
-#: bambora-online-checkout.php:445
+#: bambora-online-checkout.php:488
 msgid "Bambora Online Checkout Subscription ID was not found"
 msgstr "Bambora Online Checkout - Abonnement-id ble ikke funnet"
 
-#: bambora-online-checkout.php:454
+#: bambora-online-checkout.php:497
 #, php-format
 msgid ""
 "Subscription successfully Canceled. - Bambora Online Checkout Subscription "
@@ -75,16 +82,16 @@ msgid ""
 msgstr ""
 "Abonnementet ble kansellert. Bambora Online Checkout - Abonnement-id: %s"
 
-#: bambora-online-checkout.php:456
+#: bambora-online-checkout.php:499
 #, php-format
 msgid "Bambora Online Checkout Subscription Id: %s"
 msgstr "Bambora Online Checkout - Abonnement-id: %s"
 
-#: bambora-online-checkout.php:488
+#: bambora-online-checkout.php:531
 msgid "Could not retrive the payment window. Reason:"
 msgstr "Kunne ikke hente betalingsvinduet. Årsak:"
 
-#: bambora-online-checkout.php:515
+#: bambora-online-checkout.php:558
 #, php-format
 msgid ""
 "Could not open payment window for order id %s - No checkout token provided"
@@ -92,32 +99,32 @@ msgstr ""
 "Kunne ikke åpne betalingsvindu for ordre-id %s - Ingen utsjekkings-token "
 "angitt"
 
-#: bambora-online-checkout.php:688 bambora-online-checkout.php:705
-#: bambora-online-checkout.php:971 bambora-online-checkout.php:993
-#: bambora-online-checkout.php:1009
+#: bambora-online-checkout.php:741 bambora-online-checkout.php:758
+#: bambora-online-checkout.php:1007 bambora-online-checkout.php:1029
+#: bambora-online-checkout.php:1045
 msgid "pcs."
 msgstr "stk."
 
-#: bambora-online-checkout.php:796
+#: bambora-online-checkout.php:849
 #, php-format
 msgid "Bambora Online Checkout Payment completed with transaction id %s"
 msgstr "Bambora Online Checkout - Betaling fullført med transaksjons-id %s"
 
-#: bambora-online-checkout.php:820
+#: bambora-online-checkout.php:873
 #, php-format
 msgid "Bambora Online Checkout Subscription changed from: %s to: %s"
 msgstr "Bambora Online Checkout - Abonnement endret fra: %s til: %s"
 
-#: bambora-online-checkout.php:832
+#: bambora-online-checkout.php:885
 #, php-format
 msgid "Bambora Online Checkout Subscription activated with subscription id: %s"
 msgstr "Bambora Online Checkout - Abonnement aktivert med abonnement-id: %s"
 
-#: bambora-online-checkout.php:849
+#: bambora-online-checkout.php:902
 msgid "Surcharge Fee"
 msgstr "Tilleggsavgift"
 
-#: bambora-online-checkout.php:894
+#: bambora-online-checkout.php:947
 #, php-format
 msgid ""
 "Bambora Online Checkout Subscription activated with subscription id: %s by "
@@ -126,140 +133,165 @@ msgstr ""
 "Bambora Online Checkout - Abonnement aktivert med abonnement-id: %s av ordre "
 "%s"
 
-#: bambora-online-checkout.php:921
-msgid "Could not create refund invoice lines"
-msgstr "Kunne ikke opprette refunderte fakturalinjer"
+#: bambora-online-checkout.php:969
+#, php-format
+msgid "The Refund action was a success for order %s"
+msgstr "Refusjonsaksjonen var en suksess for ordre %s"
 
-#: bambora-online-checkout.php:961
+#: bambora-online-checkout.php:997
 msgid "Invalid refund amount for item"
 msgstr "Ugyldig tilbakebetalingsbeløp for produkt"
 
-#: bambora-online-checkout.php:984
+#: bambora-online-checkout.php:1020
 msgid "Invalid refund amount for shipping"
 msgstr "Ugyldig tilbakebetalingsbeløp for frakt"
 
-#: bambora-online-checkout.php:988
+#: bambora-online-checkout.php:1024
 msgid "shipping"
 msgstr "levering"
 
-#: bambora-online-checkout.php:990 bambora-online-checkout.php:991
+#: bambora-online-checkout.php:1026 bambora-online-checkout.php:1027
 msgid "Shipping"
 msgstr "Levering"
 
-#: bambora-online-checkout.php:1004 bambora-online-checkout.php:1006
-#: bambora-online-checkout.php:1007
+#: bambora-online-checkout.php:1040 bambora-online-checkout.php:1042
+#: bambora-online-checkout.php:1043
 msgid "Refund"
 msgstr "Refunder"
 
 #. Plugin Name of the plugin/theme
-#: bambora-online-checkout.php:1028
+#: bambora-online-checkout.php:1066
 msgid "Bambora Online Checkout"
 msgstr "Bambora Online Checkout"
 
-#: bambora-online-checkout.php:1057
+#: bambora-online-checkout.php:1094
 #, php-format
 msgid "Get transaction failed for order %s - %s"
 msgstr "Henting av transaksjon feilet for ordre %s - %s"
 
-#: bambora-online-checkout.php:1078
+#: bambora-online-checkout.php:1115
 msgid "Transaction ID"
 msgstr "Transaksjons-id"
 
-#: bambora-online-checkout.php:1082
+#: bambora-online-checkout.php:1119
 msgid "Payment Type"
 msgstr "Betalingsmåte"
 
-#: bambora-online-checkout.php:1087
+#: bambora-online-checkout.php:1124
 msgid "Authorized:"
 msgstr "Autorisert:"
 
-#: bambora-online-checkout.php:1092
+#: bambora-online-checkout.php:1129
 msgid "Captured:"
 msgstr "Belastet:"
 
-#: bambora-online-checkout.php:1097
+#: bambora-online-checkout.php:1134
 msgid "Refunded:"
 msgstr "Refundert:"
 
-#: bambora-online-checkout.php:1108
+#: bambora-online-checkout.php:1145
 msgid "Are you sure you want to capture the payment?"
 msgstr "Er du sikker på at du vil belaste betalingen?"
 
-#: bambora-online-checkout.php:1112
+#: bambora-online-checkout.php:1149
 msgid "Capture"
 msgstr "Belast"
 
-#: bambora-online-checkout.php:1117
+#: bambora-online-checkout.php:1154
 msgid "Are you sure you want to delete the payment?"
 msgstr "Er du sikker på at du vil slette betalingen?"
 
-#: bambora-online-checkout.php:1119
+#: bambora-online-checkout.php:1156
 msgid "Delete"
 msgstr "Slett"
 
-#: bambora-online-checkout.php:1123
+#: bambora-online-checkout.php:1160
 msgid "The amount you entered was in the wrong format."
 msgstr "Det angitte beløpet var i feil format."
 
-#: bambora-online-checkout.php:1125
+#: bambora-online-checkout.php:1162
 msgid "Warning"
 msgstr "Advarsel"
 
-#: bambora-online-checkout.php:1125
+#: bambora-online-checkout.php:1162
 msgid "Correct format is: 1234.56"
 msgstr "Riktig format er: 1234,56"
 
-#: bambora-online-checkout.php:1132
+#: bambora-online-checkout.php:1169
 #, php-format
 msgid "Get transaction operations failed - %s"
 msgstr "Henting av transaksjon feilet - %s"
 
-#: bambora-online-checkout.php:1153
+#: bambora-online-checkout.php:1190
 #, php-format
 msgid "No transaction was found for order %s"
 msgstr "Fant ingen transaksjon for ordre %s"
 
-#: bambora-online-checkout.php:1158
+#: bambora-online-checkout.php:1195
 #, php-format
 msgid "Could not load the order with order id %s"
 msgstr "Kunne ikke laste inn ordren med ordre %s"
 
-#: bambora-online-checkout.php:1172
+#: bambora-online-checkout.php:1209
 msgid "TRANSACTION HISTORY"
 msgstr "Transaksjonshistorikk"
 
-#: lib/bambora-online-checkout-helper.php:37
+#: bambora-online-checkout.php:1293
+#, php-format
+msgid "The %s action was a success for order %s"
+msgstr "Handling (%s) fullført for ordre %s"
+
+#: bambora-online-checkout.php:1327
+#, php-format
+msgid "Capture action failed for order %s - %s"
+msgstr "Fangsthandling mislyktes for ordre %s - %s"
+
+#: bambora-online-checkout.php:1355
+msgid "Could not create refund invoice lines"
+msgstr "Kunne ikke opprette refunderte fakturalinjer"
+
+#: bambora-online-checkout.php:1356 bambora-online-checkout.php:1368
+#, php-format
+msgid "Refund action failed for order %s - %s"
+msgstr "Refusjonshandling mislyktes for ordre %s - %s"
+
+#: bambora-online-checkout.php:1392
+#, php-format
+msgid "Delete action failed - %s"
+msgstr "Slettingen mislyktes - %s"
+
+#: lib/bambora-online-checkout-helper.php:41
 msgid "Thank you for using Bambora Online Checkout."
 msgstr "Takk for at du bruker Bambora Online Checkout."
 
-#: lib/bambora-online-checkout-helper.php:38
+#: lib/bambora-online-checkout-helper.php:42
 msgid "Please wait..."
 msgstr "Vennligst vent ..."
 
-#: lib/bambora-online-checkout-helper.php:227
+#: lib/bambora-online-checkout-helper.php:246
 msgid "Authorized"
 msgstr "Autorisert"
 
-#: lib/bambora-online-checkout-helper.php:229
+#: lib/bambora-online-checkout-helper.php:248
 msgid "Captured"
 msgstr "Belastet"
 
-#: lib/bambora-online-checkout-helper.php:231
+#: lib/bambora-online-checkout-helper.php:250
 msgid "Refunded"
 msgstr "Refundert"
 
-#: lib/bambora-online-checkout-helper.php:233
+#: lib/bambora-online-checkout-helper.php:252
 msgid "Deleted"
 msgstr "Slettet"
+
+#. Description of the plugin/theme
+msgid "Bambora Online Checkout payment gateway for WooCommerce"
+msgstr "Bambora Online Checkout betalingsplatform for WooCommerce"
 
 #. Plugin URI of the plugin/theme
 #. Author URI of the plugin/theme
 msgid "https://www.bambora.com"
 msgstr "https://www.bambora.com"
-
-#. Description of the plugin/theme
-msgid "Bambora Online Checkout payment gateway for WooCommerce"
-msgstr "Bambora Online Checkout betalingsplatform for WooCommerce"
 
 #. Author of the plugin/theme
 msgid "Bambora"

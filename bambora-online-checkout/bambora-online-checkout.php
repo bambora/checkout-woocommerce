@@ -317,7 +317,7 @@ function init_bambora_online_checkout() {
                 $this->_boc_log->add( $message );
                 Bambora_Online_Checkout_Helper::add_admin_notices(Bambora_Online_Checkout_Helper::ERROR, $message);
             } else {
-                $message = __( "The Capture action was a success for order {$order_id} ", 'bambora-online-checkout' );
+                $message = sprintf( __( 'The Capture action was a success for order %s', 'bambora-online-checkout' ), $order_id );
                 Bambora_Online_Checkout_Helper::add_admin_notices(Bambora_Online_Checkout_Helper::SUCCESS, $message);
             }
         }
@@ -966,7 +966,7 @@ function init_bambora_online_checkout() {
             if ( is_wp_error( $refund_result ) ) {
                 return $refund_result;
             } else {
-                $message = __( "The Refund action was a success for order {$order_id}", 'bambora-online-checkout' );
+                $message = sprintf( __( 'The Refund action was a success for order %s', 'bambora-online-checkout' ), $order_id );
                 Bambora_Online_Checkout_Helper::add_admin_notices(Bambora_Online_Checkout_Helper::SUCCESS, $message);
             }
 
@@ -1091,7 +1091,7 @@ function init_bambora_online_checkout() {
 
                         if ( ! isset( $transaction_response ) || ! $transaction_response->meta->result ) {
                             $get_transaction_error = isset( $transaction_response ) ? $transaction_response->meta->message->merchant : __( 'No connection to Bambora', 'bambora-online-checkout' );
-                            $message = __( "Get transaction failed for order {$order_id} - {$get_transaction_error}", 'bambora-online-checkout' );
+                            $message = sprintf( __( 'Get transaction failed for order %s - %s', 'bambora-online-checkout' ), $order_id, $get_transaction_error );
                             echo Bambora_Online_Checkout_Helper::message_to_html( Bambora_Online_Checkout_Helper::ERROR, $message );
                             $this->_boc_log->add( $message );
                             return null;
@@ -1290,7 +1290,7 @@ function init_bambora_online_checkout() {
                     Bambora_Online_Checkout_Helper::add_admin_notices(Bambora_Online_Checkout_Helper::ERROR, $message);
                 } else {
                     global $post;
-                    $message = __( "The {$action} action was a success for order {$order_id }", 'bambora-online-checkout' );
+                    $message = sprintf( __( 'The %s action was a success for order %s', 'bambora-online-checkout' ), $action, $order_id );
                     Bambora_Online_Checkout_Helper::add_admin_notices(Bambora_Online_Checkout_Helper::SUCCESS, $message, true);
                     $url = admin_url( 'post.php?post=' . $post->ID . '&action=edit' );
                     wp_safe_redirect( $url );
@@ -1324,7 +1324,7 @@ function init_bambora_online_checkout() {
                 return true;
             } else {
                 $messageReason = isset( $capture_response ) ? $capture_response->meta->message->merchant : __( 'No connection to Bambora', 'bambora-online-checkout' );
-                $message = __( "Capture action failed for order {$order_id} - {$messageReason}", 'bambora-online-checkout' );
+                $message = sprintf( __( 'Capture action failed for order %s - %s', 'bambora-online-checkout' ), $order_id, $messageReason);
                 $this->_boc_log->add( $message );
                 return new WP_Error( 'bambora_online_checkout_error', $message);
             }
@@ -1353,7 +1353,7 @@ function init_bambora_online_checkout() {
             $bambora_refund_lines = array();
             if ( ! $this->create_bambora_refund_lines( $refunds[0], $bambora_refund_lines, $minorunits ) ) {
                 $messageReason = __( 'Could not create refund invoice lines', 'bambora-online-checkout' );
-                $message = __( "Refund action failed for order {$order_id} - {$messageReason}", 'bambora-online-checkout' );
+                $message = sprintf( __( 'Refund action failed for order %s - %s', 'bambora-online-checkout' ), $order_id, $messageReason );
                 return new WP_Error( 'bambora_online_checkout_error', $message);
             }
 
@@ -1365,7 +1365,7 @@ function init_bambora_online_checkout() {
                 return true;
             } else {
                 $messageReason = isset( $credit_response ) ? $credit_response->meta->message->merchant : __( 'No connection to Bambora', 'bambora-online-checkout' );
-                $message = __( "Refund action failed for order {$order_id} - {$messageReason}", 'bambora-online-checkout' );
+                $message = sprintf( __( 'Refund action failed for order %s - %s', 'bambora-online-checkout' ), $order_id, $messageReason );
                 $this->_boc_log->add( $message );
                 return new WP_Error( 'bambora_online_checkout_error', $message);
             }
@@ -1389,7 +1389,7 @@ function init_bambora_online_checkout() {
             }
             else {
                 $messageReason = isset( $delete_response ) ? $delete_response->meta->message->merchant : __( 'No connection to Bambora', 'bambora-online-checkout' );
-                $message = __( "Delete action failed - {$messageReason}", 'bambora-online-checkout' );
+                $message = sprintf( __( 'Delete action failed - %s', 'bambora-online-checkout' ), $messageReason );
                 $this->_boc_log->add( $message );
                 return new WP_Error( 'bambora_online_checkout_error', $message);
             }
