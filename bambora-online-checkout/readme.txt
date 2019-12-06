@@ -2,8 +2,8 @@
 Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
-Tested up to: 5.2.4
-Stable tag: 4.2.4
+Tested up to: 5.3.0
+Stable tag: 4.3.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -46,6 +46,13 @@ With Bambora Online Checkout for WooCommerce, you are able to integrate the Bamb
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+
+= 4.3.0 =
+* Adds Capture on order status changed to Completed
+* Adds Bulk capture on orders by order status Completed
+* Fix for no status messages in Administration
+* Refactoring of capture, refund and delete flows
+
 = 4.2.4 =
 * Adds fix for declineurl using encoded version of & 
 
