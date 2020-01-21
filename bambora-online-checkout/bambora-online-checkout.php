@@ -117,7 +117,6 @@ function init_bambora_online_checkout() {
             $this->accesstoken = array_key_exists( 'accesstoken', $this->settings ) ? $this->settings['accesstoken'] : '';
             $this->secrettoken = array_key_exists( 'secrettoken', $this->settings ) ? $this->settings['secrettoken'] : '';
             $this->paymentwindowid = array_key_exists( 'paymentwindowid', $this->settings ) ? $this->settings['paymentwindowid'] : 1;
-            $this->windowstate = array_key_exists( 'windowstate', $this->settings ) ? $this->settings['windowstate'] : 2;
             $this->instantcapture = array_key_exists( 'instantcapture', $this->settings ) ? $this->settings['instantcapture'] :  'no';
             $this->immediateredirecttoaccept = array_key_exists( 'immediateredirecttoaccept', $this->settings ) ? $this->settings['immediateredirecttoaccept'] :  'no';
             $this->addsurchargetoshipment = array_key_exists( 'addsurchargetoshipment', $this->settings ) ? $this->settings['addsurchargetoshipment'] :  'no';
@@ -132,7 +131,6 @@ function init_bambora_online_checkout() {
         public function init_hooks() {
             // Actions!
             add_action( 'woocommerce_api_' . strtolower( get_class() ), array( $this, 'bambora_online_checkout_callback' ) );
-            add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
 
             if( is_admin() ) {
                 add_action( 'add_meta_boxes', array( $this, 'bambora_online_checkout_meta_boxes' ) );
@@ -233,14 +231,6 @@ function init_bambora_online_checkout() {
                     'type' => 'text',
                     'description' => 'The ID of the payment window to use.',
                     'default' => '1'
-                ),
-                'windowstate' => array(
-                    'title' => 'Window state',
-                    'type' => 'select',
-                    'description' => 'Please select if you want the Payment window shown as an overlay or as full screen.',
-                    'options' => array( 2 => 'Overlay',1 => 'Full screen' ),
-                    'label' => 'Window state',
-                    'default' => 2
                 ),
                 'instantcapture' => array(
                     'title' => 'Instant capture',
@@ -539,28 +529,10 @@ function init_bambora_online_checkout() {
 
             return array(
                 'result' => 'success',
-                'redirect' => add_query_arg('checkout_token', $bambora_checkout_response->token, $order->get_checkout_payment_url( true )
-            ));
+                'redirect' => $bambora_checkout_response->url
+            );
         }
-
-        /**
-         * Receipt page
-         *
-         * @param int $order
-         **/
-        public function receipt_page( $order_id ) {
-            $params = stripslashes_deep( $_GET );
-            if( array_key_exists('checkout_token', $params) && strlen($params['checkout_token']) > 0 ) {
-                $checkout_token = $params['checkout_token'];
-                $html = Bambora_Online_Checkout_Helper::create_bambora_online_checkout_payment_html( $checkout_token, $this->windowstate );
-                echo $html;
-            } else {
-                $message = sprintf( __( 'Could not open payment window for order id %s - No checkout token provided', 'bambora-online-checkout' ), $order_id );
-                $this->_boc_log->add( $message );
-                wc_add_notice( $message , 'error' );
-            }
-        }
-
+        
         /**
          * Create Checkout Request
          *
