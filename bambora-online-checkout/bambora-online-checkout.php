@@ -532,7 +532,7 @@ function init_bambora_online_checkout() {
                 'redirect' => $bambora_checkout_response->url
             );
         }
-        
+
         /**
          * Create Checkout Request
          *
@@ -1112,6 +1112,7 @@ function init_bambora_online_checkout() {
                         if ( $available_for_capture > 0 || $can_delete === true ) {
                             $html .= '<div class="bambora_action_container">';
 
+
                             if ( 0 < $available_for_capture ) {
                                 $html .= '<input type="hidden" id="bambora_currency" name="bambora_currency" value="' . $curency_code . '">';
                                 $html .= '<input type="hidden" id="bambora_capture_message" name="bambora_capture_message" value="' . __( 'Are you sure you want to capture the payment?', 'bambora-online-checkout' ) . '" />';
@@ -1128,6 +1129,7 @@ function init_bambora_online_checkout() {
                                 $html .= '<input id="bambora_delete_submit" class="button delete" name="bambora_delete" type="submit" value="' . __( 'Delete', 'bambora-online-checkout' ) . '" />';
                                 $html .= '</div>';
                             }
+                            wp_nonce_field( 'bambora_process_payment_action', 'bambora_nonce' );
                             $html .= '</div>';
                             $warning_message = __( 'The amount you entered was in the wrong format.', 'bambora-online-checkout' );
 
@@ -1231,7 +1233,7 @@ function init_bambora_online_checkout() {
          * Bambora Online Checkout Actions
          */
         public function bambora_online_checkout_actions() {
-            if ( isset( $_GET['bambora_action'] ) ) {
+            if ( isset( $_GET['bambora_action'] ) && isset($_GET['bambora_nonce'] ) && wp_verify_nonce( $_GET['bambora_nonce'], 'bambora_process_payment_action' ) ) {
                 $params = $_GET;
                 $order_id = $params['post'];
                 $currency = $params['currency'];

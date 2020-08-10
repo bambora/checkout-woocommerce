@@ -40,8 +40,9 @@ jQuery(document).ready(function () {
             if (confirmResult === false) {
                 return false;
             }
-            var currency = jQuery( "#bambora_currency" ).val();
-            var params = "&bambora_action=capture&amount=" + amount + "&currency=" + currency;
+            var currency = jQuery("#bambora_currency").val();
+            var nonce = jQuery("#bambora_nonce").val();
+            var params = "&bambora_action=capture&amount=" + amount + "&currency=" + currency + "&bambora_nonce=" + nonce;
             var url = window.location.href + params;
 
             window.location.href = url;
@@ -55,8 +56,8 @@ jQuery(document).ready(function () {
             if (confirmResult === false) {
                 return false;
             }
-
-            var params = "&bambora_action=delete";
+            var nonce = jQuery("#bambora_nonce").val();
+            var params = "&bambora_action=delete&bambora_nonce=" + nonce;
             var url = window.location.href + params;
 
             window.location.href = url;
