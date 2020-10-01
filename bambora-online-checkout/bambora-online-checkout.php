@@ -1201,7 +1201,7 @@ function init_bambora_online_checkout() {
                 $html .= '<tr class="bambora_transaction_row_header">';
                 $html .= '<td>' . Bambora_Online_Checkout_Helper::format_date_time( $operation->createddate ) . '</td>';
 
-                if ( array_key_exists( 'ecis', $operation ) && is_array( $operation->ecis ) && count( $operation->ecis ) > 0 ) {
+                if ( isset( $operation->ecis ) && is_array( $operation->ecis ) && count( $operation->ecis ) > 0 ) {
                     $html .= '<td>ECI: ' . $operation->ecis[0]->value . '</td>';
                 } else {
                     $html .= '<td>ECI: -</td>';
@@ -1221,7 +1221,7 @@ function init_bambora_online_checkout() {
 
                 $html .= '</tr>';
 
-                if ( array_key_exists( 'transactionoperations', $operation ) && count( $operation->transactionoperations ) > 0 ) {
+                if ( isset( $operation->transactionoperations ) && count( $operation->transactionoperations ) > 0 ) {
                     $html .= $this->build_transaction_log_rows( $operation->transactionoperations, $minorunits );
                 }
             }
