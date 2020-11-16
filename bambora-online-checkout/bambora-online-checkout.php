@@ -1368,7 +1368,10 @@ function init_bambora_online_checkout() {
                 return new WP_Error( 'bambora_online_checkout_error', $message);
             }
         }
-
+        public function get_icon() {
+            $icon_html = '<img src="' . $this->icon . '" alt="' . $this->method_title . '" width="50"  />';
+            return apply_filters( 'woocommerce_gateway_icon', $icon_html );
+        }
         /**
          * Get the Bambora Api Key
          */
