@@ -191,9 +191,10 @@ class Bambora_Online_Checkout_Api {
      * @param int $amount
      * @param string $currency
      * @param string $orderId
+     * @param int $instantCaptureAmount
      * @return mixed
      */
-    public function authorize_subscription( $subscriptionId, $amount, $currency, $orderId )
+    public function authorize_subscription( $subscriptionId, $amount, $currency, $orderId ,$instantCaptureAmount)
     {
         $service_url = Bambora_Online_Checkout_Endpoints::get_subscription_endpoint() . "/subscriptions/{$subscriptionId}/authorize";
 
@@ -201,6 +202,9 @@ class Bambora_Online_Checkout_Api {
         $data['authorize']['currency'] = $currency;
         $data['authorize']['amount'] = $amount;
         $data['authorize']['orderid'] = $orderId;
+        if ( $instantCaptureAmount > 0 ) {
+	        $data['authorize']['instantcaptureamount'] = $instantCaptureAmount;
+        }
 
         $json_data = wp_json_encode( $data );
         $result = $this->call_rest_service( $service_url, $json_data, self::POST );

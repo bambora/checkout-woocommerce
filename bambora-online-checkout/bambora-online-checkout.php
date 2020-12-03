@@ -118,6 +118,7 @@ function init_bambora_online_checkout() {
             $this->secrettoken = array_key_exists( 'secrettoken', $this->settings ) ? $this->settings['secrettoken'] : '';
             $this->paymentwindowid = array_key_exists( 'paymentwindowid', $this->settings ) ? $this->settings['paymentwindowid'] : 1;
             $this->instantcapture = array_key_exists( 'instantcapture', $this->settings ) ? $this->settings['instantcapture'] :  'no';
+	        $this->instantcaptureonrenewal = array_key_exists( 'instantcaptureonrenewal', $this->settings ) ? $this->settings['instantcaptureonrenewal'] :  'no';
             $this->immediateredirecttoaccept = array_key_exists( 'immediateredirecttoaccept', $this->settings ) ? $this->settings['immediateredirecttoaccept'] :  'no';
             $this->addsurchargetoshipment = array_key_exists( 'addsurchargetoshipment', $this->settings ) ? $this->settings['addsurchargetoshipment'] :  'no';
             $this->md5key = array_key_exists( 'md5key', $this->settings ) ? $this->settings['md5key'] : '';
@@ -237,6 +238,13 @@ function init_bambora_online_checkout() {
                     'description' => 'Capture the payments at the same time they are authorized. In some countries, this is only permitted if the consumer receives the products right away Ex. digital products.',
                     'label' => 'Enable Instant Capture',
                     'default' => 'no'
+                ),
+                'instantcaptureonrenewal' => array(
+	                'title' => 'Instant capture for renewal of Subscriptions',
+	                'type' => 'checkbox',
+	                'description' => 'Capture the payments at the same time they are authorized for recurring payments. In some countries, this is only permitted if the consumer receives the products right away Ex. digital products.',
+	                'label' => 'Enable Instant Capture for Renewals',
+	                'default' => 'no'
                 ),
                 'immediateredirecttoaccept' => array(
                     'title' => 'Immediate Redirect',
@@ -425,9 +433,11 @@ function init_bambora_online_checkout() {
                 $amount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $amount, $minorunits, $this->roundingmode );
 
                 $renewal_order_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $renewal_order->get_id() : $renewal_order->id;
+
+	            $instant_capture_amount = $this->instantcaptureonrenewal === 'yes' ? $amount : 0;
                 $api_key = $this->get_api_key();
                 $api = new Bambora_Online_Checkout_Api( $api_key );
-                $authorize_response = $api->authorize_subscription( $bambora_subscription_id, $amount, $order_currency, $renewal_order_id );
+                $authorize_response = $api->authorize_subscription( $bambora_subscription_id, $amount, $order_currency, $renewal_order_id , $instant_capture_amount);
 
                 if($authorize_response->meta->result == false) {
                     return new WP_Error( 'bambora_online_checkout_error', $authorize_response->meta->message->merchant );
