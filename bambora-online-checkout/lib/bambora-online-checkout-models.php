@@ -90,6 +90,13 @@ class Bambora_Online_Checkout_Orderline {
     public $unit;
     /** @var int|long */
     public $vat;
+	/** @var int|long */
+    public $unitpriceinclvat;
+	/** @var int|long */
+    public $unitprice;
+	/** @var int|long */
+    public $unitpricevatamount;
+
 }
 
 /**

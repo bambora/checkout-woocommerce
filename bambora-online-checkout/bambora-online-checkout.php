@@ -709,7 +709,7 @@ function init_bambora_online_checkout() {
                 $item_total = $order->get_line_total( $item, false, true );
                 $item_total_incl_vat = $order->get_line_total( $item, true, true );
                 $item_vat_amount = $order->get_line_tax( $item );
-
+				$item_quantity = $item['qty'];
                 $line = new Bambora_Online_Checkout_Orderline();
                 $line->description = $item['name'];
                 $line->id = $item['product_id'];
@@ -719,6 +719,9 @@ function init_bambora_online_checkout() {
                 $line->totalprice = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $item_total, $minorunits, $this->roundingmode );
                 $line->totalpriceinclvat = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $item_total_incl_vat, $minorunits, $this->roundingmode );
                 $line->totalpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $item_vat_amount, $minorunits, $this->roundingmode );
+	            $line->unitpriceinclvat = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $item_total_incl_vat/$item_quantity, $minorunits, $this->roundingmode );
+	            $line->unitpricevatamount =  Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $item_vat_amount/$item_quantity, $minorunits, $this->roundingmode );
+	            $line->unitprice = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ($item_total_incl_vat - $item_vat_amount)/$item_quantity, $minorunits, $this->roundingmode );
                 $line->unit = __( 'pcs.', 'bambora-online-checkout' );
                 $line->vat = $item_vat_amount > 0 ? ( $item_vat_amount / $item_total ) * 100 : 0;
 
@@ -740,9 +743,11 @@ function init_bambora_online_checkout() {
                 $shipping_orderline->linenumber = ++$line_number;
                 $shipping_orderline->totalprice = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $shipping_total, $minorunits, $this->roundingmode );
                 $shipping_orderline->totalpriceinclvat = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ($shipping_total + $shipping_tax), $minorunits, $this->roundingmode );
-                $shipping_orderline->totalpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $shipping_tax, $minorunits, $this->roundingmode );
-                $shipping_orderline->vat = $shipping_tax > 0 ? ( $shipping_tax / $shipping_total ) * 100 : 0;
-
+	            $shipping_orderline->totalpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $shipping_tax, $minorunits, $this->roundingmode );
+	            $shipping_orderline->unitpriceinclvat = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ($shipping_total + $shipping_tax), $minorunits, $this->roundingmode );
+	            $shipping_orderline->unitpricevatamount = $shipping_orderline->unitpriceinclvat-$shipping_orderline->unitprice;
+	            $shipping_orderline->unitprice =  $shipping_orderline->totalprice;
+	            $shipping_orderline->vat = $shipping_tax > 0 ? ( $shipping_tax / $shipping_total ) * 100 : 0;
                 $bambora_orderlines[] = $shipping_orderline;
             }
 
@@ -955,7 +960,7 @@ function init_bambora_online_checkout() {
         }
 
         /**
-         * Try and create refund lines. If there is a negativ amount on one of the refund items, it fails.
+         * Try and create refund lines. If there is a negative amount on one of the refund items, it fails.
          *
          * @param WC_Order_Refund     $refund
          * @param Bambora_Online_Checkout_Orderline[] $bambora_refund_lines
@@ -985,6 +990,9 @@ function init_bambora_online_checkout() {
                 $line->text = $item['name'];
                 $line->totalpriceinclvat = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_total_with_vat ), $minorunits, $this->roundingmode );
                 $items_total += $line_total_with_vat;
+                $line->unitpriceinclvat =  Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_total_with_vat )/abs( $item['qty'] ), $minorunits, $this->roundingmode );
+	            $line->unitprice = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_total )/abs( $item['qty'] ), $minorunits, $this->roundingmode );
+	            $line->unitpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_vat )/abs( $item['qty'] ), $minorunits, $this->roundingmode );
                 $line->unit = __( 'pcs.', 'bambora-online-checkout' );
                 $line->vat = (float)($line_vat > 0 ? ($line_vat / $line_total) * 100 : 0);
 
@@ -1010,6 +1018,9 @@ function init_bambora_online_checkout() {
                 $shipping_orderline->unit = __( 'pcs.', 'bambora-online-checkout' );
                 $shipping_orderline->totalpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total + $shipping_tax ), $minorunits, $this->roundingmode ) );
                 $shipping_orderline->vat = (float)($shipping_tax > 0 ? ($shipping_tax / $shipping_total) * 100 : 0);
+	            $shipping_orderline->unitpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total + $shipping_tax ), $minorunits, $this->roundingmode ) );
+	            $shipping_orderline->unitprice = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total ), $minorunits, $this->roundingmode ) );;
+		        $shipping_orderline->unitpricevatamount = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_tax ), $minorunits, $this->roundingmode ) );;
                 $bambora_refund_lines[] = $shipping_orderline;
                 $items_total += $shipping_total + $shipping_tax;
             }
@@ -1025,6 +1036,7 @@ function init_bambora_online_checkout() {
                 $additional_refund_orderline->quantity = 1;
                 $additional_refund_orderline->unit = __( 'pcs.', 'bambora-online-checkout' );
                 $additional_refund_orderline->totalpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $total - $items_total ), $minorunits, $this->roundingmode ) );
+	            $additional_refund_orderline->unitpriceinclvat = $additional_refund_orderline->totalpriceinclvat;
                 $additional_refund_orderline->vat = 0;
                 $bambora_refund_lines[] = $additional_refund_orderline;
             }
@@ -1086,9 +1098,16 @@ function init_bambora_online_checkout() {
 
                         $total_credited = Bambora_Online_Checkout_Currency::convert_price_from_minorunits( $transaction->total->credited, $minorunits );
                         $can_delete = $transaction->candelete;
-                        $curency_code = $transaction->currency->code;
+                        $currency_code = $transaction->currency->code;
                         $card_group_id = $transaction->information->paymenttypes[0]->groupid;
                         $card_name = $transaction->information->paymenttypes[0]->displayname;
+	                    $paymentTypesGroupId = $transaction->information->paymenttypes[0]->groupid;
+	                    $paymentTypesId = $transaction->information->paymenttypes[0]->id;
+	                    if ($paymentTypesGroupId  == 19 && $paymentTypesId == 40 ) { //Collector Bank
+		                    $isCollector = true;
+	                    } else {
+		                    $isCollector = false;
+	                    }
 
                         $html = '<div class="bambora_info">';
                         $html .= '<img class="bambora_paymenttype_img" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $card_group_id . '.svg" alt="' . $card_name . '" title="' . $card_name . '" />';
@@ -1103,17 +1122,17 @@ function init_bambora_online_checkout() {
 
                         $html .= '<div class="bambora_info_overview">';
                         $html .= '<p>' . __( 'Authorized:', 'bambora-online-checkout' ) . '</p>';
-                        $html .= '<p>' . wc_format_localized_price( $total_authorized ) . ' ' . $curency_code . '</p>';
+                        $html .= '<p>' . wc_format_localized_price( $total_authorized ) . ' ' . $currency_code . '</p>';
                         $html .= '</div>';
 
                         $html .= '<div class="bambora_info_overview">';
                         $html .= '<p>' . __( 'Captured:', 'bambora-online-checkout' ) . '</p>';
-                        $html .= '<p>' . wc_format_localized_price( $total_captured ) . ' ' . $curency_code . '</p>';
+                        $html .= '<p>' . wc_format_localized_price( $total_captured ) . ' ' . $currency_code . '</p>';
                         $html .= '</div>';
 
                         $html .= '<div class="bambora_info_overview">';
                         $html .= '<p>' . __( 'Refunded:', 'bambora-online-checkout' ) . '</p>';
-                        $html .= '<p>' . wc_format_localized_price( $total_credited ) . ' ' . $curency_code . '</p>';
+                        $html .= '<p>' . wc_format_localized_price( $total_credited ) . ' ' . $currency_code . '</p>';
                         $html .= '</div>';
 
                         $html .= '</div>';
@@ -1123,10 +1142,16 @@ function init_bambora_online_checkout() {
 
 
                             if ( 0 < $available_for_capture ) {
-                                $html .= '<input type="hidden" id="bambora_currency" name="bambora_currency" value="' . $curency_code . '">';
+                            	if ( $isCollector ) {
+		                            $tooltip =  __( 'With Payment Provider Collector bank only full capture is possible here. For partial capture, please use Bambora Merchant Portal.', 'bambora-online-checkout');
+                            		$readOnly = 'readonly data-toggle="tooltip" title="' . $tooltip . '"';
+	                            } else {
+		                            $readOnly = "";
+	                            }
+                                $html .= '<input type="hidden" id="bambora_currency" name="bambora_currency" value="' . $currency_code . '">';
                                 $html .= '<input type="hidden" id="bambora_capture_message" name="bambora_capture_message" value="' . __( 'Are you sure you want to capture the payment?', 'bambora-online-checkout' ) . '" />';
                                 $html .= '<div class="bambora_action">';
-                                $html .= '<p>' . $curency_code . '</p>';
+                                if ($canCaptureRefundDelete){
                                 $html .= '<input type="text" value="' .  $available_for_capture . '"id="bambora_capture_amount" class="bambora_amount" name="bambora_amount" />';
                                 $html .= '<input id="bambora_capture_submit" class="button capture" name="bambora_capture" type="submit" value="' . __( 'Capture', 'bambora-online-checkout' ) . '" />';
                                 $html .= '</div>';
@@ -1300,7 +1325,8 @@ function init_bambora_online_checkout() {
             $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
 
             $webservice = new Bambora_Online_Checkout_Api( $this->get_api_key() );
-            $capture_response = $webservice->capture( $transaction_id, $amount_in_minorunits, $currency );
+	        $order_lines = $this->create_bambora_orderlines( $order, $minorunits );
+            $capture_response = $webservice->capture( $transaction_id, $amount_in_minorunits, $currency, $order_lines );
 
             if ( isset( $capture_response ) && $capture_response->meta->result ) {
                 do_action( 'bambora_online_checkout_after_capture', $order_id );
