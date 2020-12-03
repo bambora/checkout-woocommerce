@@ -3,7 +3,7 @@
  * Plugin Name: Bambora Online Checkout
  * Plugin URI: https://www.bambora.com
  * Description: Bambora Online Checkout payment gateway for WooCommerce
- * Version: 4.4.3
+ * Version: 4.5.0
  * Author: Bambora
  * Author URI: https://www.bambora.com
  * Text Domain: bambora-online-checkout
@@ -26,7 +26,7 @@ function init_bambora_online_checkout() {
     }
 
     define( 'BOC_LIB', dirname( __FILE__ ) . '/lib/' );
-    define( 'BOC_VERSION', '4.4.2' );
+    define( 'BOC_VERSION', '4.5.0' );
 
     // Including Bambora files!
     include( BOC_LIB . 'bambora-online-checkout-api.php' );
@@ -1029,7 +1029,7 @@ function init_bambora_online_checkout() {
                 $line->unit = __( 'pcs.', 'bambora-online-checkout' );
                 $line->vat = (float)($line_vat > 0 ? ($line_vat / $line_total) * 100 : 0);
 
-                $bambora_refund_lines[] = $line;
+	            $bambora_refund_lines[] = $line;
             }
 
             $shipping_methods = $refund->get_shipping_methods();
@@ -1472,7 +1472,7 @@ function init_bambora_online_checkout() {
     // Load the module into WordPress / WooCommerce
 
     add_filter( 'woocommerce_payment_gateways', 'add_bambora_online_checkout' );
-    Bambora_Online_Checkout::get_instance()->init_hooks();
+     Bambora_Online_Checkout::get_instance()->init_hooks();
     /**
      * Add the Bambora gateway to WooCommerce
      *
