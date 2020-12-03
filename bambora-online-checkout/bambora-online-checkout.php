@@ -124,6 +124,7 @@ function init_bambora_online_checkout() {
             $this->md5key = array_key_exists( 'md5key', $this->settings ) ? $this->settings['md5key'] : '';
             $this->roundingmode = array_key_exists( 'roundingmode', $this->settings ) ? $this->settings['roundingmode'] : Bambora_Online_Checkout_Currency::ROUND_DEFAULT;
             $this->captureonstatuscomplete = array_key_exists( 'captureonstatuscomplete', $this->settings ) ? $this->settings['captureonstatuscomplete'] : 'no';
+	        $this->rolecapturerefunddelete = array_key_exists( 'rolecapturerefunddelete', $this->settings ) ? $this->settings['rolecapturerefunddelete'] : 'shop_manager';
         }
 
         /**
@@ -183,6 +184,15 @@ function init_bambora_online_checkout() {
          * Initialise Gateway Settings Form Fields
          */
         public function init_form_fields() {
+	        if ( ! function_exists( 'get_editable_roles' ) ) {
+		        require_once( ABSPATH . 'wp-admin/includes/user.php' );
+	        }
+
+	        $roles = wp_roles()->roles;
+
+	        foreach ( $roles as $role => $details ) {
+		        $roles_options[ $role ] = translate_user_role( $details['name'] );
+	        }
             $this->form_fields = array(
                 'enabled' => array(
                     'title' => 'Activate module',
@@ -273,7 +283,15 @@ function init_bambora_online_checkout() {
                     'options' => array( Bambora_Online_Checkout_Currency::ROUND_DEFAULT => 'Default', Bambora_Online_Checkout_Currency::ROUND_UP => 'Always up', Bambora_Online_Checkout_Currency::ROUND_DOWN => 'Always down' ),
                     'label' => 'Rounding mode',
                     'default' => 'normal',
-                )
+                ),
+	            'rolecapturerefunddelete' => array(
+		        'title' => 'User role for access to capture/refund/delete',
+		        'type' => 'select',
+		        'description' => 'Please select user role for access to capture/refund/delete (role administrator will always have access). The role also of course need to have access to view orders. ',
+		        'options' => $roles_options,
+		        'label' => 'User role',
+		        'default' => 'shop_manager'
+	            )
             );
         }
 
@@ -621,7 +639,7 @@ function init_bambora_online_checkout() {
         }
 
         /**
-         * Removes any special charactors from the order number
+         * Removes any special characters from the order number
          *
          * @param string $order_number
          * @return string
@@ -944,9 +962,24 @@ function init_bambora_online_checkout() {
          * @return bool|WP_Error
          */
         public function process_refund( $order_id, $amount = null, $reason = '' ) {
-            if ( ! isset( $amount ) ) {
+
+	        $user = wp_get_current_user();
+	        if ( in_array( $this->rolecapturerefunddelete, (array) $user->roles )  ||
+	             in_array( 'administrator', (array) $user->roles )  ) {
+		        //The user has the role required for  "Capture, Refund, Delete"  and can perform those actions.
+	        }else{
+		        //The user can only view the data.
+		        return new WP_Error( 'notpermitted', __( "Your user role is not allowed to refund via Bambora Online", "bambora-online-checkout" ) );
+	        }
+
+
+	        if ( ! isset( $amount ) ) {
                 return true;
             }
+
+	        if ( $amount < 1 ) {
+		        return new WP_Error( 'toolow', __( "You have to refund a higher amount than 0.", "bambora-online-checkout" ) );
+	        }
 
             $refund_result = $this->bambora_online_checkout_refund_payment($order_id, $amount, '');
             if ( is_wp_error( $refund_result ) ) {
@@ -1108,6 +1141,14 @@ function init_bambora_online_checkout() {
 	                    } else {
 		                    $isCollector = false;
 	                    }
+	                    $user = wp_get_current_user();
+	                    if ( in_array( $this->rolecapturerefunddelete, (array) $user->roles )  || in_array( 'administrator', (array) $user->roles )  ) {
+		                    //The user has the role required for  "Capture, Refund, Delete"  and can perform those actions.
+		                    $canCaptureRefundDelete = true;
+	                    }else{
+	                    	//The user can only view the data.
+		                    $canCaptureRefundDelete = false;
+	                    }
 
                         $html = '<div class="bambora_info">';
                         $html .= '<img class="bambora_paymenttype_img" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $card_group_id . '.svg" alt="' . $card_name . '" title="' . $card_name . '" />';
@@ -1152,15 +1193,21 @@ function init_bambora_online_checkout() {
                                 $html .= '<input type="hidden" id="bambora_capture_message" name="bambora_capture_message" value="' . __( 'Are you sure you want to capture the payment?', 'bambora-online-checkout' ) . '" />';
                                 $html .= '<div class="bambora_action">';
                                 if ($canCaptureRefundDelete){
-                                $html .= '<input type="text" value="' .  $available_for_capture . '"id="bambora_capture_amount" class="bambora_amount" name="bambora_amount" />';
-                                $html .= '<input id="bambora_capture_submit" class="button capture" name="bambora_capture" type="submit" value="' . __( 'Capture', 'bambora-online-checkout' ) . '" />';
+	                                $html .= '<p>' . $currency_code . '</p>';
+	                                $html .= '<input type="text" value="' .  $available_for_capture . '"id="bambora_capture_amount" ' .  $readOnly . ' class="bambora_amount" name="bambora_amount" />';
+	                                $html .= '<input id="bambora_capture_submit" class="button capture" name="bambora_capture" type="submit" value="' . __( 'Capture', 'bambora-online-checkout' ) . '" />';
+                                } else {
+	                                $html .= __( 'Your role cannot capture or delete the payment', 'bambora-online-checkout' );
+                                }
                                 $html .= '</div>';
                                 $html .= '<br />';
                             }
                             if ( $can_delete === true ) {
                                 $html .= '<input type="hidden" id="bambora_delete_message" name="bambora_delete_message" value="' . __( 'Are you sure you want to delete the payment?', 'bambora-online-checkout' ) . '" />';
                                 $html .= '<div class="bambora_action">';
-                                $html .= '<input id="bambora_delete_submit" class="button delete" name="bambora_delete" type="submit" value="' . __( 'Delete', 'bambora-online-checkout' ) . '" />';
+	                            if ($canCaptureRefundDelete){
+                                    $html .= '<input id="bambora_delete_submit" class="button delete" name="bambora_delete" type="submit" value="' . __( 'Delete', 'bambora-online-checkout' ) . '" />';
+	                            }
                                 $html .= '</div>';
                             }
                             wp_nonce_field( 'bambora_process_payment_action', 'bambora_nonce' );
