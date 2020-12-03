@@ -137,11 +137,10 @@ function init_bambora_online_checkout() {
                 add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
                 add_action( 'wp_before_admin_bar_render', array( $this, 'bambora_online_checkout_actions' ) );
                 add_action( 'admin_notices', array( $this, 'bambora_online_checkout_admin_notices' ) );
-                if($this->captureonstatuscomplete === 'yes') {
-                    add_action( 'woocommerce_order_status_completed', array( $this, 'bambora_online_checkout_order_status_completed' ) );
-                }
             }
-
+	        if ( $this->captureonstatuscomplete === 'yes' ) {
+		        add_action( 'woocommerce_order_status_completed', array( $this, 'bambora_online_checkout_order_status_completed' ) );
+	        }
             //Subscriptions
             add_action('woocommerce_scheduled_subscription_payment_' . $this->id, array($this, 'scheduled_subscription_payment'), 10, 2);
             add_action('woocommerce_subscription_cancelled_' . $this->id, array($this, 'subscription_cancellation'));
