@@ -1370,17 +1370,8 @@ function init_bambora_online_checkout() {
             $amount = str_replace( ',', '.', $amount);
             $amount_in_minorunits = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $amount, $minorunits, $this->roundingmode );
             $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
-
             $webservice = new Bambora_Online_Checkout_Api( $this->get_api_key() );
-
-	        $order_total = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_total() : $order->order_total;
-	        $capture_response = null;
-            if ($amount  === $order_total){
-	            $capture_response = $webservice->capture( $transaction_id, $amount_in_minorunits, $currency, null );
-            } else {
-	            $order_lines = $this->create_bambora_orderlines( $order, $minorunits );
-	            $capture_response = $webservice->capture( $transaction_id, $amount_in_minorunits, $currency, $order_lines );
-            }
+	        $capture_response = $webservice->capture( $transaction_id, $amount_in_minorunits, $currency, null );
 
             if ( isset( $capture_response ) && $capture_response->meta->result ) {
                 do_action( 'bambora_online_checkout_after_capture', $order_id );
