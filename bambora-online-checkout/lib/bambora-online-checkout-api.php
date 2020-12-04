@@ -81,16 +81,18 @@ class Bambora_Online_Checkout_Api {
      * @param string $transaction_id
      * @param int    $amount
      * @param string $currency
-     * @param Bambora_Online_Checkout_Orderline[] $invoice_lines
+     * @param Bambora_Online_Checkout_Orderline[] $capture_lines
      * @return mixed
      */
-    public function capture( $transaction_id, $amount, $currency, $invoice_lines) {
+    public function capture( $transaction_id, $amount, $currency, $capture_lines) {
         $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/capture";
 
         $data = array();
         $data['amount'] = $amount;
         $data['currency'] = $currency;
-		$data['invoicelines'] = $invoice_lines;
+        if ( isset($capture_lines) ) {
+	        $data['invoicelines'] = $capture_lines;
+        }
         $json_data = wp_json_encode( $data );
 
         $result = $this->call_rest_service( $service_url, $json_data, self::POST );
@@ -106,13 +108,15 @@ class Bambora_Online_Checkout_Api {
      * @param Bambora_Online_Checkout_Orderline[] $credit_lines
      * @return mixed
      */
-    public function credit( $transaction_id, $amount, $currency, $credit_lines ) {
+    public function credit( $transaction_id, $amount, $currency, $credit_lines) {
         $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/credit";
 
         $data = array();
         $data['amount'] = $amount;
         $data['currency'] = $currency;
-        $data['invoicelines'] = $credit_lines;
+	    if ( isset($credit_lines) ) {
+		    $data['invoicelines'] = $credit_lines;
+	    }
 
         $json_data = wp_json_encode( $data );
 

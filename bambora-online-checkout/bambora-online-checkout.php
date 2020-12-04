@@ -1372,8 +1372,15 @@ function init_bambora_online_checkout() {
             $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
 
             $webservice = new Bambora_Online_Checkout_Api( $this->get_api_key() );
-	        $order_lines = $this->create_bambora_orderlines( $order, $minorunits );
-            $capture_response = $webservice->capture( $transaction_id, $amount_in_minorunits, $currency, $order_lines );
+
+	        $order_total = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_total() : $order->order_total;
+	        $capture_response = null;
+            if ($amount  === $order_total){
+	            $capture_response = $webservice->capture( $transaction_id, $amount_in_minorunits, $currency, null );
+            } else {
+	            $order_lines = $this->create_bambora_orderlines( $order, $minorunits );
+	            $capture_response = $webservice->capture( $transaction_id, $amount_in_minorunits, $currency, $order_lines );
+            }
 
             if ( isset( $capture_response ) && $capture_response->meta->result ) {
                 do_action( 'bambora_online_checkout_after_capture', $order_id );
@@ -1405,16 +1412,20 @@ function init_bambora_online_checkout() {
             $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
 
             $refunds = $order->get_refunds();
-            /** @var Bambora_Online_Checkout_Orderline[] */
-            $bambora_refund_lines = array();
-            if ( ! $this->create_bambora_refund_lines( $refunds[0], $bambora_refund_lines, $minorunits ) ) {
-                $messageReason = __( 'Could not create refund invoice lines', 'bambora-online-checkout' );
-                $message = sprintf( __( 'Refund action failed for order %s - %s', 'bambora-online-checkout' ), $order_id, $messageReason );
-                return new WP_Error( 'bambora_online_checkout_error', $message);
-            }
+	        $order_total = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_total() : $order->order_total;
 
-            $webservice = new Bambora_Online_Checkout_Api( $this->get_api_key() );
-            $credit_response = $webservice->credit( $transaction_id, $amount_in_minorunits, $currency, $bambora_refund_lines );
+	        $credit_response = null;
+	        $webservice = new Bambora_Online_Checkout_Api( $this->get_api_key() );
+	        if ( $amount  === $order_total ){ //Do not send credit lines when crediting full amount
+		        $credit_response = $webservice->credit( $transaction_id, $amount_in_minorunits, $currency, null );
+	        } else {
+		        /** @var Bambora_Online_Checkout_Orderline[] */
+		        $bambora_refund_lines = array();
+	        	if ( ! $this->create_bambora_refund_lines( $refunds[0], $bambora_refund_lines, $minorunits ) ) {
+			        $bambora_refund_lines = null;
+		        }
+		        $credit_response = $webservice->credit( $transaction_id, $amount_in_minorunits, $currency, $bambora_refund_lines );
+	        }
 
             if ( isset( $credit_response ) && $credit_response->meta->result ) {
                 do_action( 'bambora_online_checkout_after_capture', $order_id );
