@@ -1023,9 +1023,15 @@ function init_bambora_online_checkout() {
                 $line->text = $item['name'];
                 $line->totalpriceinclvat = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_total_with_vat ), $minorunits, $this->roundingmode );
                 $items_total += $line_total_with_vat;
-                $line->unitpriceinclvat =  Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_total_with_vat )/abs( $item['qty'] ), $minorunits, $this->roundingmode );
-	            $line->unitprice = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_total )/abs( $item['qty'] ), $minorunits, $this->roundingmode );
-	            $line->unitpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_vat )/abs( $item['qty'] ), $minorunits, $this->roundingmode );
+
+                if ( !isset($line->quantity) || is_null($line->quantity) || $line->quantity == 0 ) {
+                	$quantity = 1;
+                } else {
+	                $quantity = abs( $item['qty'] );
+                }
+                $line->unitpriceinclvat =  Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_total_with_vat )/$quantity  , $minorunits, $this->roundingmode );
+	            $line->unitprice = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_total )/$quantity , $minorunits, $this->roundingmode );
+	            $line->unitpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_vat )/$quantity , $minorunits, $this->roundingmode );
                 $line->unit = __( 'pcs.', 'bambora-online-checkout' );
                 $line->vat = (float)($line_vat > 0 ? ($line_vat / $line_total) * 100 : 0);
 
@@ -1419,7 +1425,7 @@ function init_bambora_online_checkout() {
 	        }
 
             if ( isset( $credit_response ) && $credit_response->meta->result ) {
-                do_action( 'bambora_online_checkout_after_capture', $order_id );
+                do_action( 'bambora_online_checkout_after_refund', $order_id );
                 return true;
             } else {
                 $messageReason = isset( $credit_response ) ? $credit_response->meta->message->merchant : __( 'No connection to Bambora', 'bambora-online-checkout' );
