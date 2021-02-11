@@ -7,7 +7,7 @@ Stable tag: 4.5.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 2.6
-WC tested up to: 4.9.7
+WC tested up to: 5.0.0
 
 Integrates Bambora Online Checkout payment gateway into your WooCommerce installation.
 
