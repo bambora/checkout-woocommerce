@@ -998,10 +998,11 @@ function init_bambora_online_checkout() {
          * @param WC_Order_Refund     $refund
          * @param Bambora_Online_Checkout_Orderline[] $bambora_refund_lines
          * @param int                 $minorunits
-         * @param string              $reason
+         * @param WC_Order           $order
+         * @param boolean           $isCollector
          * @return boolean
          */
-        protected function create_bambora_refund_lines( $refund, &$bambora_refund_lines, $minorunits, $reason = '' ) {
+        protected function create_bambora_refund_lines( $refund, &$bambora_refund_lines, $minorunits, $order, $isCollector = false) {
             $line_number = 0;
             $total = $refund->get_total();
             $items_total = 0;
@@ -1047,7 +1048,13 @@ function init_bambora_online_checkout() {
                 if ( 0 < $shipping_total || 0 < $shipping_tax ) {
                     throw new Exception( __( 'Invalid refund amount for shipping', 'bambora-online-checkout' ) );
                 }
-
+	            if ($isCollector && $order_shipping_methods && count( $order_shipping_methods ) !== 0 ){
+		            $order_shipping_total = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_shipping_total() : $order->get_total_shipping();
+		            $order_shipping_tax = $order->get_shipping_tax();
+		            if ( abs((float)$order_shipping_total) !=  abs((float)$shipping_total) ||  abs((float)$order_shipping_tax) != abs((float)$shipping_tax )) {
+			            throw new Exception( __( 'You can only refund complete order lines for payments made with Collector Bank.', 'bambora-online-checkout' ) );
+		            }
+	            }
                 $shipping_orderline = new Bambora_Online_Checkout_Orderline();
                 $shipping_orderline->id = __( 'shipping', 'bambora-online-checkout' );
                 $shipping_orderline->linenumber = ++$line_number;
@@ -1067,6 +1074,7 @@ function init_bambora_online_checkout() {
             if ( $items_total < $total ) {
                 return false;
             } elseif ( $items_total > $total ) {
+	            $reason = $refund->get_reason();
                 $additional_refund_orderline = new Bambora_Online_Checkout_Orderline();
                 $additional_refund_orderline->id = __( 'Refund', 'bambora-online-checkout' );
                 $additional_refund_orderline->linenumber = ++$line_number;
@@ -1144,19 +1152,22 @@ function init_bambora_online_checkout() {
 	                    $paymentTypesId = $transaction->information->paymenttypes[0]->id;
 	                    if ($paymentTypesGroupId  == 19 && $paymentTypesId == 40 ) { //Collector Bank
 		                    $isCollector = true;
+		                    $collectorClass = "isCollectorTrue";
 	                    } else {
 		                    $isCollector = false;
+		                    $collectorClass = "isCollectorFalse";
 	                    }
 	                    $user = wp_get_current_user();
 	                    if ( in_array( $this->rolecapturerefunddelete, (array) $user->roles )  || in_array( 'administrator', (array) $user->roles )  ) {
 		                    //The user has the role required for  "Capture, Refund, Delete"  and can perform those actions.
 		                    $canCaptureRefundDelete = true;
-	                    }else{
+	                    } else {
 	                    	//The user can only view the data.
 		                    $canCaptureRefundDelete = false;
 	                    }
+	                    $html = '<div id="'.$collectorClass.'"></div>';
 
-                        $html = '<div class="bambora_info">';
+                        $html .= '<div class="bambora_info">';
                         $html .= '<img class="bambora_paymenttype_img" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $card_group_id . '.svg" alt="' . $card_name . '" title="' . $card_name . '" />';
                         $html .= '<div class="bambora_transactionid">';
                         $html .= '<p>' . __( 'Transaction ID', 'bambora-online-checkout' ) . '</p>';
@@ -1407,6 +1418,27 @@ function init_bambora_online_checkout() {
             $amount = str_replace( ',', '.', $amount);
             $amount_in_minorunits = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $amount, $minorunits, $this->roundingmode );
             $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
+	        $api_key = $this->get_api_key();
+	        $api = new Bambora_Online_Checkout_Api( $api_key );
+
+	        $transaction_response = $api->get_transaction( $transaction_id );
+
+	        if ( ! isset( $transaction_response ) || ! $transaction_response->meta->result ) {
+		        $get_transaction_error = isset( $transaction_response ) ? $transaction_response->meta->message->merchant : __( 'No connection to Bambora', 'bambora-online-checkout' );
+		        $message = sprintf( __( 'Get transaction failed for order %s - %s', 'bambora-online-checkout' ), $order_id, $get_transaction_error );
+ 		        $this->_boc_log->add( $message );
+		        return new WP_Error( 'bambora_online_checkout_error', $message);
+	        }
+
+	        $transaction = $transaction_response->transaction;
+
+	        $paymentTypesGroupId = $transaction->information->paymenttypes[0]->groupid;
+	        $paymentTypesId = $transaction->information->paymenttypes[0]->id;
+	        if ($paymentTypesGroupId  == 19 && $paymentTypesId == 40 ) { //Collector Bank
+		        $isCollector = true;
+	        } else {
+		        $isCollector = false;
+	        }
 
             $refunds = $order->get_refunds();
 	        $order_total = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_total() : $order->order_total;
@@ -1418,7 +1450,7 @@ function init_bambora_online_checkout() {
 	        } else {
 		        /** @var Bambora_Online_Checkout_Orderline[] */
 		        $bambora_refund_lines = array();
-	        	if ( ! $this->create_bambora_refund_lines( $refunds[0], $bambora_refund_lines, $minorunits ) ) {
+	        	if ( ! $this->create_bambora_refund_lines( $refunds[0], $bambora_refund_lines, $minorunits ,$order, $isCollector) ) {
 			        $bambora_refund_lines = null;
 		        }
 		        $credit_response = $webservice->credit( $transaction_id, $amount_in_minorunits, $currency, $bambora_refund_lines );

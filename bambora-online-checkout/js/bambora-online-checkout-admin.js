@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017. All rights reserved Bambora Online.
  *
  * This program is free software. You are allowed to use the software but NOT allowed to modify the software.
@@ -63,4 +63,9 @@ jQuery(document).ready(function () {
             window.location.href = url;
             return true;
         });
+    if(jQuery('#isCollectorFalse').length){
+        jQuery("#order_line_items .refund_line_total").prop("readonly", true);
+        jQuery("#order_line_items .refund_line_tax").prop("readonly", true);
+     }
+
 });
