@@ -768,6 +768,28 @@ function init_bambora_online_checkout() {
 	            $shipping_orderline->vat = $shipping_tax > 0 ? ( $shipping_tax / $shipping_total ) * 100 : 0;
                 $bambora_orderlines[] = $shipping_orderline;
             }
+	        $order_fees =  $order->get_fees();
+	        if ( $order_fees && count( $order_fees ) !== 0 ) {
+		        foreach ( $order_fees as $fee_item ) {
+			        $fee_total = $fee_item->get_total();
+			        $fee_tax = (float)$fee_item->get_total_tax();
+			        $fee_orderline = new Bambora_Online_Checkout_Orderline();
+			        $fee_orderline->id = __( 'fee', 'bambora-online-checkout' );
+			        $fee_orderline->linenumber = ++$line_number;
+			        $fee_orderline->description = __( 'Fee', 'bambora-online-checkout' );
+			        $fee_orderline->text = __( 'Fee', 'bambora-online-checkout' );
+			        $fee_orderline->quantity = 1;
+			        $fee_orderline->unit = __( 'pcs.', 'bambora-online-checkout' );
+			        $fee_orderline->totalprice = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $fee_total, $minorunits, $this->roundingmode );
+			        $fee_orderline->totalpriceinclvat =  Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total +  $fee_tax), $minorunits, $this->roundingmode );
+			        $fee_orderline->totalpricevatamount =  Bambora_Online_Checkout_Currency::convert_price_to_minorunits(  $fee_tax, $minorunits, $this->roundingmode );
+			        $fee_orderline->vat = (float)($fee_tax > 0 ? ($fee_tax / $fee_total) * 100 : 0);
+			        $fee_orderline->unitpriceinclvat =  Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total +  $fee_tax ), $minorunits, $this->roundingmode );
+			        $fee_orderline->unitprice =Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $fee_total , $minorunits, $this->roundingmode );
+			        $fee_orderline->unitpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits(  $fee_tax , $minorunits, $this->roundingmode );
+			        $bambora_orderlines[] = $fee_orderline;
+		        }
+	        }
 
             return $bambora_orderlines;
         }
@@ -1023,7 +1045,9 @@ function init_bambora_online_checkout() {
                 $line->quantity = abs( $item['qty'] );
                 $line->text = $item['name'];
                 $line->totalpriceinclvat = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_total_with_vat ), $minorunits, $this->roundingmode );
-                $items_total += $line_total_with_vat;
+	            $line->totalprice = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_total ), $minorunits, $this->roundingmode );
+	            $line->totalpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( abs( $line_vat ), $minorunits, $this->roundingmode );
+	            $items_total += $line_total_with_vat;
 
                 if ( !isset($line->quantity) || is_null($line->quantity) || $line->quantity == 0 ) {
                 	$quantity = 1;
@@ -1040,7 +1064,7 @@ function init_bambora_online_checkout() {
             }
 
             $shipping_methods = $refund->get_shipping_methods();
-
+			$order_shipping_methods =  $order->get_shipping_methods();
             if ( $shipping_methods && count( $shipping_methods ) !== 0 ) {
                 $shipping_total = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $refund->get_shipping_total() : $refund->get_total_shipping();
                 $shipping_tax = $refund->get_shipping_tax();
@@ -1055,22 +1079,66 @@ function init_bambora_online_checkout() {
 			            throw new Exception( __( 'You can only refund complete order lines for payments made with Collector Bank.', 'bambora-online-checkout' ) );
 		            }
 	            }
-                $shipping_orderline = new Bambora_Online_Checkout_Orderline();
-                $shipping_orderline->id = __( 'shipping', 'bambora-online-checkout' );
+	            $shipping_method = reset( $shipping_methods );
+	            $shipping_orderline = new Bambora_Online_Checkout_Orderline();
+	            $shipping_orderline->id = $shipping_method->get_method_id();
                 $shipping_orderline->linenumber = ++$line_number;
-                $shipping_orderline->description = __( 'Shipping', 'bambora-online-checkout' );
-                $shipping_orderline->text = __( 'Shipping', 'bambora-online-checkout' );
+                $shipping_orderline->description = $shipping_method->get_method_title();
+                $shipping_orderline->text = $shipping_method->get_method_title();;
                 $shipping_orderline->quantity = 1;
                 $shipping_orderline->unit = __( 'pcs.', 'bambora-online-checkout' );
                 $shipping_orderline->totalpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total + $shipping_tax ), $minorunits, $this->roundingmode ) );
-                $shipping_orderline->vat = (float)($shipping_tax > 0 ? ($shipping_tax / $shipping_total) * 100 : 0);
+	            $shipping_orderline->totalprice  = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total  ), $minorunits, $this->roundingmode ) );
+	            $shipping_orderline->totalpricevatamount = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( (  $shipping_tax ), $minorunits, $this->roundingmode ) );
+	            $shipping_orderline->vat = (float)(abs($shipping_tax )> 0 ? ((abs($shipping_tax) / abs($shipping_total))) * 100 : 0);
 	            $shipping_orderline->unitpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total + $shipping_tax ), $minorunits, $this->roundingmode ) );
 	            $shipping_orderline->unitprice = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total ), $minorunits, $this->roundingmode ) );;
 		        $shipping_orderline->unitpricevatamount = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_tax ), $minorunits, $this->roundingmode ) );;
                 $bambora_refund_lines[] = $shipping_orderline;
                 $items_total += $shipping_total + $shipping_tax;
             }
+	        $fees = $refund->get_fees();
+	        $order_fees =  $order->get_fees();
+	        if ( $fees && count( $fees ) !== 0 ) {
+		        foreach ( $fees as $fee_item ) {
+			        $fee_total = $fee_item->get_total();
 
+			        $fee_tax = $fee_item->get_total_tax();
+			        if ( 0 < $fee_total ) {
+				        throw new Exception( __( 'Invalid refund amount for fees', 'bambora-online-checkout' ) );
+			        }
+			        if ( $isCollector && $order_fees && count( $order_fees ) !== 0 ){
+
+				        if ( $order_fees && count( $order_fees ) !== 0 ) {
+					        foreach ( $order_fees as $order_fee_item ) {
+						        $order_fee_total += (float) $order_fee_item->get_total();
+						        $order_fee_tax += (float)$order_fee_item->get_total_tax();
+					        }
+				        }
+
+				        if (abs($order_fee_total) !=  abs($fee_total) ||  abs($order_fee_tax) != abs($fee_tax ) ) {
+					        throw new Exception( __( 'You can only refund complete order lines for payments made with Collector Bank.', 'bambora-online-checkout' ) );
+				        }
+			        }
+
+			        $fee_orderline = new Bambora_Online_Checkout_Orderline();
+			        $fee_orderline->id = __( 'fee', 'bambora-online-checkout' );
+			        $fee_orderline->linenumber = ++$line_number;
+			        $fee_orderline->description = __( 'Fee', 'bambora-online-checkout' );
+			        $fee_orderline->text = __( 'Fee', 'bambora-online-checkout' );
+			        $fee_orderline->quantity = 1;
+			        $fee_orderline->unit = __( 'pcs.', 'bambora-online-checkout' );
+			        $fee_orderline->totalpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total + $fee_tax ), $minorunits, $this->roundingmode ) );
+			        $fee_orderline->totalprice  = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total ), $minorunits, $this->roundingmode ) );
+			        $fee_orderline->totalpricevatamount = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_tax ), $minorunits, $this->roundingmode ) );
+			        $fee_orderline->vat = (float)(abs($fee_tax )> 0 ? ((abs($fee_tax) / abs($fee_total))) * 100 : 0);
+			        $fee_orderline->unitpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total + $fee_tax ), $minorunits, $this->roundingmode ) );
+			        $fee_orderline->unitprice = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total ), $minorunits, $this->roundingmode ) );
+			        $fee_orderline->unitpricevatamount = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_tax ), $minorunits, $this->roundingmode ) );
+			        $bambora_refund_lines[] = $fee_orderline;
+			        $items_total += $fee_total + $fee_tax;
+		        }
+	        }
             if ( $items_total < $total ) {
                 return false;
             } elseif ( $items_total > $total ) {
