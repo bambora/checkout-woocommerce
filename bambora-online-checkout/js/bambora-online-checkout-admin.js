@@ -63,7 +63,7 @@ jQuery(document).ready(function () {
             window.location.href = url;
             return true;
         });
-    if(jQuery('#isCollectorFalse').length){
+    if(jQuery('#isCollectorTrue').length){
         jQuery("#order_line_items .refund_line_total").prop("readonly", true);
         jQuery("#order_line_items .refund_line_tax").prop("readonly", true);
      }
