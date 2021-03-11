@@ -781,12 +781,12 @@ function init_bambora_online_checkout() {
 			        $fee_orderline->quantity = 1;
 			        $fee_orderline->unit = __( 'pcs.', 'bambora-online-checkout' );
 			        $fee_orderline->totalprice = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $fee_total, $minorunits, $this->roundingmode );
-			        $fee_orderline->totalpriceinclvat =  Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total +  $fee_tax), $minorunits, $this->roundingmode );
-			        $fee_orderline->totalpricevatamount =  Bambora_Online_Checkout_Currency::convert_price_to_minorunits(  $fee_tax, $minorunits, $this->roundingmode );
+			        $fee_orderline->totalpriceinclvat = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total +  $fee_tax), $minorunits, $this->roundingmode );
+			        $fee_orderline->totalpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $fee_tax, $minorunits, $this->roundingmode );
 			        $fee_orderline->vat = (float)($fee_tax > 0 ? ($fee_tax / $fee_total) * 100 : 0);
 			        $fee_orderline->unitpriceinclvat =  Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total +  $fee_tax ), $minorunits, $this->roundingmode );
-			        $fee_orderline->unitprice =Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $fee_total , $minorunits, $this->roundingmode );
-			        $fee_orderline->unitpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits(  $fee_tax , $minorunits, $this->roundingmode );
+			        $fee_orderline->unitprice = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $fee_total, $minorunits, $this->roundingmode );
+			        $fee_orderline->unitpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $fee_tax , $minorunits, $this->roundingmode );
 			        $bambora_orderlines[] = $fee_orderline;
 		        }
 	        }
@@ -1084,13 +1084,13 @@ function init_bambora_online_checkout() {
 	            $shipping_orderline->id = $shipping_method->get_method_id();
                 $shipping_orderline->linenumber = ++$line_number;
                 $shipping_orderline->description = $shipping_method->get_method_title();
-                $shipping_orderline->text = $shipping_method->get_method_title();;
+                $shipping_orderline->text = $shipping_method->get_method_title();
                 $shipping_orderline->quantity = 1;
                 $shipping_orderline->unit = __( 'pcs.', 'bambora-online-checkout' );
                 $shipping_orderline->totalpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total + $shipping_tax ), $minorunits, $this->roundingmode ) );
 	            $shipping_orderline->totalprice  = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total  ), $minorunits, $this->roundingmode ) );
 	            $shipping_orderline->totalpricevatamount = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( (  $shipping_tax ), $minorunits, $this->roundingmode ) );
-	            $shipping_orderline->vat = (float)(abs($shipping_tax )> 0 ? ((abs($shipping_tax) / abs($shipping_total))) * 100 : 0);
+	            $shipping_orderline->vat = (float)(abs($shipping_tax ) > 0 ? ((abs($shipping_tax) / abs($shipping_total))) * 100 : 0);
 	            $shipping_orderline->unitpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total + $shipping_tax ), $minorunits, $this->roundingmode ) );
 	            $shipping_orderline->unitprice = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total ), $minorunits, $this->roundingmode ) );;
 		        $shipping_orderline->unitpricevatamount = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_tax ), $minorunits, $this->roundingmode ) );;
@@ -1131,7 +1131,7 @@ function init_bambora_online_checkout() {
 			        $fee_orderline->totalpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total + $fee_tax ), $minorunits, $this->roundingmode ) );
 			        $fee_orderline->totalprice  = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total ), $minorunits, $this->roundingmode ) );
 			        $fee_orderline->totalpricevatamount = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_tax ), $minorunits, $this->roundingmode ) );
-			        $fee_orderline->vat = (float)(abs($fee_tax )> 0 ? ((abs($fee_tax) / abs($fee_total))) * 100 : 0);
+			        $fee_orderline->vat = (float)(abs($fee_tax ) > 0 ? ((abs($fee_tax) / abs($fee_total))) * 100 : 0);
 			        $fee_orderline->unitpriceinclvat = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total + $fee_tax ), $minorunits, $this->roundingmode ) );
 			        $fee_orderline->unitprice = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_total ), $minorunits, $this->roundingmode ) );
 			        $fee_orderline->unitpricevatamount = abs( Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $fee_tax ), $minorunits, $this->roundingmode ) );
