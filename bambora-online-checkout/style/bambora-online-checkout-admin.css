@@ -144,17 +144,31 @@
     float: right;
 }
 
-.bambora_transaction {
-    border-bottom: 1px solid #C1C1C1;
+.bambora_transaction_header {
     font-weight: 600;
     padding-bottom: 10px;
 }
 
-.bambora_transaction td {
+.bambora_transaction_header td {
     padding: 0 10px 7px 10px;
 }
 
-.bambora_transaction td:last-child {
+.bambora_transaction_header td:last-child {
+    float: right;
+}
+
+.bambora_transaction_description {
+    border-bottom: 1px solid #C1C1C1;
+    font-weight: 300;
+    font-style: italic;
+    padding-bottom: 10px;
+}
+
+.bambora_transaction_description td {
+    padding: 0 10px 7px 10px;
+}
+
+.bambora_transaction_description td:last-child {
     float: right;
 }
 

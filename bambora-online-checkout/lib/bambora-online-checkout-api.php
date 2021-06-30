@@ -75,6 +75,23 @@ class Bambora_Online_Checkout_Api {
         return $url;
     }
 
+
+	/**
+	 * Get Response Code data
+	 *
+	 * @param string $source
+	 * @param string $actionCode
+	 *
+	 * @return mixed
+	 */
+	public function get_response_code_data( $source, $actionCode ) {
+		$serviceUrl       = Bambora_Online_Checkout_Endpoints::get_data_endpoint() . "/responsecodes/{$source}/{$actionCode}";
+		$responseCodeData = $this->call_rest_service( $serviceUrl, null, "GET" );
+
+		return json_decode( $responseCodeData );
+	}
+
+
     /**
      * Make a capture request to Bambora
      *

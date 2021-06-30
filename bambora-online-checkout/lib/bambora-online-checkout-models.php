@@ -152,4 +152,8 @@ class Bambora_Online_Checkout_Request {
     public $url;
     /** @var int */
     public $paymentwindowid;
+    /** @var string */
+	public $securityexemption;
+	/** @var string */
+	public $securitylevel;
 }
