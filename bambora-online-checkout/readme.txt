@@ -7,7 +7,7 @@ Stable tag: 4.5.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 2.6
-WC tested up to: 5.1
+WC tested up to: 5.4
 
 Integrates Bambora Online Checkout payment gateway into your WooCommerce installation.
 
@@ -48,6 +48,10 @@ With Bambora Online Checkout for WooCommerce, you are able to integrate the Bamb
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+
+= 4.6.0 =
+* Added functionality to allow LowValuePayments
+* Improved transaction log history display
 
 = 4.5.2 =
 * Added fees to orderlines
