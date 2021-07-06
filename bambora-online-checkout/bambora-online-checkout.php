@@ -101,8 +101,6 @@ function init_bambora_online_checkout() {
             // Initilize Bambora Online Checkout Settings
             $this->init_bambora_online_checkout_settings();
 
-            // Set description for checkout page!
-            $this->set_bambora_description_for_checkout();
         }
 
         /**
@@ -357,6 +355,8 @@ function init_bambora_online_checkout() {
          * There are no payment fields for bambora, but we want to show the description if set.
          **/
         public function payment_fields() {
+	        // Set description for checkout page!
+	        $this->set_bambora_description_for_checkout();
             if ( $this->description ) {
                 $text_replace = wptexturize( $this->description );
                 $text_remove_double_lines = wpautop( $text_replace );
