@@ -64,7 +64,6 @@ class Bambora_Online_Checkout_Api {
         return $url;
     }
 
-
     /**
      * Get Bambora Online Checkout payment window JavaScript url
      *
@@ -74,7 +73,6 @@ class Bambora_Online_Checkout_Api {
         $url = Bambora_Online_Checkout_Endpoints::get_checkout_assets() . '/paymentwindow-v1.min.js';
         return $url;
     }
-
 
 	/**
 	 * Get Response Code data
@@ -90,7 +88,6 @@ class Bambora_Online_Checkout_Api {
 
 		return json_decode( $responseCodeData );
 	}
-
 
     /**
      * Make a capture request to Bambora
@@ -252,8 +249,6 @@ class Bambora_Online_Checkout_Api {
 
         return json_decode( $result );
     }
-
-
 
     /**
      * Call the rest service at the specified Url

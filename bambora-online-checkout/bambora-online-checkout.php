@@ -139,7 +139,6 @@ function init_bambora_online_checkout() {
                 add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
                 add_action( 'wp_before_admin_bar_render', array( $this, 'bambora_online_checkout_actions' ) );
                 add_action( 'admin_notices', array( $this, 'bambora_online_checkout_admin_notices' ) );
-
             }
 	        if ( $this->captureonstatuscomplete === 'yes' ) {
 		        add_action( 'woocommerce_order_status_completed', array( $this, 'bambora_online_checkout_order_status_completed' ) );
@@ -277,7 +276,6 @@ function init_bambora_online_checkout() {
                     'description' => 'When this is enabled the full payment will be captured when the order status changes to Completed',
                     'default' => 'no'
                 ),
-
                 'roundingmode' => array(
                     'title' => 'Rounding mode',
                     'type' => 'select',
@@ -297,7 +295,7 @@ function init_bambora_online_checkout() {
                 'allowlowvalueexemption' => array(
 		        'title' => 'Enable Low Value Exemption',
 		        'type' => 'checkbox',
-		        'description' => 'Allow you as a merchant to skip Strong Customer Authentication(SCA) when the value of the order is below your defined limit. Note: the liability will be on you as a merchant.',
+		        'description' => 'Allow you as a merchant to let the customer attempt to skip Strong Customer Authentication(SCA) when the value of the order is below your defined limit. Note: the liability will be on you as a merchant.',
 		        'default' => 'no'
 	            ),
                 'limitforlowvalueexemption' => array(
@@ -377,8 +375,9 @@ function init_bambora_online_checkout() {
                 try{
                     $currency = get_woocommerce_currency();
                     if ( $currency ) {
-                        $minorunits = Bambora_Online_Checkout_Currency::get_currency_minorunits( $currency );
+	                    $minorunits = Bambora_Online_Checkout_Currency::get_currency_minorunits( $currency );
                         $amount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $cart->total, $minorunits, $this->roundingmode );
+	                    $this->_boc_log->add( " Currency: {$currency} - Amount: {$amount} -  Minor Units: {$minorunits}") ;
                         $api_key = $this->get_api_key();
                         $api = new Bambora_Online_Checkout_Api( $api_key );
                         $get_payment_types_response = $api->get_payment_types( $currency, $amount );
@@ -597,14 +596,11 @@ function init_bambora_online_checkout() {
 	             ( Bambora_Online_Checkout_Helper::order_contains_subscription( $order ) || $is_request_to_change_payment_method ) ) {
 		        $bambora_subscription  = $this->create_bambora_subscription();
 		        $request->subscription = $bambora_subscription;
-	        } else {
-		        if ( $this->allowlowvalueexemption ) {
-
-			        if ( $request->order->total < Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $this->limitforlowvalueexemption,
-					        Bambora_Online_Checkout_Currency::get_currency_minorunits( $request->order->currency ), $this->roundingmode ) ) {
-				        $request->securityexemption = "lowvaluepayment";
-				        $request->securitylevel     = "none";
-			        }
+	        } elseif ( $this->allowlowvalueexemption ) {
+		        if ( $request->order->total < Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $this->limitforlowvalueexemption,
+				        Bambora_Online_Checkout_Currency::get_currency_minorunits( $request->order->currency ), $this->roundingmode ) ) {
+			        $request->securityexemption = "lowvaluepayment";
+			        $request->securitylevel     = "none";
 		        }
 	        }
 
@@ -1406,55 +1402,49 @@ function init_bambora_online_checkout() {
          * @param int   $minorunits
          * @return string
          */
-        protected function build_transaction_log_rows( $operations, $minorunits ) {
-            $html = '';
-            foreach ( $operations as $operation ) {
+	    protected function build_transaction_log_rows( $operations, $minorunits ) {
+		    $html = '';
+		    foreach ( $operations as $operation ) {
 
             	$eventInfo = Bambora_Online_Checkout_Helper::getEventText($operation);
+			    $eventInfoExtra = '';
 
-	            $eventInfoExtra = '';
-            	if ($operation->status != 'approved'){
-		            $eventInfoExtra = $this->get_event_extra($operation);
-		            $eventInfoExtra = '<div style="color:#ec6459;">'. $eventInfoExtra . '</div>';
-	            }
+			    if ( $operation->status != 'approved' ) {
+				    $eventInfoExtra = $this->get_event_extra( $operation );
+				    $eventInfoExtra = '<div style="color:#ec6459;">' . $eventInfoExtra . '</div>';
+			    }
+			    if ( $eventInfo['description'] != null ) {
+				    $html .= '<tr class="bambora_transaction_row_header">';
+				    $html .= '<td>' . Bambora_Online_Checkout_Helper::format_date_time( $operation->createddate ) . '</td>';
+				    $html .= '</tr>';
 
-				if ($eventInfo['description'] != null){
-					$html .= '<tr class="bambora_transaction_row_header">';
-					$html .= '<td>' . Bambora_Online_Checkout_Helper::format_date_time( $operation->createddate ) . '</td>';
+				    $html .= '<tr class="bambora_transaction_header">';
+				    $html .= '<td>' . $eventInfo['title'] . '</td>';
 
-					$html .= '</tr>';
+				    $amount = Bambora_Online_Checkout_Currency::convert_price_from_minorunits( $operation->amount, $minorunits );
+				    if ( $amount > 0 ) {
+					    $html .= '<td>' . wc_format_localized_price( $amount ) . ' ' . $operation->currency->code . '</td>';
+				    } else {
+					    $html .= '<td>-</td>';
+				    }
 
+				    $html .= '</tr>';
+				    $html .= '<tr class="bambora_transaction_description">';
+				    $html .= '<td colspan="2">' . $eventInfo['description'] . $eventInfoExtra . '</td>';
 
-					$html .= '<tr class="bambora_transaction_header">';
-					$html .= '<td>' .  $eventInfo['title']  . '</td>';
+				    $html .= '</tr>';
 
-					$amount = Bambora_Online_Checkout_Currency::convert_price_from_minorunits( $operation->amount, $minorunits );
-					if ( $amount > 0 ) {
-						$html .= '<td>' . wc_format_localized_price( $amount ) . ' ' . $operation->currency->code . '</td>';
-					} else {
-						$html .= '<td>-</td>';
-					}
+				    if ( isset( $operation->transactionoperations ) && count( $operation->transactionoperations ) > 0 ) {
+					    $html .= $this->build_transaction_log_rows( $operation->transactionoperations, $minorunits );
+				    }
 
-					$html .= '</tr>';
-					$html .= '<tr class="bambora_transaction_description">';
-					$html .= '<td colspan="2">' .  $eventInfo['description']  . $eventInfoExtra. '</td>';
+			    } elseif ( isset( $operation->transactionoperations ) && count( $operation->transactionoperations ) > 0 ) {
+				    $html .= $this->build_transaction_log_rows( $operation->transactionoperations, $minorunits );
+			    }
+		    }
 
-					$html .= '</tr>';
-
-
-					if ( isset( $operation->transactionoperations ) && count( $operation->transactionoperations ) > 0 ) {
-						$html  .= $this->build_transaction_log_rows( $operation->transactionoperations, $minorunits );
-					}
-
-				} else {
-					if ( isset( $operation->transactionoperations ) && count( $operation->transactionoperations ) > 0 ) {
-						$html  .= $this->build_transaction_log_rows( $operation->transactionoperations, $minorunits );
-					}
-				}
-            }
-
-            return $html;
-        }
+		    return $html;
+	    }
 
 	    protected function get_event_extra( $operation ) {
 		    $source        = $operation->actionsource;

@@ -186,27 +186,29 @@ class Bambora_Online_Checkout_Helper {
 
 
     /**
-     * Format a number
-     *
-     * @param mixed $number
-     * @param int   $decimals
-     * @return string
-     */
-    public static function format_number( $number, $decimals, $display_thousand_separator = true ) {
-        if($display_thousand_separator) {
-            return number_format( $number, $decimals, wc_get_price_decimal_separator(), wc_get_price_thousand_separator() );
-        }
+	 * Format a number
+	 *
+	 * @param mixed $number
+	 * @param int $decimals
+	 *
+	 * @return string
+	 */
+	public static function format_number( $number, $decimals, $display_thousand_separator = true ) {
+		if ( $display_thousand_separator ) {
+			return number_format( $number, $decimals, wc_get_price_decimal_separator(), wc_get_price_thousand_separator() );
+		}
 
         return number_format( $number, $decimals, wc_get_price_decimal_separator(), '' );
     }
 
     /**
-     * Convert action
-     *
-     * @param string $action
-     * @return string
-     */
-    public static function convert_action( $action ) {
+	 * Convert action
+	 *
+	 * @param string $action
+	 *
+	 * @return string
+	 */
+	public static function convert_action( $action ) {
         if ( 'Authorize' === $action ) {
             return __( 'Authorized', 'bambora-online-checkout' );
         } elseif ( 'Capture' === $action ) {
@@ -222,23 +224,25 @@ class Bambora_Online_Checkout_Helper {
 
     /**
      * Convert message to HTML
-     *
-     * @param string $type
-     * @param string $message
-     * @return string
-     * */
-    public static function message_to_html( $type, $message ) {
+	 *
+	 * @param string $type
+	 * @param string $message
+	 *
+	 * @return string
+	 * */
+	public static function message_to_html( $type, $message ) {
 
-        $class = '';
-        if($type === self::SUCCESS) {
-            $class = "notice-success";
-        } else {
-            $class = "notice-error";
-        }
+		$class = '';
+		if ( $type === self::SUCCESS ) {
+			$class = "notice-success";
+		} else {
+			$class = "notice-error";
+		}
 
-        $html = '<div id="message" class="'.$class.' notice"><p><strong>'.ucfirst($type).'! </strong>'.$message.'</p></div>';
-        return ent2ncr( $html );
-    }
+		$html = '<div id="message" class="' . $class . ' notice"><p><strong>' . ucfirst( $type ) . '! </strong>' . $message . '</p></div>';
+
+		return ent2ncr( $html );
+	}
 
     /**
      * Returns the Callback url
@@ -500,7 +504,6 @@ class Bambora_Online_Checkout_Helper {
 		$threeDSecureBrandName = "";
 		$eventInfo             = array();
 
-
 		if ( $action === "authorize" ) {
 			if ( isset( $operation->paymenttype->id ) ) {
 				$threeDSecureBrandName = Bambora_Online_Checkout_Helper::getCardAuthenticationBrandName( $operation->paymenttype->id );
@@ -570,7 +573,6 @@ class Bambora_Online_Checkout_Helper {
 
 					return $eventInfo;
 				}
-
 				case "update":
 				{
 					$title = $approved
@@ -586,7 +588,6 @@ class Bambora_Online_Checkout_Helper {
 
 					return $eventInfo;
 				}
-
 				case "return":
 				{
 					$title      = $approved
@@ -603,7 +604,6 @@ class Bambora_Online_Checkout_Helper {
 					return $eventInfo;
 
 				}
-
 				case "redirect":
 				{
 					$statusText               = $approved
@@ -686,7 +686,6 @@ class Bambora_Online_Checkout_Helper {
 				}
 			}
 		}
-
 		if ( $action === "credit" ) {
 			switch ( $subAction ) {
 				case "full":
@@ -710,11 +709,9 @@ class Bambora_Online_Checkout_Helper {
 						? 'Refunded partial amount'
 						: 'Refund failed';
 
-
 					$refundMultiText = $subAction === "multi"
 						? "Further refunds are possible."
 						: "Further refunds are no longer possible.";
-
 
 					$description = $approved
 						? 'The amount was successfully refunded. ' . $refundMultiText
