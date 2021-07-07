@@ -2,12 +2,12 @@
 Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
-Tested up to: 5.7
-Stable tag: 4.5.2
+Tested up to: 5.8
+Stable tag: 4.6.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 2.6
-WC tested up to: 5.4
+WC tested up to: 5.5
 
 Integrates Bambora Online Checkout payment gateway into your WooCommerce installation.
 
@@ -49,7 +49,7 @@ With Bambora Online Checkout for WooCommerce, you are able to integrate the Bamb
 
 == Changelog ==
 
-= 4.6.0 =
+= 4.6.1 =
 * Added functionality to allow LowValuePayments
 * Improved transaction log history display
 
