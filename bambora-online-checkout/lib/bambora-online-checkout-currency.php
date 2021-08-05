@@ -94,6 +94,7 @@ class Bambora_Online_Checkout_Currency {
                 'KRW' => 0,
                 'XOF' => 0,
                 'RWF' => 0,
+                'ISK' => 0,
                 'IQD' => 3,
                 'TND' => 3,
                 'BHD' => 3,
