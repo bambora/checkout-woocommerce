@@ -31,7 +31,8 @@ class Bambora_Online_Checkout_Currency {
      * @return int
      */
     public static function convert_price_to_minorunits( $amount, $minorunits, $rounding ) {
-        if ( ! isset( $amount ) ) {
+
+        if ( ! isset( $amount ) || $amount == "" ) {
             return 0;
         }
 
