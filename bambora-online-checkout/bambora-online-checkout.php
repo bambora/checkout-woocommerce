@@ -1097,7 +1097,7 @@ function init_bambora_online_checkout() {
 		            $order_shipping_total = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_shipping_total() : $order->get_total_shipping();
 		            $order_shipping_tax = $order->get_shipping_tax();
 		            if ( abs((float)$order_shipping_total) !=  abs((float)$shipping_total) ||  abs((float)$order_shipping_tax) != abs((float)$shipping_tax )) {
-			            throw new Exception( __( 'You can only refund complete order lines for payments made with Collector Bank.', 'bambora-online-checkout' ) );
+			            throw new Exception( __( 'You can only refund complete order lines for payments made with Walley.', 'bambora-online-checkout' ) );
 		            }
 	            }
 	            $shipping_method = reset( $shipping_methods );
@@ -1138,7 +1138,7 @@ function init_bambora_online_checkout() {
 				        }
 
 				        if (abs($order_fee_total) !=  abs($fee_total) ||  abs($order_fee_tax) != abs($fee_tax ) ) {
-					        throw new Exception( __( 'You can only refund complete order lines for payments made with Collector Bank.', 'bambora-online-checkout' ) );
+					        throw new Exception( __( 'You can only refund complete order lines for payments made with Walley.', 'bambora-online-checkout' ) );
 				        }
 			        }
 
@@ -1238,7 +1238,7 @@ function init_bambora_online_checkout() {
                         $card_name = $transaction->information->paymenttypes[0]->displayname;
 	                    $paymentTypesGroupId = $transaction->information->paymenttypes[0]->groupid;
 	                    $paymentTypesId = $transaction->information->paymenttypes[0]->id;
-	                    if ($paymentTypesGroupId  == 19 && $paymentTypesId == 40 ) { //Collector Bank
+	                    if ($paymentTypesGroupId  == 19 && $paymentTypesId == 40 ) { //Collector Bank (from 1st September 2021 called Walley)
 		                    $isCollector = true;
 		                    $collectorClass = "isCollectorTrue";
 	                    } else {
@@ -1321,7 +1321,7 @@ function init_bambora_online_checkout() {
 
                             if ( 0 < $available_for_capture ) {
                             	if ( $isCollector ) {
-		                            $tooltip =  __( 'With Payment Provider Collector bank only full capture is possible here. For partial capture, please use Bambora Merchant Portal.', 'bambora-online-checkout');
+		                            $tooltip =  __( 'With Payment Provider Walley only full capture is possible here. For partial capture, please use Bambora Merchant Portal.', 'bambora-online-checkout');
                             		$readOnly = 'readonly data-toggle="tooltip" title="' . $tooltip . '"';
 	                            } else {
 		                            $readOnly = "";
@@ -1442,7 +1442,7 @@ function init_bambora_online_checkout() {
 				    $html .= $this->build_transaction_log_rows( $operation->transactionoperations, $minorunits );
 			    }
 		    }
-
+		    $html = str_replace("CollectorBank", "Walley", $html);
 		    return $html;
 	    }
 
@@ -1585,7 +1585,7 @@ function init_bambora_online_checkout() {
 
 	        $paymentTypesGroupId = $transaction->information->paymenttypes[0]->groupid;
 	        $paymentTypesId = $transaction->information->paymenttypes[0]->id;
-	        if ($paymentTypesGroupId  == 19 && $paymentTypesId == 40 ) { //Collector Bank
+	        if ($paymentTypesGroupId  == 19 && $paymentTypesId == 40 ) { //Collector Bank (from 1st September 2021 called Walley)
 		        $isCollector = true;
 	        } else {
 		        $isCollector = false;

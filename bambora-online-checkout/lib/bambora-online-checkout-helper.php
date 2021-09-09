@@ -18,17 +18,17 @@
  */
 class Bambora_Online_Checkout_Helper {
 
-    const BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY = 'Transaction ID';
-    const BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID = 'bambora_online_checkout_subscription_id';
-    const BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY = 'Subscription ID';
-    const BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES = 'bambora_online_checkout_status_messages';
-    const BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST = 'bambora_online_checkout_status_messages_keep_for_post';
-    const ERROR = 'error';
-    const SUCCESS = 'success';
+	const BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY = 'Transaction ID';
+	const BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID = 'bambora_online_checkout_subscription_id';
+	const BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY = 'Subscription ID';
+	const BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES = 'bambora_online_checkout_status_messages';
+	const BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST = 'bambora_online_checkout_status_messages_keep_for_post';
+	const ERROR = 'error';
+	const SUCCESS = 'success';
 
-    /**
-     * Generate Bambora API key
-     *
+	/**
+	 * Generate Bambora API key
+	 *
      * @param string $merchant
      * @param string $accesstoken
      * @param string $secrettoken
@@ -42,11 +42,11 @@ class Bambora_Online_Checkout_Helper {
         return $api_key;
     }
 
-    /**
-     * Returns the module header
-     *
-     * @return string
-     */
+	/**
+	 * Returns the module header
+	 *
+	 * @return string
+	 */
     public static function get_module_header_info() {
         global $woocommerce;
 
@@ -57,10 +57,10 @@ class Bambora_Online_Checkout_Helper {
         return $result;
     }
 
-    /**
-     * Create the admin debug section
-     *
-     * @return string
+	/**
+	 * Create the admin debug section
+	 *
+	 * @return string
      */
     public static function create_admin_debug_section() {
         $documentation_link = 'https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce';
@@ -72,7 +72,7 @@ class Bambora_Online_Checkout_Helper {
     }
 
 
-    /**
+	/**
      * Checks if Woocommerce Subscriptions is enabled or not
      */
     public static function woocommerce_subscription_plugin_is_active() {
@@ -164,28 +164,28 @@ class Bambora_Online_Checkout_Helper {
         }
 
         return $formated_date;
-    }
+	}
 
-    /**
-     * Determines if the current WooCommerce version is 3.0 or higher
-     *
-     * @return boolean
-     */
-    public static function is_woocommerce_3() {
-        return version_compare( WC()->version, '3.0', '>=' );
-    }
+	/**
+	 * Determines if the current WooCommerce version is 3.0 or higher
+	 *
+	 * @return boolean
+	 */
+	public static function is_woocommerce_3() {
+		return version_compare( WC()->version, '3.0', '>=' );
+	}
 
-    /**
-     * Determines if the current WooCommerce version is 3.1 or higher
-     *
-     * @return boolean
-     */
-    public static function is_woocommerce_3_1() {
-        return version_compare( WC()->version, '3.1', '>=' );
-    }
+	/**
+	 * Determines if the current WooCommerce version is 3.1 or higher
+	 *
+	 * @return boolean
+	 */
+	public static function is_woocommerce_3_1() {
+		return version_compare( WC()->version, '3.1', '>=' );
+	}
 
 
-    /**
+	/**
 	 * Format a number
 	 *
 	 * @param mixed $number
@@ -198,10 +198,10 @@ class Bambora_Online_Checkout_Helper {
 			return number_format( $number, $decimals, wc_get_price_decimal_separator(), wc_get_price_thousand_separator() );
 		}
 
-        return number_format( $number, $decimals, wc_get_price_decimal_separator(), '' );
-    }
+		return number_format( $number, $decimals, wc_get_price_decimal_separator(), '' );
+	}
 
-    /**
+	/**
 	 * Convert action
 	 *
 	 * @param string $action
@@ -209,21 +209,21 @@ class Bambora_Online_Checkout_Helper {
 	 * @return string
 	 */
 	public static function convert_action( $action ) {
-        if ( 'Authorize' === $action ) {
-            return __( 'Authorized', 'bambora-online-checkout' );
-        } elseif ( 'Capture' === $action ) {
-            return __( 'Captured', 'bambora-online-checkout' );
-        } elseif ( 'Credit' === $action ) {
-            return __( 'Refunded', 'bambora-online-checkout' );
-        } elseif ( 'Delete' === $action ) {
-            return __( 'Deleted', 'bambora-online-checkout' );
-        } else {
-            return $action;
-        }
-    }
+		if ( 'Authorize' === $action ) {
+			return __( 'Authorized', 'bambora-online-checkout' );
+		} elseif ( 'Capture' === $action ) {
+			return __( 'Captured', 'bambora-online-checkout' );
+		} elseif ( 'Credit' === $action ) {
+			return __( 'Refunded', 'bambora-online-checkout' );
+		} elseif ( 'Delete' === $action ) {
+			return __( 'Deleted', 'bambora-online-checkout' );
+		} else {
+			return $action;
+		}
+	}
 
-    /**
-     * Convert message to HTML
+	/**
+	 * Convert message to HTML
 	 *
 	 * @param string $type
 	 * @param string $message
@@ -244,9 +244,9 @@ class Bambora_Online_Checkout_Helper {
 		return ent2ncr( $html );
 	}
 
-    /**
-     * Returns the Callback url
-     *
+	/**
+	 * Returns the Callback url
+	 *
      * @param WC_Order $order
      */
     public static function get_bambora_online_checkout_callback_url( $order_id ) {
@@ -255,9 +255,9 @@ class Bambora_Online_Checkout_Helper {
     }
 
     /**
-     * Returns the Accept url
-     *
-     * @param WC_Order $order
+	 * Returns the Accept url
+	 *
+	 * @param WC_Order $order
      */
     public static function get_accept_url( $order ) {
         if ( method_exists( $order, 'get_checkout_order_received_url' ) ) {
@@ -268,17 +268,17 @@ class Bambora_Online_Checkout_Helper {
             return $acceptUrl;
         }
 
-        return add_query_arg( 'key', $order->order_key, add_query_arg(
-                'order', Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id,
-                get_permalink( get_option( 'woocommerce_thanks_page_id' ) )
-            )
-        );
-    }
+		return add_query_arg( 'key', $order->order_key, add_query_arg(
+				'order', Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id,
+				get_permalink( get_option( 'woocommerce_thanks_page_id' ) )
+			)
+		);
+	}
 
-    /**
-     * Returns the Decline url
-     *
-     * @param WC_Order $order
+	/**
+	 * Returns the Decline url
+	 *
+	 * @param WC_Order $order
      */
     public static function get_decline_url( $order ) {
         if ( method_exists( $order, 'get_cancel_order_url' ) ) {
@@ -295,13 +295,13 @@ class Bambora_Online_Checkout_Helper {
                     'payment_cancellation' => 'yes',
                 ),
                 get_permalink( get_option( 'woocommerce_cart_page_id' ) ) )
-        );
-    }
+		);
+	}
 
-    /**
-     * Validate Callback
-     *
-     * @param mixed $params
+	/**
+	 * Validate Callback
+	 *
+	 * @param mixed $params
      * @param string $md5_key
      * @param WC_Order $order
      * @param string $message
@@ -333,7 +333,7 @@ class Bambora_Online_Checkout_Helper {
             return false;
         }
 
-        // Validate MD5!
+		// Validate MD5!
         $var = '';
         if ( strlen( $md5_key ) > 0 ) {
             foreach ( $params as $key => $value ) {
@@ -347,13 +347,13 @@ class Bambora_Online_Checkout_Helper {
             }
         }
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Get the Bambora Online Checkout Subscription id from the order
-     *
-     * @param WC_Subscription $subscription
+	/**
+	 * Get the Bambora Online Checkout Subscription id from the order
+	 *
+	 * @param WC_Subscription $subscription
      */
     public static function get_bambora_online_checkout_subscription_id( $subscription ) {
 
@@ -368,14 +368,14 @@ class Bambora_Online_Checkout_Helper {
                 //Transform Legacy to new standards
                 update_post_meta( $subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
                 delete_post_meta( $parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY );
-            }
-        }
+			}
+		}
 
-        return $bambora_subscription_id;
-    }
+		return $bambora_subscription_id;
+	}
 
-    /**
-     * get the Bambora Online Checkout Transaction id from the order
+	/**
+	 * get the Bambora Online Checkout Transaction id from the order
      *
      * @param WC_Order $order
      */
@@ -389,17 +389,17 @@ class Bambora_Online_Checkout_Helper {
                 //Transform Legacy to new standards
                 delete_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY );
                 $order->set_transaction_id( $transaction_id );
-                $order->save();
-            }
-        }
+				$order->save();
+			}
+		}
 
-        return $transaction_id;
-    }
+		return $transaction_id;
+	}
 
-    /**
-     * Build the list of notices to display on the administration
-     *
-     * @param string $type
+	/**
+	 * Build the list of notices to display on the administration
+	 *
+	 * @param string $type
      * @param string $message
      * @param bool $keep_post
      */
@@ -416,7 +416,7 @@ class Bambora_Online_Checkout_Helper {
     }
 
     /**
-     * Echo the notices to the Administration
+	 * Echo the notices to the Administration
      *
      * @return void
      */
@@ -432,8 +432,8 @@ class Bambora_Online_Checkout_Helper {
             delete_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES );
         } else {
             delete_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST );
-        }
-    }
+		}
+	}
 
 	/**
 	 *  Get the Card Authentication Brand Name
@@ -508,11 +508,12 @@ class Bambora_Online_Checkout_Helper {
 			if ( isset( $operation->paymenttype->id ) ) {
 				$threeDSecureBrandName = Bambora_Online_Checkout_Helper::getCardAuthenticationBrandName( $operation->paymenttype->id );
 			}
-			// Temporary renaming for Lindorff to Collector Bank require until implemented in Acquire
+			// Temporary renaming for Lindorff to Walley & Collector Bank to Walley require until implemented in Acquire. (from 1st September 2021 called Walley)
 			$thirdPartyName = $operation->acquirername;
-			$thirdPartyName = strtolower( $thirdPartyName ) !== "lindorff"
+			$thirdPartyName = strtolower( $thirdPartyName ) !== ("lindorff" || "collectorbank")
 				? $thirdPartyName
-				: "Collector Bank";
+				: "Walley";
+
 
 			switch ( $subAction ) {
 				case "threed":
