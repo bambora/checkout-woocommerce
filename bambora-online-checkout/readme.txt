@@ -12,6 +12,7 @@ WC tested up to: 5.7
 Integrates Bambora Online Checkout payment gateway into your WooCommerce installation.
 
 == Description ==
+Bambora will now be known as Worldline. As your payment partner, we’re now becoming stronger and better. However, all the things that you love about Bambora will remain the same – the contract, the people, and the solutions.
 With Bambora Online Checkout for WooCommerce, you are able to integrate the Bambora Online Checkout payment window into your WooCommerce installation and start receiving secure online payments.
 
 = Features =
