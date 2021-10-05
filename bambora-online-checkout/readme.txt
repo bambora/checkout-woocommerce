@@ -3,11 +3,11 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
 Tested up to: 5.8
-Stable tag: 4.6.2
+Stable tag: 4.6.3
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 2.6
-WC tested up to: 5.6
+WC tested up to: 5.7
 
 Integrates Bambora Online Checkout payment gateway into your WooCommerce installation.
 
@@ -48,6 +48,11 @@ With Bambora Online Checkout for WooCommerce, you are able to integrate the Bamb
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+
+= 4.6.3 =
+
+* Logo change Rebranding Worldline
+
 = 4.6.2 =
 * Renaming of CollectorBank to Walley
 * Fix for Type Exception
