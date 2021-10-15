@@ -280,13 +280,15 @@ class Bambora_Online_Checkout_Api {
 		curl_setopt( $curl, CURLOPT_FAILONERROR, false );
 		curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER, false );
 
-		if ($this->proxy->is_enabled() && $this->proxy->send_through_proxy( $service_url )) {
-			curl_setopt($curl, CURLOPT_PROXY, $this->proxy->host());
-			curl_setopt($curl, CURLOPT_PROXYPORT, $this->proxy->port());
-			if ($this->proxy->use_authentication()) {
-				curl_setopt($curl, CURLOPT_PROXYUSERPWD, $this->proxy->username() . ':' . $this->proxy->password());
+		//Check for proxy and proxy bypass
+		if ( $this->proxy->is_enabled() && $this->proxy->send_through_proxy( $service_url )) {
+			curl_setopt( $curl, CURLOPT_PROXY, $this->proxy->host());
+			curl_setopt( $curl, CURLOPT_PROXYPORT, $this->proxy->port());
+			if ( $this->proxy->use_authentication() ) {
+				curl_setopt( $curl, CURLOPT_PROXYUSERPWD, $this->proxy->authentication() );
 			}
 		}
+
 		$result = curl_exec( $curl );
 		return $result;
 	}
