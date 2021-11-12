@@ -385,14 +385,14 @@ function init_bambora_online_checkout() {
                             $payment_types = array();
                             foreach ( $get_payment_types_response->paymentcollections as $payment ) {
                                 foreach ( $payment->paymentgroups as $card ) {
-                                    $payment_types[] = $card->id;
+                                    $payment_types[] = $card;
                                 }
                             }
                             ksort( $payment_types );
 
                             $payment_types_html = '<div class="bambora_payment_types">';
-                            foreach ( $payment_types as $id ) {
-                                $payment_types_html .= '<img class="bambora_payment_type" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $id . '.svg" />';
+                            foreach ( $payment_types as $card ) {
+                                $payment_types_html .= '<img class="bambora_payment_type" title="'. $card->displayname .'" alt="'. $card->displayname .'" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $card->id . '.svg" />';
                             }
                             $payment_types_html .= '</div>';
                             $description = $payment_types_html;
