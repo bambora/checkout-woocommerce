@@ -603,8 +603,8 @@ function init_bambora_online_checkout() {
 			        $request->securitylevel     = "none";
 		        }
 	        }
-
-            return $request;
+            
+            return apply_filters( 'bambora_online_checkout_request', $request );
         }
 
         /**
