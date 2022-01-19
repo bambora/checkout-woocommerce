@@ -1286,19 +1286,28 @@ function init_bambora_online_checkout() {
 			                    $html .= '<div class="bambora_paymenttype">';
 			                    $html .= '<p>' . __( 'ECI', 'bambora-online-checkout' ) . '</p>';
 			                    $html .= '<p> <span title="' . Bambora_Online_Checkout_Helper::get3DSecureText( $lowestECI ) . '">' . $lowestECI . '</span></p>';
-			                    $html .= '</div>';
-		                    }
-	                    }
-	                    if ( isset( $transaction->information->exemptions ) ) {
-		                    $exemptions = $this->getDistinctExemptions( $transaction->information->exemptions );
-		                    if ( isset( $exemptions ) && $exemptions != "" ) {
-			                    $html .= '<div class="bambora_paymenttype">';
-			                    $html .= '<p>' . __( 'Exemptions', 'bambora-online-checkout' ) . '</p>';
-			                    $html .= '<p>' . $exemptions . '</p>';
-			                    $html .= '</div>';
-		                    }
-	                    }
-                        $html .= '<div class="bambora_info_overview">';
+								$html .= '</div>';
+							}
+						}
+						if ( isset( $transaction->information->acquirerreferences ) && isset( $transaction->information->acquirerreferences[0]->reference ) ) {
+							$acquirer_reference      = $transaction->information->acquirerreferences[0]->reference;
+							if ( isset( $acquirer_reference ) && $acquirer_reference != "" ) {
+								$html .= '<div class="bambora_paymenttype">';
+								$html .= '<p>' . __( 'Acquirer Reference', 'bambora-online-checkout' ) . '</p>';
+								$html .= '<p>' . $acquirer_reference . '</p>';
+								$html .= '</div>';
+							}
+						}
+						if ( isset( $transaction->information->exemptions ) ) {
+							$exemptions = $this->getDistinctExemptions( $transaction->information->exemptions );
+							if ( isset( $exemptions ) && $exemptions != "" ) {
+								$html .= '<div class="bambora_paymenttype">';
+								$html .= '<p>' . __( 'Exemptions', 'bambora-online-checkout' ) . '</p>';
+								$html .= '<p>' . $exemptions . '</p>';
+								$html .= '</div>';
+							}
+						}
+						$html .= '<div class="bambora_info_overview">';
                         $html .= '<p>' . __( 'Authorized:', 'bambora-online-checkout' ) . '</p>';
                         $html .= '<p>' . wc_format_localized_price( $total_authorized ) . ' ' . $currency_code . '</p>';
                         $html .= '</div>';
