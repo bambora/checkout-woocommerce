@@ -1264,15 +1264,23 @@ function init_bambora_online_checkout() {
 		                    return null;
 	                    }
 
-	                    $transaction_operations = $transaction_operations_response->transactionoperations;
+						$transaction_operations = $transaction_operations_response->transactionoperations;
 
 	                    $html = '<div id="'.$collectorClass.'"></div>';
 
-                        $html .= '<div class="bambora_info">';
-                        $html .= '<img class="bambora_paymenttype_img" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $card_group_id . '.svg" alt="' . $card_name . '" title="' . $card_name . '" />';
-                        $html .= '<div class="bambora_transactionid">';
-                        $html .= '<p>' . __( 'Transaction ID', 'bambora-online-checkout' ) . '</p>';
-                        $html .= '<p>' . $transaction->id . '</p>';
+						$html .= '<div class="bambora_info">';
+						$html .= '<img class="bambora_paymenttype_img" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $card_group_id . '.svg" alt="' . $card_name . '" title="' . $card_name . '" />';
+						if ( isset( $transaction_operations[0]->transactionoperations[0]->acquirerdata[0]->key ) ) {
+							if ( $transaction_operations[0]->transactionoperations[0]->acquirerdata[0]->key == "nordeaepaymentfi.customerbank" ) {
+								$bank_name = $transaction_operations[0]->transactionoperations[0]->acquirerdata[0]->value;
+							}
+							if ( isset( $bank_name ) && $bank_name != "" ) {
+								$html .= '<br/><img style="max-width: 65px;max-height:25px;float: right;clear: both;" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/bank-' . $bank_name . '.svg" alt="' . $bank_name . '" title="' . $bank_name . '" />';
+							}
+						}
+						$html .= '<div class="bambora_transactionid">';
+						$html .= '<p>' . __( 'Transaction ID', 'bambora-online-checkout' ) . '</p>';
+						$html .= '<p>' . $transaction->id . '</p>';
                         $html .= '</div>';
                         $html .= '<div class="bambora_paymenttype">';
                         $html .= '<p>' . __( 'Payment Type', 'bambora-online-checkout' ) . '</p>';
