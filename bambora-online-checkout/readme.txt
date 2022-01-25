@@ -89,6 +89,9 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+= 4.6.6 =
+Show Acquirer reference and bank logos for Direct Banking 
+
 = 4.6.5 =
 Added alt-tags to cards for accessibility.
 
@@ -174,13 +177,13 @@ Added alt-tags to cards for accessibility.
 
 = 4.0.4 =
 * Adds more logging and exception handling to getPaymentType
-* Fix for log beeing flooded
+* Fix for log being flooded
 
 = 4.0.3 =
 * Adds Payment Type and logo to Order detail page in the backoffice
 
 = 4.0.2 =
-* Fix for renewal order status not beeing set to failed when subscription payments fails
+* Fix for renewal order status not being set to failed when subscription payments fails
 
 = 4.0.1 =
 * Adds Swedish translations
@@ -213,7 +216,7 @@ Added alt-tags to cards for accessibility.
 
 = 3.0.2 =
 * Improved quality for Bambora logo
-* Improved quality for Bambora payment type logoes
+* Improved quality for Bambora payment type logos
 * Adds rounding option in module configuration
 * Fix for warning when using get order tax
 
