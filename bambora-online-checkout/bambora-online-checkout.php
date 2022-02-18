@@ -317,6 +317,18 @@ function init_bambora_online_checkout() {
 
             $html .= Bambora_Online_Checkout_Helper::create_admin_debug_section();
             $html .= '<h3 class="wc-settings-sub-title">Module configuration</h3>';
+
+	        if ( class_exists( 'sitepress' ) ) {
+		        $html .= '<div class="form-table">
+					<h2>You have WPML activated.</h2>
+					If you need to configure another merchant number for another language translate them under
+					<a href="admin.php?page=wpml-string-translation/menu/string-translation.php&context=admin_texts_woocommerce_bambora_settings" class="current" aria-currents="page">String Translation</a>
+					</br>
+					Subscriptions are currently only supported for the default merchant number.
+					</br>	
+</div>';
+	        }
+
             $html .= '<table class="form-table">';
 
             // Generate the HTML For the settings form.!
@@ -554,7 +566,7 @@ function init_bambora_online_checkout() {
                     'redirect' => $this->get_return_url( $order )
                 );
             }
-            $api_key = $this->get_api_key();
+	        $api_key = $this->get_api_key( $order_id );
             $api = new Bambora_Online_Checkout_Api( $api_key );
             $bambora_checkout_request = $this->create_bambora_checkout_request( $order );
             $bambora_checkout_response = $api->set_checkout_session( $bambora_checkout_request );
@@ -826,7 +838,7 @@ function init_bambora_online_checkout() {
             try {
                 $isValidCall = Bambora_Online_Checkout_Helper::validate_bambora_online_checkout_callback_params( $params, $this->md5key, $order, $message );
                 if( $isValidCall ) {
-                    $api_key = $this->get_api_key();
+	                $api_key = $this->get_api_key( $order->id );
                     $api = new Bambora_Online_Checkout_Api( $api_key );
                     $transaction_response = $api->get_transaction( $params['txnid'] );
                     if ( isset( $transaction_response ) && $transaction_response->meta->result ) {
@@ -1212,7 +1224,7 @@ function init_bambora_online_checkout() {
                 if ( strlen( $transaction_id ) > 0 ) {
                     $html = '';
                     try {
-                        $api_key = $this->get_api_key();
+                        $api_key = $this->get_api_key( $order_id );
                         $api = new Bambora_Online_Checkout_Api( $api_key );
 
                         $transaction_response = $api->get_transaction( $transaction_id );
@@ -1264,7 +1276,7 @@ function init_bambora_online_checkout() {
 		                    return null;
 	                    }
 
-						$transaction_operations = $transaction_operations_response->transactionoperations;
+	                    $transaction_operations = $transaction_operations_response->transactionoperations;
 
 	                    $html = '<div id="'.$collectorClass.'"></div>';
 
@@ -1309,13 +1321,13 @@ function init_bambora_online_checkout() {
 						if ( isset( $transaction->information->exemptions ) ) {
 							$exemptions = $this->getDistinctExemptions( $transaction->information->exemptions );
 							if ( isset( $exemptions ) && $exemptions != "" ) {
-								$html .= '<div class="bambora_paymenttype">';
-								$html .= '<p>' . __( 'Exemptions', 'bambora-online-checkout' ) . '</p>';
-								$html .= '<p>' . $exemptions . '</p>';
-								$html .= '</div>';
-							}
-						}
-						$html .= '<div class="bambora_info_overview">';
+			                    $html .= '<div class="bambora_paymenttype">';
+			                    $html .= '<p>' . __( 'Exemptions', 'bambora-online-checkout' ) . '</p>';
+			                    $html .= '<p>' . $exemptions . '</p>';
+			                    $html .= '</div>';
+		                    }
+	                    }
+                        $html .= '<div class="bambora_info_overview">';
                         $html .= '<p>' . __( 'Authorized:', 'bambora-online-checkout' ) . '</p>';
                         $html .= '<p>' . wc_format_localized_price( $total_authorized ) . ' ' . $currency_code . '</p>';
                         $html .= '</div>';
@@ -1466,8 +1478,10 @@ function init_bambora_online_checkout() {
 	    protected function get_event_extra( $operation ) {
 		    $source        = $operation->actionsource;
 		    $actionCode    = $operation->actioncode;
-		    $webservice    = new Bambora_Online_Checkout_Api( $this->get_api_key() );
-		    $responseCode  = $webservice->get_response_code_data( $source, $actionCode );
+		    global $post;
+		    $id           = $post->ID;
+		    $webservice   = new Bambora_Online_Checkout_Api( $this->get_api_key( $id ) );
+		    $responseCode = $webservice->get_response_code_data( $source, $actionCode );
 		    $merchantLabel = "";
 		    if ( isset( $responseCode->responsecode ) ) {
 			    $merchantLabel = $responseCode->responsecode->merchantlabel . " - " . $source . " " . $actionCode;
@@ -1555,7 +1569,7 @@ function init_bambora_online_checkout() {
             $amount = str_replace( ',', '.', $amount);
             $amount_in_minorunits = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $amount, $minorunits, $this->roundingmode );
             $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
-	        $webservice  = new Bambora_Online_Checkout_Api( $this->get_api_key() );
+	        $webservice  = new Bambora_Online_Checkout_Api( $this->get_api_key( $order_id ) );
 	        $capture_response = $webservice->capture( $transaction_id, $amount_in_minorunits, $currency, null );
 
             if ( isset( $capture_response ) && $capture_response->meta->result ) {
@@ -1586,7 +1600,7 @@ function init_bambora_online_checkout() {
             $amount = str_replace( ',', '.', $amount);
             $amount_in_minorunits = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $amount, $minorunits, $this->roundingmode );
             $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
-	        $api_key = $this->get_api_key();
+	        $api_key = $this->get_api_key( $order_id );
 	        $api = new Bambora_Online_Checkout_Api( $api_key );
 
 	        $transaction_response = $api->get_transaction( $transaction_id );
@@ -1612,7 +1626,7 @@ function init_bambora_online_checkout() {
 	        $order_total = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_total() : $order->order_total;
 
 	        $credit_response = null;
-	        $webservice = new Bambora_Online_Checkout_Api( $this->get_api_key() );
+	        $webservice = new Bambora_Online_Checkout_Api( $this->get_api_key( $order_id ) );
 	        if ( $amount  === $order_total ){ //Do not send credit lines when crediting full amount
 		        $credit_response = $webservice->credit( $transaction_id, $amount_in_minorunits, $currency, null );
 	        } else {
@@ -1644,7 +1658,7 @@ function init_bambora_online_checkout() {
         public function bambora_online_checkout_delete_payment( $order_id ) {
             $order = wc_get_order( $order_id );
             $transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
-            $webservice = new Bambora_Online_Checkout_Api( $this->get_api_key() );
+            $webservice = new Bambora_Online_Checkout_Api( $this->get_api_key( $order_id ) );
 
             $delete_response = $webservice->delete( $transaction_id );
             if ( isset( $delete_response ) && $delete_response->meta->result ) {
@@ -1667,9 +1681,23 @@ function init_bambora_online_checkout() {
         /**
          * Get the Bambora Api Key
          */
-        protected function get_api_key() {
-            return Bambora_Online_Checkout_Helper::generate_api_key( $this->merchant, $this->accesstoken, $this->secrettoken );
-        }
+	    /**
+	     * Get the Bambora Api Key
+	     */
+	    protected function get_api_key( $order_id = null ) {
+		    if ( isset( $order_id ) ) {
+			    if ( class_exists( 'sitepress' ) ) {
+				    $order_language = Bambora_Online_Checkout_Helper::getWPMLOrderLanguage( $order_id );
+				    $merchant       = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'merchant', $order_language );
+				    $accesstoken    = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'accesstoken', $order_language );
+				    $secrettoken    = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'secrettoken', $order_language );
+
+				    return Bambora_Online_Checkout_Helper::generate_api_key( $merchant, $accesstoken, $secrettoken );
+			    }
+		    }
+
+		    return Bambora_Online_Checkout_Helper::generate_api_key( $this->merchant, $this->accesstoken, $this->secrettoken );
+	    }
 
         public function module_check($order_id) {
             $payment_method = get_post_meta( $order_id, '_payment_method', true );

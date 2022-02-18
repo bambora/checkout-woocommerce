@@ -1,0 +1,10 @@
+<wpml-config>
+    <admin-texts>
+        <key name="woocommerce_bambora_settings">
+            <key name="merchant"/>
+            <key name="accesstoken"/>
+            <key name="secrettoken"/>
+            <key name="md5key"/>
+        </key>
+    </admin-texts>
+</wpml-config>
