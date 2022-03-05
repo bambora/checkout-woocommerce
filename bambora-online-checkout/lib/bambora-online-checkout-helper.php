@@ -335,7 +335,7 @@ class Bambora_Online_Checkout_Helper {
 
 	    if ( class_exists( 'sitepress' ) ) {
 		    $order_language = Bambora_Online_Checkout_Helper::getWPMLOrderLanguage( $order );
-		    $md5_key        = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'md5key', $order_language );
+		    $md5_key        = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'md5key', $order_language, $md5_key );
 	    }
 		// Validate MD5!
         $var = '';
@@ -371,12 +371,14 @@ class Bambora_Online_Checkout_Helper {
 	/**
 	 * Get the option value by language
 	 *
-	 * @param WC_Order $order
+	 * @param string $key
+	 * @param string $language
+	 * @param string $default_value
 	 *
 	 * @return string
 	 */
 
-	public static function getWPMLOptionValue( $key, $language = null ) {
+	public static function getWPMLOptionValue( $key, $language = null, $default_value = null ) {
 		if ( is_null( $language ) ) {
 			$language = apply_filters( 'wpml_current_language', null );
 		}
@@ -387,6 +389,10 @@ class Bambora_Online_Checkout_Helper {
 			if ( isset( $language ) && $language != "" ) {
 				$option_value = apply_filters( 'wpml_translate_single_string', $key_value, "admin_texts_woocommerce_bambora_settings", "[woocommerce_bambora_settings]" . $key, $language );
 			}
+		}
+		// Always return default value in case of not set.
+		if ( is_null( $option_value ) ) {
+			$option_value = $default_value;
 		}
 
 		return $option_value;

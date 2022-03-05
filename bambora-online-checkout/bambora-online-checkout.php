@@ -1688,9 +1688,9 @@ function init_bambora_online_checkout() {
 		    if ( isset( $order_id ) ) {
 			    if ( class_exists( 'sitepress' ) ) {
 				    $order_language = Bambora_Online_Checkout_Helper::getWPMLOrderLanguage( $order_id );
-				    $merchant       = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'merchant', $order_language );
-				    $accesstoken    = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'accesstoken', $order_language );
-				    $secrettoken    = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'secrettoken', $order_language );
+				    $merchant = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'merchant', $order_language, $this->merchant );
+				    $accesstoken = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'accesstoken', $order_language, $this->accesstoken );
+				    $secrettoken = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'secrettoken', $order_language, $this->secrettoken );
 
 				    return Bambora_Online_Checkout_Helper::generate_api_key( $merchant, $accesstoken, $secrettoken );
 			    }
