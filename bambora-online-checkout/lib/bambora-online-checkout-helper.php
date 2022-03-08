@@ -334,7 +334,7 @@ class Bambora_Online_Checkout_Helper {
         }
 
 	    if ( class_exists( 'sitepress' ) ) {
-		    $order_language = Bambora_Online_Checkout_Helper::getWPMLOrderLanguage( $order );
+		    $order_language = Bambora_Online_Checkout_Helper::getWPMLOrderLanguage( $order->get_id() );
 		    $md5_key        = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'md5key', $order_language, $md5_key );
 	    }
 		// Validate MD5!
