@@ -2,12 +2,12 @@
 Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
-Tested up to: 5.8
-Stable tag: 4.7.1
+Tested up to: 5.9
+Stable tag: 4.7.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 2.6
-WC tested up to: 5.9
+WC tested up to: 6.2
 
 Integrates Bambora Checkout payment gateway into your WooCommerce installation.
 
@@ -89,6 +89,10 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+
+= 4.7.2 =
+* Makes sure default values are set if WPML is recently installed.
+
 = 4.7.1 =
 * Adds support for WPML. Subscriptions are not supported for WPML with settings other than default.
 
