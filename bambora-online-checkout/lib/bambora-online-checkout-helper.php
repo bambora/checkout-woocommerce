@@ -29,150 +29,153 @@ class Bambora_Online_Checkout_Helper {
 	/**
 	 * Generate Bambora API key
 	 *
-     * @param string $merchant
-     * @param string $accesstoken
-     * @param string $secrettoken
-     * @return string
-     */
-    public static function generate_api_key( $merchant, $accesstoken, $secrettoken ) {
-        $combined = $accesstoken . '@' . $merchant . ':' . $secrettoken;
-        $encoded_key = base64_encode( $combined );
-        $api_key = 'Basic ' . $encoded_key;
+	 * @param string $merchant
+	 * @param string $accesstoken
+	 * @param string $secrettoken
+	 *
+	 * @return string
+	 */
+	public static function generate_api_key( $merchant, $accesstoken, $secrettoken ) {
+		$combined    = $accesstoken . '@' . $merchant . ':' . $secrettoken;
+		$encoded_key = base64_encode( $combined );
 
-        return $api_key;
-    }
+		return 'Basic ' . $encoded_key;
+	}
 
 	/**
 	 * Returns the module header
 	 *
 	 * @return string
 	 */
-    public static function get_module_header_info() {
-        global $woocommerce;
+	public static function get_module_header_info() {
+		global $woocommerce;
 
-        $bambora_version = BOC_VERSION;
-        $woocommerce_version = $woocommerce->version;
-        $php_version = phpversion();
-        $result = "WooCommerce/{$woocommerce_version} Module/{$bambora_version} PHP/{$php_version}";
-        return $result;
-    }
+		$bambora_version     = BOC_VERSION;
+		$woocommerce_version = $woocommerce->version;
+		$php_version         = phpversion();
+
+		return "WooCommerce/{$woocommerce_version} Module/{$bambora_version} PHP/{$php_version}";
+	}
 
 	/**
 	 * Create the admin debug section
 	 *
 	 * @return string
-     */
-    public static function create_admin_debug_section() {
-        $documentation_link = 'https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce';
-        $html = '<h3 class="wc-settings-sub-title">Debug</h3>';
-        $html .= sprintf( '<a id="boc-admin-documentation" class="button button-primary" href="%s" target="_blank">Module documentation</a>', $documentation_link );
-        $html .= sprintf( '<a id="boc-admin-log" class="button" href="%s" target="_blank">View debug logs</a>', Bambora_Online_Checkout::get_instance()->get_boc_logger()->get_admin_link() );
+	 */
+	public static function create_admin_debug_section() {
+		$documentation_link = 'https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce';
+		$html               = '<h3 class="wc-settings-sub-title">Debug</h3>';
+		$html               .= sprintf( '<a id="boc-admin-documentation" class="button button-primary" href="%s" target="_blank">Module documentation</a>', $documentation_link );
+		$html               .= sprintf( '<a id="boc-admin-log" class="button" href="%s" target="_blank">View debug logs</a>', Bambora_Online_Checkout::get_instance()->get_boc_logger()->get_admin_link() );
 
-        return $html;
-    }
+		return $html;
+	}
 
 
 	/**
-     * Checks if Woocommerce Subscriptions is enabled or not
-     */
-    public static function woocommerce_subscription_plugin_is_active() {
-        return class_exists('WC_Subscriptions') && WC_Subscriptions::$name = 'subscription';
-    }
-
-    /**
-     * Get the subscription for a renewal order
-     *
-     * @param WC_Order $renewal_order
-     * @return WC_Subscription|null
-     */
-    public static function get_subscriptions_for_renewal_order( $renewal_order ) {
-        if( function_exists( 'wcs_get_subscriptions_for_renewal_order' ) ) {
-            $subscriptions = wcs_get_subscriptions_for_renewal_order( $renewal_order );
-            return end( $subscriptions );
-        }
-        return null;
-    }
-
-    /**
-     * Check if order contains switching products
-     *
-     * @param WC_Order|int $order The WC_Order object or ID of a WC_Order order.
-     * @return bool
-     */
-    public static function order_contains_switch( $order ) {
-        if (function_exists( 'wcs_order_contains_switch' )) {
-            return wcs_order_contains_switch( $order );
-        }
-        return false;
-    }
-
-    /**
-     * Check if order contains subscriptions.
-     *
-     * @param  WC_Order|int $order_id
-     * @return bool
-     */
-    public static function order_contains_subscription( $order_id ) {
-        if( function_exists( 'wcs_order_contains_subscription' ) ) {
-            return wcs_order_contains_subscription( $order_id ) || wcs_order_contains_renewal( $order_id );
-        }
-        return false;
-    }
-
-    /**
-     * Get subscriptions for order
-     *
-     * @param mixed $order_id
-     * @return array
-     */
-    public static function get_subscriptions_for_order( $order_id ) {
-        if( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
-            return wcs_get_subscriptions_for_order( $order_id, array( 'order_type' => 'any' ) );
-        }
-        return array();
-    }
-
-    /**
-     * Check if an order is of type subscription
-     *
-     * @param object $order
-     * @return boolean
-     */
-    public static function order_is_subscription( $order ) {
-        if( function_exists( 'wcs_is_subscription' ) ) {
-            return wcs_is_subscription( $order );
-        }
-        return false;
-    }
-
-    /**
-     * Format date time
-     *
-     * @param string $raw_date_time
-     * @return string
-     */
-    public static function format_date_time( $raw_date_time ) {
-        $date_format = wc_date_format();
-        $time_format = wc_time_format();
-        $date_time_format = "{$date_format} - {$time_format}";
-        $formated_date = "";
-        if ( self::is_woocommerce_3_1() ) {
-            $date_time = wc_string_to_datetime( $raw_date_time );
-            $formated_date = wc_format_datetime( $date_time, $date_time_format );
-        } else {
-            $formated_date = date( $date_time_format, strtotime($raw_date_time));
-        }
-
-        return $formated_date;
+	 * Checks if Woocommerce Subscriptions is enabled or not
+	 */
+	public static function woocommerce_subscription_plugin_is_active() {
+		return class_exists( 'WC_Subscriptions' ) && WC_Subscriptions::$name = 'subscription';
 	}
 
 	/**
-	 * Determines if the current WooCommerce version is 3.0 or higher
+	 * Get the subscription for a renewal order
+	 *
+	 * @param WC_Order $renewal_order
+	 *
+	 * @return WC_Subscription|null
+	 */
+	public static function get_subscriptions_for_renewal_order( $renewal_order ) {
+		if ( function_exists( 'wcs_get_subscriptions_for_renewal_order' ) ) {
+			$subscriptions = wcs_get_subscriptions_for_renewal_order( $renewal_order );
+
+			return end( $subscriptions );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Check if order contains switching products
+	 *
+	 * @param WC_Order|int $order The WC_Order object or ID of a WC_Order order.
+	 *
+	 * @return bool
+	 */
+	public static function order_contains_switch( $order ) {
+		if ( function_exists( 'wcs_order_contains_switch' ) ) {
+			return wcs_order_contains_switch( $order );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if order contains subscriptions.
+	 *
+	 * @param WC_Order|int $order_id
+	 *
+	 * @return bool
+	 */
+	public static function order_contains_subscription( $order_id ) {
+		if ( function_exists( 'wcs_order_contains_subscription' ) ) {
+			return wcs_order_contains_subscription( $order_id ) || wcs_order_contains_renewal( $order_id );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get subscriptions for order
+	 *
+	 * @param mixed $order_id
+	 *
+	 * @return array
+	 */
+	public static function get_subscriptions_for_order( $order_id ) {
+		if ( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
+			return wcs_get_subscriptions_for_order( $order_id, array( 'order_type' => 'any' ) );
+		}
+
+		return array();
+	}
+
+	/**
+	 * Check if an order is of type subscription
+	 *
+	 * @param object $order
 	 *
 	 * @return boolean
 	 */
-	public static function is_woocommerce_3() {
-		return version_compare( WC()->version, '3.0', '>=' );
+	public static function order_is_subscription( $order ) {
+		if ( function_exists( 'wcs_is_subscription' ) ) {
+			return wcs_is_subscription( $order );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Format date time
+	 *
+	 * @param string $raw_date_time
+	 *
+	 * @return string
+	 */
+	public static function format_date_time( $raw_date_time ) {
+		$date_format      = wc_date_format();
+		$time_format      = wc_time_format();
+		$date_time_format = "{$date_format} - {$time_format}";
+		$formated_date    = "";
+		if ( self::is_woocommerce_3_1() ) {
+			$date_time     = wc_string_to_datetime( $raw_date_time );
+			$formated_date = wc_format_datetime( $date_time, $date_time_format );
+		} else {
+			$formated_date = date( $date_time_format, strtotime( $raw_date_time ) );
+		}
+
+		return $formated_date;
 	}
 
 	/**
@@ -184,12 +187,13 @@ class Bambora_Online_Checkout_Helper {
 		return version_compare( WC()->version, '3.1', '>=' );
 	}
 
-
 	/**
 	 * Format a number
 	 *
 	 * @param mixed $number
 	 * @param int $decimals
+	 *
+	 * @param bool $display_thousand_separator
 	 *
 	 * @return string
 	 */
@@ -223,53 +227,35 @@ class Bambora_Online_Checkout_Helper {
 	}
 
 	/**
-	 * Convert message to HTML
+	 * Returns the Callback url
 	 *
-	 * @param string $type
-	 * @param string $message
+	 * @param $order_id
 	 *
 	 * @return string
-	 * */
-	public static function message_to_html( $type, $message ) {
+	 */
+	public static function get_bambora_online_checkout_callback_url( $order_id ) {
+		$args = array( 'wc-api' => 'Bambora_Online_Checkout', 'wcorderid' => $order_id );
 
-		$class = '';
-		if ( $type === self::SUCCESS ) {
-			$class = "notice-success";
-		} else {
-			$class = "notice-error";
-		}
-
-		$html = '<div id="message" class="' . $class . ' notice"><p><strong>' . ucfirst( $type ) . '! </strong>' . $message . '</p></div>';
-
-		return ent2ncr( $html );
+		return add_query_arg( $args, site_url( '/' ) );
 	}
 
 	/**
-	 * Returns the Callback url
-	 *
-     * @param WC_Order $order
-     */
-    public static function get_bambora_online_checkout_callback_url( $order_id ) {
-        $args = array( 'wc-api' => 'Bambora_Online_Checkout', 'wcorderid' => $order_id);
-        return add_query_arg( $args , site_url( '/' ) );
-    }
-
-    /**
 	 * Returns the Accept url
 	 *
 	 * @param WC_Order $order
-     */
-    public static function get_accept_url( $order ) {
-        if ( method_exists( $order, 'get_checkout_order_received_url' ) ) {
-            $acceptUrlRaw = $order->get_checkout_order_received_url();
-            $acceptUrlTemp = str_replace( '&amp;', '&', $acceptUrlRaw );
-            $acceptUrl = str_replace( '&#038', '&', $acceptUrlTemp );
+	 *
+	 * @return string|string[]
+	 */
+	public static function get_accept_url( WC_Order $order ): string|array {
+		if ( method_exists( $order, 'get_checkout_order_received_url' ) ) {
+			$acceptUrlRaw  = $order->get_checkout_order_received_url();
+			$acceptUrlTemp = str_replace( '&amp;', '&', $acceptUrlRaw );
 
-            return $acceptUrl;
-        }
+			return str_replace( '&#038', '&', $acceptUrlTemp );
+		}
 
 		return add_query_arg( 'key', $order->order_key, add_query_arg(
-				'order', Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id,
+				'order', $order->get_id(),
 				get_permalink( get_option( 'woocommerce_thanks_page_id' ) )
 			)
 		);
@@ -279,22 +265,23 @@ class Bambora_Online_Checkout_Helper {
 	 * Returns the Decline url
 	 *
 	 * @param WC_Order $order
-     */
-    public static function get_decline_url( $order ) {
-        if ( method_exists( $order, 'get_cancel_order_url' ) ) {
-            $declineUrlRaw = $order->get_cancel_order_url();
-            $declineUrlTemp = str_replace( '&amp;', '&', $declineUrlRaw );
-            $declineUrl = str_replace( '&#038', '&', $declineUrlTemp );
+	 *
+	 * @return string|string[]
+	 */
+	public static function get_decline_url( WC_Order $order ): string|array {
+		if ( method_exists( $order, 'get_cancel_order_url' ) ) {
+			$declineUrlRaw  = $order->get_cancel_order_url();
+			$declineUrlTemp = str_replace( '&amp;', '&', $declineUrlRaw );
 
-            return $declineUrl;
-        }
+			return str_replace( '&#038', '&', $declineUrlTemp );
+		}
 
-        return add_query_arg( 'key', $order->get_order_key(), add_query_arg(
-                array(
-                    'order' => Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id,
-                    'payment_cancellation' => 'yes',
-                ),
-                get_permalink( get_option( 'woocommerce_cart_page_id' ) ) )
+		return add_query_arg( 'key', $order->get_order_key(), add_query_arg(
+				array(
+					'order'                => $order->get_id(),
+					'payment_cancellation' => 'yes',
+				),
+				get_permalink( get_option( 'woocommerce_cart_page_id' ) ) )
 		);
 	}
 
@@ -302,78 +289,81 @@ class Bambora_Online_Checkout_Helper {
 	 * Validate Callback
 	 *
 	 * @param mixed $params
-     * @param string $md5_key
-     * @param WC_Order $order
-     * @param string $message
-     * @return bool
-     */
-    public static function validate_bambora_online_checkout_callback_params( $params, $md5_key, &$order, &$message ) {
+	 * @param string $md5_key
+	 * @param WC_Order $order
+	 * @param string $message
+	 *
+	 * @return bool
+	 */
+	public static function validate_bambora_online_checkout_callback_params( $params, $md5_key, &$order, &$message ) {
 
-        if ( ! isset( $params ) || empty( $params ) ) {
-            $message = "No GET parameters supplied to the system";
-            return false;
-        }
+		if ( ! isset( $params ) || empty( $params ) ) {
+			$message = "No GET parameters supplied to the system";
 
-        // Validate woocommerce order!
-        if(empty( $params['wcorderid'] ))
-        {
-            $message = "No WooCommerce Order Id was supplied to the system!";
-            return false;
-        }
+			return false;
+		}
 
-        $order = wc_get_order( $params['wcorderid'] );
-        if ( empty( $order ) ) {
-            $message = "Could not find order with WooCommerce Order id {$params["wcorderid"]}";
-            return false;
-        }
+		// Validate woocommerce order!
+		if ( empty( $params['wcorderid'] ) ) {
+			$message = "No WooCommerce Order Id was supplied to the system!";
 
-        // Check exists transactionid!
-        if ( empty( $params['txnid'] ) ) {
-            $message = isset( $params ) ? 'No GET(txnid) was supplied to the system!' : 'Response is null';
-            return false;	
-        }
+			return false;
+		}
 
-	    if ( class_exists( 'sitepress' ) ) {
-		    $order_language = Bambora_Online_Checkout_Helper::getWPMLOrderLanguage( $order->get_id() );
-		    $md5_key        = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'md5key', $order_language, $md5_key );
-	    }
+		$order = wc_get_order( $params['wcorderid'] );
+		if ( empty( $order ) ) {
+			$message = "Could not find order with WooCommerce Order id {$params["wcorderid"]}";
+
+			return false;
+		}
+
+		// Check exists transactionid!
+		if ( empty( $params['txnid'] ) ) {
+			$message = 'No GET(txnid) was supplied to the system!';
+
+			return false;
+		}
+
+		if ( class_exists( 'sitepress' ) ) {
+			$order_language = Bambora_Online_Checkout_Helper::getWPMLOrderLanguage( $order->get_id() );
+			$md5_key        = Bambora_Online_Checkout_Helper::getWPMLOptionValue( 'md5key', $order_language, $md5_key );
+		}
 		// Validate MD5!
-        $var = '';
-        if ( strlen( $md5_key ) > 0 ) {
-            foreach ( $params as $key => $value ) {
-                if ( 'hash' === $key ) break;
-                $var .= $value;
-            }
-            $genstamp = md5( $var . $md5_key );
-            if ( ! hash_equals( $genstamp, $params['hash'] ) ) {
-                $message = 'Hash validation failed - Please check your MD5 key';
-                return false;
-            }
-        }
+		$var = '';
+		if ( strlen( $md5_key ) > 0 ) {
+			foreach ( $params as $key => $value ) {
+				if ( 'hash' === $key ) {
+					break;
+				}
+				$var .= $value;
+			}
+			$genstamp = md5( $var . $md5_key );
+			if ( ! hash_equals( $genstamp, $params['hash'] ) ) {
+				$message = 'Hash validation failed - Please check your MD5 key';
+
+				return false;
+			}
+		}
 
 		return true;
 	}
-
 
 	/**
 	 * Get the language the order was made in
 	 *
 	 * @param int $orderId
 	 *
-	 * @return string
 	 */
 	public static function getWPMLOrderLanguage( $orderId ) {
-		$order_language = get_post_meta( $orderId, 'wpml_language', true );
-
-		return $order_language;
+		return get_post_meta( $orderId, 'wpml_language', true );
 	}
 
 	/**
 	 * Get the option value by language
 	 *
 	 * @param string $key
-	 * @param string $language
-	 * @param string $default_value
+	 * @param null $language
+	 * @param null $default_value
 	 *
 	 * @return string
 	 */
@@ -398,25 +388,26 @@ class Bambora_Online_Checkout_Helper {
 		return $option_value;
 	}
 
-
 	/**
 	 * Get the Bambora Online Checkout Subscription id from the order
 	 *
 	 * @param WC_Subscription $subscription
-     */
-    public static function get_bambora_online_checkout_subscription_id( $subscription ) {
+	 *
+	 * @return mixed
+	 */
+	public static function get_bambora_online_checkout_subscription_id( WC_Subscription $subscription ) {
 
-        $subscription_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $subscription->get_id() : $subscription->id;
-        $bambora_subscription_id = get_post_meta( $subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, true );
+		$subscription_id         = $subscription->get_id();
+		$bambora_subscription_id = get_post_meta( $subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, true );
 
-        //For Legacy
-        if( empty( $bambora_subscription_id ) ) {
-            $parent_order_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $subscription->get_parent_id() : $subscription->parent_id;
-            $bambora_subscription_id = get_post_meta( $parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY, true);
-            if( !empty( $bambora_subscription_id ) ) {
-                //Transform Legacy to new standards
-                update_post_meta( $subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
-                delete_post_meta( $parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY );
+		//For Legacy
+		if ( empty( $bambora_subscription_id ) ) {
+			$parent_order_id         = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $subscription->get_parent_id() : $subscription->parent_id;
+			$bambora_subscription_id = get_post_meta( $parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY, true );
+			if ( ! empty( $bambora_subscription_id ) ) {
+				//Transform Legacy to new standards
+				update_post_meta( $subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
+				delete_post_meta( $parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY );
 			}
 		}
 
@@ -424,20 +415,32 @@ class Bambora_Online_Checkout_Helper {
 	}
 
 	/**
+	 * Determines if the current WooCommerce version is 3.0 or higher
+	 *
+	 * @return boolean
+	 */
+	public static function is_woocommerce_3() {
+		return version_compare( WC()->version, '3.0', '>=' );
+	}
+
+	/**
 	 * get the Bambora Online Checkout Transaction id from the order
-     *
-     * @param WC_Order $order
-     */
-    public static function get_bambora_online_checkout_transaction_id($order) {
-        $transaction_id = $order->get_transaction_id();
-        //For Legacy
-        if( empty( $transaction_id ) ) {
-            $order_id = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id;
-            $transaction_id = get_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY, true );
-            if( !empty( $transaction_id ) ) {
-                //Transform Legacy to new standards
-                delete_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY );
-                $order->set_transaction_id( $transaction_id );
+	 *
+	 * @param WC_Order $order
+	 *
+	 * @return mixed|string
+	 * @throws WC_Data_Exception
+	 */
+	public static function get_bambora_online_checkout_transaction_id( $order ) {
+		$transaction_id = $order->get_transaction_id();
+		//For Legacy
+		if ( empty( $transaction_id ) ) {
+			$order_id       = $order->get_id();
+			$transaction_id = get_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY, true );
+			if ( ! empty( $transaction_id ) ) {
+				//Transform Legacy to new standards
+				delete_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY );
+				$order->set_transaction_id( $transaction_id );
 				$order->save();
 			}
 		}
@@ -449,64 +452,61 @@ class Bambora_Online_Checkout_Helper {
 	 * Build the list of notices to display on the administration
 	 *
 	 * @param string $type
-     * @param string $message
-     * @param bool $keep_post
-     */
-    public static function add_admin_notices($type, $message, $keep_post = false) {
-        $message = array( "type" => $type, "message" => $message);
-        $messages = get_option(self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, false);
-        if(!$messages) {
-            update_option(self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, array($message));
-        } else {
-            array_push($messages, $message);
-            update_option(self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, $messages);
-        }
-        update_option(self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST, $keep_post);
-    }
+	 * @param string $message
+	 * @param bool $keep_post
+	 */
+	public static function add_admin_notices( $type, $message, $keep_post = false ) {
+		$message  = array( "type" => $type, "message" => $message );
+		$messages = get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, false );
+		if ( ! $messages ) {
+			update_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, array( $message ) );
+		} else {
+			array_push( $messages, $message );
+			update_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, $messages );
+		}
+		update_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST, $keep_post );
+	}
 
-    /**
+	/**
 	 * Echo the notices to the Administration
-     *
-     * @return void
-     */
-    public static function echo_admin_notices(){
-        $messages = get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, false );
-        if(!$messages) {
-            return;
-        }
-        foreach($messages as $message) {
-            echo Bambora_Online_Checkout_Helper::message_to_html( $message['type'], $message['message'] );
-        }
-        if(!get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST, false )) {
-            delete_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES );
-        } else {
-            delete_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST );
+	 *
+	 * @return void
+	 */
+	public static function echo_admin_notices() {
+		$messages = get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, false );
+		if ( ! $messages ) {
+			return;
+		}
+		foreach ( $messages as $message ) {
+			echo Bambora_Online_Checkout_Helper::message_to_html( $message['type'], $message['message'] );
+		}
+		if ( ! get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST, false ) ) {
+			delete_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES );
+		} else {
+			delete_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST );
 		}
 	}
 
 	/**
-	 *  Get the Card Authentication Brand Name
+	 * Convert message to HTML
 	 *
-	 * @param integer $paymentGroupId
+	 * @param string $type
+	 * @param string $message
 	 *
 	 * @return string
-	 */
-	public static function getCardAuthenticationBrandName( $paymentGroupId ) {
-		switch ( $paymentGroupId ) {
-			case 1:
-				return "Dankort Secured by Nets";
-			case 2:
-				return "Verified by Visa";
-			case 3:
-			case 4:
-				return "MasterCard SecureCode";
-			case 5:
-				return "J/Secure";
-			case 6:
-				return "American Express SafeKey";
-			default:
-				return "3D Secure";
+	 * */
+	public static function message_to_html( $type, $message ) {
+
+		$class = '';
+		if ( $type === self::SUCCESS ) {
+			$class = "notice-success";
+		} else {
+			$class = "notice-error";
 		}
+
+		$html = '<div id="message" class="' . $class . ' notice"><p><strong>' . ucfirst( $type ) . '! </strong>' . $message . '</p></div>';
+
+		return ent2ncr( $html );
 	}
 
 	/**
@@ -559,10 +559,9 @@ class Bambora_Online_Checkout_Helper {
 			}
 			// Temporary renaming for Lindorff to Walley & Collector Bank to Walley require until implemented in Acquire. (from 1st September 2021 called Walley)
 			$thirdPartyName = $operation->acquirername;
-			$thirdPartyName = strtolower( $thirdPartyName ) !== ("lindorff" || "collectorbank")
+			$thirdPartyName = strtolower( $thirdPartyName ) !== ( "lindorff" || "collectorbank" )
 				? $thirdPartyName
 				: "Walley";
-
 
 			switch ( $subAction ) {
 				case "threed":
@@ -812,5 +811,30 @@ class Bambora_Online_Checkout_Helper {
 		$eventInfo['description'] = null;
 
 		return $eventInfo;
+	}
+
+	/**
+	 *  Get the Card Authentication Brand Name
+	 *
+	 * @param integer $paymentGroupId
+	 *
+	 * @return string
+	 */
+	public static function getCardAuthenticationBrandName( $paymentGroupId ) {
+		switch ( $paymentGroupId ) {
+			case 1:
+				return "Dankort Secured by Nets";
+			case 2:
+				return "Verified by Visa";
+			case 3:
+			case 4:
+				return "MasterCard SecureCode";
+			case 5:
+				return "J/Secure";
+			case 6:
+				return "American Express SafeKey";
+			default:
+				return "3D Secure";
+		}
 	}
 }

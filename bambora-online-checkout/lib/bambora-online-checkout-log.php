@@ -16,66 +16,64 @@
 /**
  * Bambora Online Checkout Log
  */
-class Bambora_Online_Checkout_Log
-{
-    /* The domain handler used to name the log */
-    private $_domain = 'bambora-online-checkout';
+class Bambora_Online_Checkout_Log {
+	/* The domain handler used to name the log */
+	private string $_domain = 'bambora-online-checkout';
 
 
-    /* The WC_Logger instance */
-    private $_logger;
+	/* The WC_Logger instance */
+	private WC_Logger $_logger;
 
 
-    /**
-	* __construct.
-	*
-	* @access public
-	* @return void
-	*/
-    public function __construct()
-    {
-        $this->_logger = new WC_Logger();
-    }
+	/**
+	 * __construct.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function __construct() {
+		$this->_logger = new WC_Logger();
+	}
 
+	/**
+	 * Inserts a separation line for better overview in the logs.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function separator() {
+		$this->add( '--------------------' );
+	}
 
-    /**
-	* Uses the build in logging method in WooCommerce.
-	* Logs are available inside the System status tab
-	*
-	* @access public
-	* @param  string|array|object
-	* @return void
-	*/
-    public function add( $param )
-    {
-        if( is_array( $param ) ) {
-            $param = print_r( $param, true );
-        }
+	/**
+	 * Uses the build in logging method in WooCommerce.
+	 * Logs are available inside the System status tab
+	 *
+	 * @access public
+	 *
+	 * @param string|array|object
+	 *
+	 * @return void
+	 */
+	public function add( $param ) {
+		if ( is_array( $param ) ) {
+			$param = print_r( $param, true );
+		}
 
-        $this->_logger->add( $this->_domain, $param );
-    }
+		$this->_logger->add( $this->_domain, $param );
+	}
 
-    /**
-     * Inserts a separation line for better overview in the logs.
-     *
-     * @access public
-     * @return void
-     */
-    public function separator()
-    {
-        $this->add( '--------------------' );
-    }
+	/**
+	 * Returns a link to the log files in the WP backend.
+	 */
+	public function get_admin_link() {
+		$log_path       = wc_get_log_file_path( $this->_domain );
+		$log_path_parts = explode( '/', $log_path );
 
-    /**
-     * Returns a link to the log files in the WP backend.
-     */
-    public function get_admin_link() {
-        $log_path = wc_get_log_file_path( $this->_domain );
-        $log_path_parts = explode( '/', $log_path );
-        return add_query_arg( array(
-            'page' => 'wc-status',
-            'tab' => 'logs',
-            'log_file' => end( $log_path_parts )
-        ), admin_url( 'admin.php' ) );
-    }
+		return add_query_arg( array(
+			'page'     => 'wc-status',
+			'tab'      => 'logs',
+			'log_file' => end( $log_path_parts )
+		), admin_url( 'admin.php' ) );
+	}
 }
