@@ -339,7 +339,7 @@ function init_bambora_online_checkout() {
 			$html = "<h3>Bambora Online Checkout v{$version}</h3>";
 
 			$html .= Bambora_Online_Checkout_Helper::create_admin_debug_section();
-			$html .= '<h3 class="wc-settings-sub-title">Module configuration</h3>';
+			$html .= '<h3 class="wc-settings-sub-title">Module Configuration</h3>';
 
 			if ( class_exists( 'sitepress' ) ) {
 				$html .= '<div class="form-table">
@@ -351,6 +351,17 @@ function init_bambora_online_checkout() {
 					</br>	
 </div>';
 			}
+
+			$api_key           = $this->get_api_key();
+			$api               = new Bambora_Online_Checkout_Api( $api_key );
+			$valid_credentials = $api->test_if_valid_credentials();
+
+			if ( $valid_credentials ) {
+				$html .= "<b><i>The credentials for your Bambora account are valid.</i></b>";
+			} else {
+				$html .= "<b><i>The credentials you have provided for your Bambora account are not valid. Please check them before you enable Bambora as a payment option.</i></b>";
+			}
+
 
 			$html .= '<table class="form-table">';
 
