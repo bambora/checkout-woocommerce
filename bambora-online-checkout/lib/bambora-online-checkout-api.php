@@ -13,283 +13,313 @@
  *
  */
 
-include( BOC_LIB . 'bambora-online-checkout-models.php' );
-include( BOC_LIB . 'bambora-online-checkout-endpoints.php' );
+include(BOC_LIB . 'bambora-online-checkout-models.php');
+include(BOC_LIB . 'bambora-online-checkout-endpoints.php');
 
 /**
  * Bambora Online Checkout API
  */
-class Bambora_Online_Checkout_Api {
+class Bambora_Online_Checkout_Api
+{
+    const GET = 'GET';
+    const POST = 'POST';
+    const DELETE = 'DELETE';
 
-	const GET = 'GET';
-	const POST = 'POST';
-	const DELETE = 'DELETE';
+    private $api_key;
+    private $proxy;
 
-	private $api_key;
-	private $proxy;
+    /**
+     * Constructor
+     *
+     * @param mixed $api_key
+     */
+    public function __construct($api_key = '')
+    {
+        $this->api_key = $api_key;
+        $this->proxy   = new WP_HTTP_Proxy();
+    }
 
-	/**
-	 * Constructor
-	 *
-	 * @param mixed $api_key
-	 */
-	public function __construct( $api_key = '' ) {
-		$this->api_key = $api_key;
-		$this->proxy = new WP_HTTP_Proxy();
-	}
+    /**
+     * Get Bambora Online Checkout response.
+     *
+     * @param Bambora_Online_Checkout_Request $bambora_checkout_request
+     *
+     * @return mixed
+     */
+    public function set_checkout_session($bambora_checkout_request)
+    {
+        $service_url = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . '/checkout';
+        if ($bambora_checkout_request == null) {
+            return null;
+        }
 
-	/**
-	 * Get Bambora Online Checkout response.
-	 *
-	 * @param Bambora_Online_Checkout_Request $bambora_checkout_request
-	 * @return mixed
-	 */
-	public function set_checkout_session( $bambora_checkout_request ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . '/checkout' ;
-		if ( $bambora_checkout_request == null ) {
-			return null;
-		}
+        $json_data         = wp_json_encode($bambora_checkout_request);
+        $checkout_response = $this->call_rest_service($service_url, $json_data, self::POST);
 
-		$json_data = wp_json_encode( $bambora_checkout_request );
-		$checkout_response = $this->call_rest_service( $service_url, $json_data, self::POST );
+        return json_decode($checkout_response);
+    }
 
-		return json_decode( $checkout_response );
-	}
+    /**
+     * Get Bambora Online Checkout payment window url
+     *
+     * @return string
+     */
+    public function get_checkout_payment_window_url()
+    {
+        $url = Bambora_Online_Checkout_Endpoints::get_checkout_endpoint();
 
-	/**
-	 * Get Bambora Online Checkout payment window url
-	 *
-	 * @return string
-	 */
-	public function get_checkout_payment_window_url() {
-		$url = Bambora_Online_Checkout_Endpoints::get_checkout_endpoint();
-		return $url;
-	}
+        return $url;
+    }
 
-	/**
-	 * Get Bambora Online Checkout payment window JavaScript url
-	 *
-	 * @return string
-	 */
-	public function get_checkout_payment_window_js_url() {
-		$url = Bambora_Online_Checkout_Endpoints::get_checkout_assets() . '/paymentwindow-v1.min.js';
-		return $url;
-	}
+    /**
+     * Get Bambora Online Checkout payment window JavaScript url
+     *
+     * @return string
+     */
+    public function get_checkout_payment_window_js_url()
+    {
+        $url = Bambora_Online_Checkout_Endpoints::get_checkout_assets() . '/paymentwindow-v1.min.js';
 
-	/**
-	 * Get Response Code data
-	 *
-	 * @param string $source
-	 * @param string $actionCode
-	 *
-	 * @return mixed
-	 */
-	public function get_response_code_data( $source, $actionCode ) {
-		$serviceUrl       = Bambora_Online_Checkout_Endpoints::get_data_endpoint() . "/responsecodes/{$source}/{$actionCode}";
-		$responseCodeData = $this->call_rest_service( $serviceUrl, null, "GET" );
+        return $url;
+    }
 
-		return json_decode( $responseCodeData );
-	}
+    /**
+     * Get Response Code data
+     *
+     * @param string $source
+     * @param string $actionCode
+     *
+     * @return mixed
+     */
+    public function get_response_code_data($source, $actionCode)
+    {
+        $serviceUrl       = Bambora_Online_Checkout_Endpoints::get_data_endpoint() . "/responsecodes/{$source}/{$actionCode}";
+        $responseCodeData = $this->call_rest_service($serviceUrl, null, "GET");
 
-	/**
-	 * Make a capture request to Bambora
-	 *
-	 * @param string $transaction_id
-	 * @param int    $amount
-	 * @param string $currency
-	 * @param Bambora_Online_Checkout_Orderline[] $capture_lines
-	 * @return mixed
-	 */
-	public function capture( $transaction_id, $amount, $currency, $capture_lines) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/capture";
+        return json_decode($responseCodeData);
+    }
 
-		$data = array();
-		$data['amount'] = $amount;
-		$data['currency'] = $currency;
-		if ( isset($capture_lines) ) {
-			$data['invoicelines'] = $capture_lines;
-		}
-		$json_data = wp_json_encode( $data );
+    /**
+     * Make a capture request to Bambora
+     *
+     * @param string $transaction_id
+     * @param int $amount
+     * @param string $currency
+     * @param Bambora_Online_Checkout_Orderline[] $capture_lines
+     *
+     * @return mixed
+     */
+    public function capture($transaction_id, $amount, $currency, $capture_lines)
+    {
+        $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/capture";
 
-		$result = $this->call_rest_service( $service_url, $json_data, self::POST );
-		return json_decode( $result );
-	}
+        $data             = array();
+        $data['amount']   = $amount;
+        $data['currency'] = $currency;
+        if (isset($capture_lines)) {
+            $data['invoicelines'] = $capture_lines;
+        }
+        $json_data = wp_json_encode($data);
 
-	/**
-	 * Make a credit request to Bambora
-	 *
-	 * @param string              $transaction_id
-	 * @param int                 $amount
-	 * @param string              $currency
-	 * @param Bambora_Online_Checkout_Orderline[] $credit_lines
-	 * @return mixed
-	 */
-	public function credit( $transaction_id, $amount, $currency, $credit_lines) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/credit";
+        $result = $this->call_rest_service($service_url, $json_data, self::POST);
 
-		$data = array();
-		$data['amount'] = $amount;
-		$data['currency'] = $currency;
-		if ( isset($credit_lines) ) {
-			$data['invoicelines'] = $credit_lines;
-		}
+        return json_decode($result);
+    }
 
-		$json_data = wp_json_encode( $data );
+    /**
+     * Make a credit request to Bambora
+     *
+     * @param string $transaction_id
+     * @param int $amount
+     * @param string $currency
+     * @param Bambora_Online_Checkout_Orderline[] $credit_lines
+     *
+     * @return mixed
+     */
+    public function credit($transaction_id, $amount, $currency, $credit_lines)
+    {
+        $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/credit";
 
-		$result = $this->call_rest_service( $service_url, $json_data, self::POST );
-		return json_decode( $result );
-	}
+        $data             = array();
+        $data['amount']   = $amount;
+        $data['currency'] = $currency;
+        if (isset($credit_lines)) {
+            $data['invoicelines'] = $credit_lines;
+        }
 
-	/**
-	 * Make a delete request to Bambora
-	 *
-	 * @param string $transaction_id
-	 * @return mixed
-	 */
-	public function delete( $transaction_id ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/delete";
+        $json_data = wp_json_encode($data);
 
-		$data = array();
-		$json_data = wp_json_encode( $data );
+        $result = $this->call_rest_service($service_url, $json_data, self::POST);
 
-		$result = $this->call_rest_service( $service_url, $json_data, self::POST );
-		return json_decode( $result );
-	}
+        return json_decode($result);
+    }
 
-	/**
-	 * Get specific transaction from Bambora
-	 *
-	 * @param string $transaction_id
-	 * @return mixed
-	 */
-	public function get_transaction( $transaction_id ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/transactions/{$transaction_id}";
+    /**
+     * Make a delete request to Bambora
+     *
+     * @param string $transaction_id
+     *
+     * @return mixed
+     */
+    public function delete($transaction_id)
+    {
+        $service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/delete";
 
-		$data = array();
-		$json_data = wp_json_encode( $data );
+        $data      = array();
+        $json_data = wp_json_encode($data);
 
-		$result = $this->call_rest_service( $service_url, $json_data, self::GET );
-		return json_decode( $result );
-	}
+        $result = $this->call_rest_service($service_url, $json_data, self::POST);
 
-	/**
-	 * Get transaction operations for a specific transaction from Bambora
-	 *
-	 * @param string $transaction_id
-	 * @return mixed
-	 */
-	public function get_transaction_operations( $transaction_id ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/transactions/{$transaction_id}/transactionoperations";
+        return json_decode($result);
+    }
 
-		$data = array();
-		$json_data = wp_json_encode( $data );
+    /**
+     * Get specific transaction from Bambora
+     *
+     * @param string $transaction_id
+     *
+     * @return mixed
+     */
+    public function get_transaction($transaction_id)
+    {
+        $service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/transactions/{$transaction_id}";
 
-		$result = $this->call_rest_service( $service_url, $json_data, self::GET );
-		return json_decode( $result );
-	}
+        $data      = array();
+        $json_data = wp_json_encode($data);
 
-	/**
-	 * Get available payment types for the amount and currency from Bambora
-	 *
-	 * @param string $currency
-	 * @param int    $amount
-	 * @return mixed
-	 */
-	public function get_payment_types( $currency, $amount ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/paymenttypes?currency={$currency}&amount={$amount}";
-		$data = array();
+        $result = $this->call_rest_service($service_url, $json_data, self::GET);
 
-		$json_data = wp_json_encode( $data );
+        return json_decode($result);
+    }
 
-		$result = $this->call_rest_service( $service_url, $json_data, self::GET );
-		return json_decode( $result );
-	}
+    /**
+     * Get transaction operations for a specific transaction from Bambora
+     *
+     * @param string $transaction_id
+     *
+     * @return mixed
+     */
+    public function get_transaction_operations($transaction_id)
+    {
+        $service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/transactions/{$transaction_id}/transactionoperations";
 
-	/**
-	 * Authorize subscription by subscription Id
-	 *
-	 * @param string $subscriptionId
-	 * @param int $amount
-	 * @param string $currency
-	 * @param string $orderId
-	 * @param int $instantCaptureAmount
-	 * @return mixed
-	 */
-	public function authorize_subscription( $subscriptionId, $amount, $currency, $orderId ,$instantCaptureAmount)
-	{
-		$service_url = Bambora_Online_Checkout_Endpoints::get_subscription_endpoint() . "/subscriptions/{$subscriptionId}/authorize";
+        $data      = array();
+        $json_data = wp_json_encode($data);
 
-		$data = array();
-		$data['authorize']['currency'] = $currency;
-		$data['authorize']['amount'] = $amount;
-		$data['authorize']['orderid'] = $orderId;
-		if ( $instantCaptureAmount > 0 ) {
-			$data['authorize']['instantcaptureamount'] = $instantCaptureAmount;
-		}
+        $result = $this->call_rest_service($service_url, $json_data, self::GET);
 
-		$json_data = wp_json_encode( $data );
-		$result = $this->call_rest_service( $service_url, $json_data, self::POST );
+        return json_decode($result);
+    }
 
-		return json_decode( $result );
-	}
+    /**
+     * Get available payment types for the amount and currency from Bambora
+     *
+     * @param string $currency
+     * @param int $amount
+     *
+     * @return mixed
+     */
+    public function get_payment_types($currency, $amount)
+    {
+        $service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/paymenttypes?currency={$currency}&amount={$amount}";
+        $data        = array();
 
-	/**
-	 * Delete subscription by subscription Id
-	 *
-	 * @param string $subscriptionId
-	 * @return mixed
-	 */
-	public function delete_subscription( $subscriptionId )
-	{
-		$service_url = Bambora_Online_Checkout_Endpoints::get_subscription_endpoint() . "/subscriptions/{$subscriptionId}";
+        $json_data = wp_json_encode($data);
 
-		$data = array();
+        $result = $this->call_rest_service($service_url, $json_data, self::GET);
 
-		$json_data = wp_json_encode( $data );
+        return json_decode($result);
+    }
 
-		$result = $this->call_rest_service( $service_url, $json_data, self::DELETE );
+    /**
+     * Authorize subscription by subscription Id
+     *
+     * @param string $subscriptionId
+     * @param int $amount
+     * @param string $currency
+     * @param string $orderId
+     * @param int $instantCaptureAmount
+     *
+     * @return mixed
+     */
+    public function authorize_subscription($subscriptionId, $amount, $currency, $orderId, $instantCaptureAmount)
+    {
+        $service_url = Bambora_Online_Checkout_Endpoints::get_subscription_endpoint() . "/subscriptions/{$subscriptionId}/authorize";
 
-		return json_decode( $result );
-	}
+        $data                          = array();
+        $data['authorize']['currency'] = $currency;
+        $data['authorize']['amount']   = $amount;
+        $data['authorize']['orderid']  = $orderId;
+        if ($instantCaptureAmount > 0) {
+            $data['authorize']['instantcaptureamount'] = $instantCaptureAmount;
+        }
 
-	/**
-	 * Call the rest service at the specified Url
-	 *
-	 * @param string $service_url
-	 * @param mixed  $json_data
-	 * @param string $method
-	 * @return mixed
-	 */
-	private function call_rest_service( $service_url, $json_data, $method ) {
+        $json_data = wp_json_encode($data);
+        $result    = $this->call_rest_service($service_url, $json_data, self::POST);
 
-		$content_length = isset( $json_data ) ? strlen( $json_data ) : 0;
-		$headers = array(
-			'Content-Type: application/json',
-			'Content-Length: ' . $content_length,
-			'Accept: application/json',
-			'Authorization: ' . $this->api_key,
-			'X-EPay-System: ' . Bambora_Online_Checkout_Helper::get_module_header_info(),
-		);
+        return json_decode($result);
+    }
 
-		$curl = curl_init();
-		curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, $method );
-		curl_setopt( $curl, CURLOPT_POSTFIELDS, $json_data );
-		curl_setopt( $curl, CURLOPT_URL, $service_url );
-		curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $curl, CURLOPT_HTTPHEADER, $headers );
-		curl_setopt( $curl, CURLOPT_FAILONERROR, false );
-		curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER, false );
+    /**
+     * Delete subscription by subscription Id
+     *
+     * @param string $subscriptionId
+     *
+     * @return mixed
+     */
+    public function delete_subscription($subscriptionId)
+    {
+        $service_url = Bambora_Online_Checkout_Endpoints::get_subscription_endpoint() . "/subscriptions/{$subscriptionId}";
 
-		//Check for proxy and proxy bypass
-		if ( $this->proxy->is_enabled() && $this->proxy->send_through_proxy( $service_url )) {
-			curl_setopt( $curl, CURLOPT_PROXY, $this->proxy->host());
-			curl_setopt( $curl, CURLOPT_PROXYPORT, $this->proxy->port());
-			if ( $this->proxy->use_authentication() ) {
-				curl_setopt( $curl, CURLOPT_PROXYUSERPWD, $this->proxy->authentication() );
-			}
-		}
+        $data = array();
 
-		$result = curl_exec( $curl );
-		return $result;
-	}
+        $json_data = wp_json_encode($data);
+
+        $result = $this->call_rest_service($service_url, $json_data, self::DELETE);
+
+        return json_decode($result);
+    }
+
+    /**
+     * Call the rest service at the specified Url
+     *
+     * @param string $service_url
+     * @param mixed $json_data
+     * @param string $method
+     *
+     * @return mixed
+     */
+    private function call_rest_service($service_url, $json_data, $method)
+    {
+        $content_length = isset($json_data) ? strlen($json_data) : 0;
+        $headers        = array(
+            'Content-Type: application/json',
+            'Content-Length: ' . $content_length,
+            'Accept: application/json',
+            'Authorization: ' . $this->api_key,
+            'X-EPay-System: ' . Bambora_Online_Checkout_Helper::get_module_header_info(),
+        );
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
+        curl_setopt($curl, CURLOPT_URL, $service_url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_FAILONERROR, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+        //Check for proxy and proxy bypass
+        if ($this->proxy->is_enabled() && $this->proxy->send_through_proxy($service_url)) {
+            curl_setopt($curl, CURLOPT_PROXY, $this->proxy->host());
+            curl_setopt($curl, CURLOPT_PROXYPORT, $this->proxy->port());
+            if ($this->proxy->use_authentication()) {
+                curl_setopt($curl, CURLOPT_PROXYUSERPWD, $this->proxy->authentication());
+            }
+        }
+
+        $result = curl_exec($curl);
+
+        return $result;
+    }
 }

@@ -27,11 +27,11 @@ class Bambora_Online_Checkout_Log
 
 
     /**
-	* __construct.
-	*
-	* @access public
-	* @return void
-	*/
+     * __construct.
+     *
+     * @access public
+     * @return void
+     */
     public function __construct()
     {
         $this->_logger = new WC_Logger();
@@ -39,20 +39,22 @@ class Bambora_Online_Checkout_Log
 
 
     /**
-	* Uses the build in logging method in WooCommerce.
-	* Logs are available inside the System status tab
-	*
-	* @access public
-	* @param  string|array|object
-	* @return void
-	*/
-    public function add( $param )
+     * Uses the build in logging method in WooCommerce.
+     * Logs are available inside the System status tab
+     *
+     * @access public
+     *
+     * @param string|array|object
+     *
+     * @return void
+     */
+    public function add($param)
     {
-        if( is_array( $param ) ) {
-            $param = print_r( $param, true );
+        if (is_array($param)) {
+            $param = print_r($param, true);
         }
 
-        $this->_logger->add( $this->_domain, $param );
+        $this->_logger->add($this->_domain, $param);
     }
 
     /**
@@ -63,19 +65,21 @@ class Bambora_Online_Checkout_Log
      */
     public function separator()
     {
-        $this->add( '--------------------' );
+        $this->add('--------------------');
     }
 
     /**
      * Returns a link to the log files in the WP backend.
      */
-    public function get_admin_link() {
-        $log_path = wc_get_log_file_path( $this->_domain );
-        $log_path_parts = explode( '/', $log_path );
-        return add_query_arg( array(
-            'page' => 'wc-status',
-            'tab' => 'logs',
-            'log_file' => end( $log_path_parts )
-        ), admin_url( 'admin.php' ) );
+    public function get_admin_link()
+    {
+        $log_path       = wc_get_log_file_path($this->_domain);
+        $log_path_parts = explode('/', $log_path);
+
+        return add_query_arg(array(
+            'page'     => 'wc-status',
+            'tab'      => 'logs',
+            'log_file' => end($log_path_parts)
+        ), admin_url('admin.php'));
     }
 }

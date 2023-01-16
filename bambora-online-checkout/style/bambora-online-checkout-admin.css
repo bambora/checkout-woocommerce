@@ -3,21 +3,21 @@
     line-height: 6px;
 }
 
-    .bambora_transactionid p:first-child,
-    .bambora_paymenttype p:first-child {
-        font-size: 12px;
-        font-weight: 400;
-        color: grey;
-    }
+.bambora_transactionid p:first-child,
+.bambora_paymenttype p:first-child {
+    font-size: 12px;
+    font-weight: 400;
+    color: grey;
+}
 
-    .bambora_transactionid p:last-child,
-    .bambora_paymenttype p:last-child {
-        font-weight: 600;
-    }
+.bambora_transactionid p:last-child,
+.bambora_paymenttype p:last-child {
+    font-weight: 600;
+}
 
 .bambora_paymenttype_img {
-    max-width:42px;
-    float:right;
+    max-width: 42px;
+    float: right;
 }
 
 .bambora_info_overview {

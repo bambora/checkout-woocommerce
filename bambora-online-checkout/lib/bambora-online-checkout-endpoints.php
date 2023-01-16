@@ -13,26 +13,27 @@
  *
  */
 
-define( 'BAMBORA_ENDPOINT_TRANSACTION', 'https://transaction-v1.api-eu.bambora.com' );
-define( 'BAMBORA_ENDPOINT_MERCHANT', 'https://merchant-v1.api-eu.bambora.com' );
-define( 'BAMBORA_ENDPOINT_DATA', 'https://data-v1.api-eu.bambora.com' );
-define( 'BAMBORA_ENDPOINT_SUBSCRIPTION', 'https://subscription-v1.api-eu.bambora.com' );
-define( 'BAMBORA_ENDPOINT_CHECKOUT', 'https://v1.checkout.bambora.com');
-define( 'BAMBORA_ENDPOINT_CHECKOUT_API', 'https://api.v1.checkout.bambora.com' );
-define( 'BAMBORA_CHECKOUT_ASSETS', 'https://v1.checkout.bambora.com/Assets' );
+define('BAMBORA_ENDPOINT_TRANSACTION', 'https://transaction-v1.api-eu.bambora.com');
+define('BAMBORA_ENDPOINT_MERCHANT', 'https://merchant-v1.api-eu.bambora.com');
+define('BAMBORA_ENDPOINT_DATA', 'https://data-v1.api-eu.bambora.com');
+define('BAMBORA_ENDPOINT_SUBSCRIPTION', 'https://subscription-v1.api-eu.bambora.com');
+define('BAMBORA_ENDPOINT_CHECKOUT', 'https://v1.checkout.bambora.com');
+define('BAMBORA_ENDPOINT_CHECKOUT_API', 'https://api.v1.checkout.bambora.com');
+define('BAMBORA_CHECKOUT_ASSETS', 'https://v1.checkout.bambora.com/Assets');
 
 /**
  * Bambora Online Checkout Endpoints
  */
-class Bambora_Online_Checkout_Endpoints {
-
+class Bambora_Online_Checkout_Endpoints
+{
     /**
      * Get Transaction Endpoint
      *
      * @return mixed
      */
-    public static function get_transaction_endpoint() {
-        return constant( 'BAMBORA_ENDPOINT_TRANSACTION' );
+    public static function get_transaction_endpoint()
+    {
+        return constant('BAMBORA_ENDPOINT_TRANSACTION');
     }
 
     /**
@@ -40,8 +41,9 @@ class Bambora_Online_Checkout_Endpoints {
      *
      * @return mixed
      */
-    public static function get_merchant_endpoint() {
-        return constant( 'BAMBORA_ENDPOINT_MERCHANT' );
+    public static function get_merchant_endpoint()
+    {
+        return constant('BAMBORA_ENDPOINT_MERCHANT');
     }
 
     /**
@@ -49,8 +51,9 @@ class Bambora_Online_Checkout_Endpoints {
      *
      * @return mixed
      */
-    public static function get_data_endpoint() {
-        return constant( 'BAMBORA_ENDPOINT_DATA' );
+    public static function get_data_endpoint()
+    {
+        return constant('BAMBORA_ENDPOINT_DATA');
     }
 
     /**
@@ -58,8 +61,9 @@ class Bambora_Online_Checkout_Endpoints {
      *
      * @return mixed
      */
-    public static function get_subscription_endpoint() {
-        return constant( 'BAMBORA_ENDPOINT_SUBSCRIPTION' );
+    public static function get_subscription_endpoint()
+    {
+        return constant('BAMBORA_ENDPOINT_SUBSCRIPTION');
     }
 
     /**
@@ -67,8 +71,9 @@ class Bambora_Online_Checkout_Endpoints {
      *
      * @return mixed
      */
-    public static function get_checkout_endpoint() {
-        return constant( 'BAMBORA_ENDPOINT_CHECKOUT' );
+    public static function get_checkout_endpoint()
+    {
+        return constant('BAMBORA_ENDPOINT_CHECKOUT');
     }
 
     /**
@@ -76,8 +81,9 @@ class Bambora_Online_Checkout_Endpoints {
      *
      * @return mixed
      */
-    public static function get_checkout_api_endpoint() {
-        return constant( 'BAMBORA_ENDPOINT_CHECKOUT_API' );
+    public static function get_checkout_api_endpoint()
+    {
+        return constant('BAMBORA_ENDPOINT_CHECKOUT_API');
     }
 
     /**
@@ -85,7 +91,8 @@ class Bambora_Online_Checkout_Endpoints {
      *
      * @return mixed
      */
-    public static function get_checkout_assets() {
-        return constant( 'BAMBORA_CHECKOUT_ASSETS' );
+    public static function get_checkout_assets()
+    {
+        return constant('BAMBORA_CHECKOUT_ASSETS');
     }
 }

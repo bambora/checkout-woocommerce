@@ -16,7 +16,8 @@
 /**
  * Bambora Online Checkout Customer
  */
-class Bambora_Online_Checkout_Customer {
+class Bambora_Online_Checkout_Customer
+{
     /** @var string */
     public $email;
     /** @var string */
@@ -28,8 +29,8 @@ class Bambora_Online_Checkout_Customer {
 /**
  * Bambora Online Checkout Order
  */
-class Bambora_Online_Checkout_Order {
-
+class Bambora_Online_Checkout_Order
+{
     /** @var Bambora_Online_Checkout_Address */
     public $billingaddress;
     /** @var string */
@@ -49,7 +50,8 @@ class Bambora_Online_Checkout_Order {
 /**
  * Bambora Online Checkout Address
  */
-class Bambora_Online_Checkout_Address {
+class Bambora_Online_Checkout_Address
+{
     /** @var string */
     public $att;
     /** @var string */
@@ -69,7 +71,8 @@ class Bambora_Online_Checkout_Address {
 /**
  * Bambora Online Checkout Orderline
  */
-class Bambora_Online_Checkout_Orderline {
+class Bambora_Online_Checkout_Orderline
+{
     /** @var string */
     public $description;
     /** @var string */
@@ -90,22 +93,22 @@ class Bambora_Online_Checkout_Orderline {
     public $unit;
     /** @var int|long */
     public $vat;
-	/** @var int|long */
+    /** @var int|long */
     public $unitpriceinclvat;
-	/** @var int|long */
+    /** @var int|long */
     public $unitprice;
-	/** @var int|long */
+    /** @var int|long */
     public $unitpricevatamount;
-
 }
 
 /**
  * Bambora Online Checkout Url
  */
-class Bambora_Online_Checkout_Url {
+class Bambora_Online_Checkout_Url
+{
     /** @var string */
     public $accept;
-    /** @var  Bambora_Online_Checkout_Callback[]  */
+    /** @var  Bambora_Online_Checkout_Callback[] */
     public $callbacks;
     /** @var string */
     public $decline;
@@ -114,17 +117,18 @@ class Bambora_Online_Checkout_Url {
 /**
  * Bambora Online Checkout Callback
  */
-class Bambora_Online_Checkout_Callback {
+class Bambora_Online_Checkout_Callback
+{
     /** @var string */
     public $url;
 }
 
 
-
 /**
  * Bambora Online Checkout Request
  */
-class Bambora_Online_Checkout_Subscription {
+class Bambora_Online_Checkout_Subscription
+{
     /** @var string */
     public $action;
     /** @var string */
@@ -136,8 +140,8 @@ class Bambora_Online_Checkout_Subscription {
 /**
  * Bambora Online Checkout Request
  */
-class Bambora_Online_Checkout_Request {
-
+class Bambora_Online_Checkout_Request
+{
     /** @var Bambora_Online_Checkout_Customer */
     public $customer;
     /** @var long */
@@ -153,7 +157,7 @@ class Bambora_Online_Checkout_Request {
     /** @var int */
     public $paymentwindowid;
     /** @var string */
-	public $securityexemption;
-	/** @var string */
-	public $securitylevel;
+    public $securityexemption;
+    /** @var string */
+    public $securitylevel;
 }
