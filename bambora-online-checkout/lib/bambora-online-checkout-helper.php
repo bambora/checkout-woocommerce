@@ -179,27 +179,13 @@ class Bambora_Online_Checkout_Helper
         $date_format      = wc_date_format();
         $time_format      = wc_time_format();
         $date_time_format = "{$date_format} - {$time_format}";
-        $formated_date    = "";
-        if (self::is_woocommerce_3_1()) {
-            $date_time     = wc_string_to_datetime($raw_date_time);
-            $formated_date = wc_format_datetime($date_time, $date_time_format);
-        } else {
-            $formated_date = date($date_time_format, strtotime($raw_date_time));
-        }
+
+        $date_time     = wc_string_to_datetime($raw_date_time);
+        $formated_date = wc_format_datetime($date_time, $date_time_format);
 
         return $formated_date;
     }
-
-    /**
-     * Determines if the current WooCommerce version is 3.1 or higher
-     *
-     * @return boolean
-     */
-    public static function is_woocommerce_3_1()
-    {
-        return version_compare(WC()->version, '3.1', '>=');
-    }
-
+    
 
     /**
      * Format a number
@@ -289,9 +275,9 @@ class Bambora_Online_Checkout_Helper
         }
 
         return add_query_arg('key', $order->get_order_key(), add_query_arg(array(
-                    'order'                => $order->get_id(),
-                    'payment_cancellation' => 'yes',
-                ), get_permalink(get_option('woocommerce_cart_page_id'))));
+            'order'                => $order->get_id(),
+            'payment_cancellation' => 'yes',
+        ), get_permalink(get_option('woocommerce_cart_page_id'))));
     }
 
     /**
