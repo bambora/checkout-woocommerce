@@ -191,16 +191,6 @@ class Bambora_Online_Checkout_Helper
     }
 
     /**
-     * Determines if the current WooCommerce version is 3.0 or higher
-     *
-     * @return boolean
-     */
-    public static function is_woocommerce_3()
-    {
-        return version_compare(WC()->version, '3.0', '>=');
-    }
-
-    /**
      * Determines if the current WooCommerce version is 3.1 or higher
      *
      * @return boolean
@@ -251,28 +241,6 @@ class Bambora_Online_Checkout_Helper
     }
 
     /**
-     * Convert message to HTML
-     *
-     * @param string $type
-     * @param string $message
-     *
-     * @return string
-     * */
-    public static function message_to_html($type, $message)
-    {
-        $class = '';
-        if ($type === self::SUCCESS) {
-            $class = "notice-success";
-        } else {
-            $class = "notice-error";
-        }
-
-        $html = '<div id="message" class="' . $class . ' notice"><p><strong>' . ucfirst($type) . '! </strong>' . $message . '</p></div>';
-
-        return ent2ncr($html);
-    }
-
-    /**
      * Returns the Callback url
      *
      * @param WC_Order $order
@@ -302,15 +270,7 @@ class Bambora_Online_Checkout_Helper
             return $acceptUrl;
         }
 
-        return add_query_arg(
-            'key',
-            $order->order_key,
-            add_query_arg(
-                'order',
-                Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id,
-                get_permalink(get_option('woocommerce_thanks_page_id'))
-            )
-        );
+        return add_query_arg('key', $order->order_key, add_query_arg('order', $order->get_id(), get_permalink(get_option('woocommerce_thanks_page_id'))));
     }
 
     /**
@@ -328,17 +288,10 @@ class Bambora_Online_Checkout_Helper
             return $declineUrl;
         }
 
-        return add_query_arg(
-            'key',
-            $order->get_order_key(),
-            add_query_arg(
-                array(
-                    'order'                => Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id,
+        return add_query_arg('key', $order->get_order_key(), add_query_arg(array(
+                    'order'                => $order->get_id(),
                     'payment_cancellation' => 'yes',
-                ),
-                get_permalink(get_option('woocommerce_cart_page_id'))
-            )
-        );
+                ), get_permalink(get_option('woocommerce_cart_page_id'))));
     }
 
     /**
@@ -404,7 +357,6 @@ class Bambora_Online_Checkout_Helper
         return true;
     }
 
-
     /**
      * Get the language the order was made in
      *
@@ -450,7 +402,6 @@ class Bambora_Online_Checkout_Helper
         return $option_value;
     }
 
-
     /**
      * Get the Bambora Online Checkout Subscription id from the order
      *
@@ -458,12 +409,12 @@ class Bambora_Online_Checkout_Helper
      */
     public static function get_bambora_online_checkout_subscription_id($subscription)
     {
-        $subscription_id         = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $subscription->get_id() : $subscription->id;
+        $subscription_id         = $subscription->get_id();
         $bambora_subscription_id = get_post_meta($subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, true);
 
         //For Legacy
         if (empty($bambora_subscription_id)) {
-            $parent_order_id         = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $subscription->get_parent_id() : $subscription->parent_id;
+            $parent_order_id         = $subscription->get_parent_id();
             $bambora_subscription_id = get_post_meta($parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY, true);
             if (! empty($bambora_subscription_id)) {
                 //Transform Legacy to new standards
@@ -485,7 +436,7 @@ class Bambora_Online_Checkout_Helper
         $transaction_id = $order->get_transaction_id();
         //For Legacy
         if (empty($transaction_id)) {
-            $order_id       = Bambora_Online_Checkout_Helper::is_woocommerce_3() ? $order->get_id() : $order->id;
+            $order_id       = $order->get_id();
             $transaction_id = get_post_meta($order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY, true);
             if (! empty($transaction_id)) {
                 //Transform Legacy to new standards
@@ -540,29 +491,25 @@ class Bambora_Online_Checkout_Helper
     }
 
     /**
-     *  Get the Card Authentication Brand Name
+     * Convert message to HTML
      *
-     * @param integer $paymentGroupId
+     * @param string $type
+     * @param string $message
      *
      * @return string
-     */
-    public static function getCardAuthenticationBrandName($paymentGroupId)
+     * */
+    public static function message_to_html($type, $message)
     {
-        switch ($paymentGroupId) {
-            case 1:
-                return "Dankort Secured by Nets";
-            case 2:
-                return "Verified by Visa";
-            case 3:
-            case 4:
-                return "MasterCard SecureCode";
-            case 5:
-                return "J/Secure";
-            case 6:
-                return "American Express SafeKey";
-            default:
-                return "3D Secure";
+        $class = '';
+        if ($type === self::SUCCESS) {
+            $class = "notice-success";
+        } else {
+            $class = "notice-error";
         }
+
+        $html = '<div id="message" class="' . $class . ' notice"><p><strong>' . ucfirst($type) . '! </strong>' . $message . '</p></div>';
+
+        return ent2ncr($html);
     }
 
     /**
@@ -616,9 +563,7 @@ class Bambora_Online_Checkout_Helper
             }
             // Temporary renaming for Lindorff to Walley & Collector Bank to Walley require until implemented in Acquire. (from 1st September 2021 called Walley)
             $thirdPartyName = $operation->acquirername;
-            $thirdPartyName = strtolower($thirdPartyName) !== ("lindorff" || "collectorbank")
-                ? $thirdPartyName
-                : "Walley";
+            $thirdPartyName = strtolower($thirdPartyName) !== ("lindorff" || "collectorbank") ? $thirdPartyName : "Walley";
 
 
             switch ($subAction) {
@@ -626,23 +571,16 @@ class Bambora_Online_Checkout_Helper
                     {
                         $title       = $approved ? 'Payment completed (' . $threeDSecureBrandName . ')' : 'Payment failed (' . $threeDSecureBrandName . ')';
                         $eci         = $operation->eci->value;
-                        $statusText  = $approved
-                            ? "completed successfully"
-                            : "failed";
+                        $statusText  = $approved ? "completed successfully" : "failed";
                         $description = "";
                         if ($eci === "7") {
-                            $description = 'Authentication was either not attempted or unsuccessful. Either the card does not support' .
-                                           $threeDSecureBrandName . ' or the issuing bank does not handle it as a ' .
-                                           $threeDSecureBrandName . ' payment. Payment ' . $statusText . ' at ECI level ' . $eci;
+                            $description = 'Authentication was either not attempted or unsuccessful. Either the card does not support' . $threeDSecureBrandName . ' or the issuing bank does not handle it as a ' . $threeDSecureBrandName . ' payment. Payment ' . $statusText . ' at ECI level ' . $eci;
                         }
                         if ($eci === "6") {
-                            $description = 'Authentication was attempted but failed. Either cardholder or card issuing bank is not enrolled for ' .
-                                           $threeDSecureBrandName . '. Payment ' . $statusText . ' at ECI level ' . $eci;
+                            $description = 'Authentication was attempted but failed. Either cardholder or card issuing bank is not enrolled for ' . $threeDSecureBrandName . '. Payment ' . $statusText . ' at ECI level ' . $eci;
                         }
                         if ($eci === "5") {
-                            $description = $approved
-                                ? 'Payment was authenticated at ECI level ' . $eci . ' via ' . $threeDSecureBrandName . ' and ' . $statusText
-                                : 'Payment was did not authenticate via ' . $threeDSecureBrandName . ' and ' . $statusText;
+                            $description = $approved ? 'Payment was authenticated at ECI level ' . $eci . ' via ' . $threeDSecureBrandName . ' and ' . $statusText : 'Payment was did not authenticate via ' . $threeDSecureBrandName . ' and ' . $statusText;
                         }
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -651,13 +589,9 @@ class Bambora_Online_Checkout_Helper
                     }
                 case "ssl":
                     {
-                        $title = $approved
-                            ? 'Payment completed'
-                            : 'Payment failed';
+                        $title = $approved ? 'Payment completed' : 'Payment failed';
 
-                        $description = $approved
-                            ? 'Payment was completed and authorized via SSL.'
-                            : 'Authorization was attempted via SSL, but failed.';
+                        $description = $approved ? 'Payment was completed and authorized via SSL.' : 'Authorization was attempted via SSL, but failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -667,13 +601,9 @@ class Bambora_Online_Checkout_Helper
 
                 case "recurring":
                     {
-                        $title = $approved
-                            ? 'Subscription payment completed'
-                            : 'Subscription payment failed';
+                        $title = $approved ? 'Subscription payment completed' : 'Subscription payment failed';
 
-                        $description = $approved
-                            ? 'Payment was completed and authorized on a subscription.'
-                            : 'Authorization was attempted on a subscription, but failed.';
+                        $description = $approved ? 'Payment was completed and authorized on a subscription.' : 'Authorization was attempted on a subscription, but failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -682,13 +612,9 @@ class Bambora_Online_Checkout_Helper
                     }
                 case "update":
                     {
-                        $title = $approved
-                            ? 'Payment updated'
-                            : 'Payment update failed';
+                        $title = $approved ? 'Payment updated' : 'Payment update failed';
 
-                        $description = $approved
-                            ? 'The payment was successfully updated.'
-                            : 'The payment update failed.';
+                        $description = $approved ? 'The payment was successfully updated.' : 'The payment update failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -697,12 +623,8 @@ class Bambora_Online_Checkout_Helper
                     }
                 case "return":
                     {
-                        $title      = $approved
-                            ? 'Payment completed'
-                            : 'Payment failed';
-                        $statusText = $approved
-                            ? 'successful'
-                            : 'failed';
+                        $title      = $approved ? 'Payment completed' : 'Payment failed';
+                        $statusText = $approved ? 'successful' : 'failed';
 
                         $description              = 'Returned from ' . $thirdPartyName . ' authentication with a ' . $statusText . ' authorization.';
                         $eventInfo['title']       = $title;
@@ -712,9 +634,7 @@ class Bambora_Online_Checkout_Helper
                     }
                 case "redirect":
                     {
-                        $statusText               = $approved
-                            ? "Successfully"
-                            : "Unsuccessfully";
+                        $statusText               = $approved ? "Successfully" : "Unsuccessfully";
                         $eventInfo['title']       = 'Redirect to ' . $thirdPartyName;
                         $eventInfo['description'] = $statusText . ' redirected to ' . $thirdPartyName . ' for authentication.';
 
@@ -723,20 +643,14 @@ class Bambora_Online_Checkout_Helper
             }
         }
         if ($action === "capture") {
-            $captureMultiText = (($subAction === "multi" || $subAction === "multiinstant") && $operation->currentbalance > 0)
-                ? 'Further captures are possible.'
-                : 'Further captures are no longer possible.';
+            $captureMultiText = (($subAction === "multi" || $subAction === "multiinstant") && $operation->currentbalance > 0) ? 'Further captures are possible.' : 'Further captures are no longer possible.';
 
             switch ($subAction) {
                 case "full":
                     {
-                        $title = $approved
-                            ? 'Captured full amount'
-                            : 'Capture failed';
+                        $title = $approved ? 'Captured full amount' : 'Capture failed';
 
-                        $description = $approved
-                            ? 'The full amount was successfully captured.'
-                            : 'The capture attempt failed.';
+                        $description = $approved ? 'The full amount was successfully captured.' : 'The capture attempt failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -745,13 +659,9 @@ class Bambora_Online_Checkout_Helper
                     }
                 case "fullinstant":
                     {
-                        $title = $approved
-                            ? 'Instantly captured full amount'
-                            : 'Instant capture failed';
+                        $title = $approved ? 'Instantly captured full amount' : 'Instant capture failed';
 
-                        $description = $approved
-                            ? 'The full amount was successfully captured.'
-                            : 'The instant capture attempt failed.';
+                        $description = $approved ? 'The full amount was successfully captured.' : 'The instant capture attempt failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -761,13 +671,9 @@ class Bambora_Online_Checkout_Helper
                 case "partly":
                 case "multi":
                     {
-                        $title = $approved
-                            ? 'Captured partial amount'
-                            : 'Capture failed';
+                        $title = $approved ? 'Captured partial amount' : 'Capture failed';
 
-                        $description = $approved
-                            ? 'The partial amount was successfully captured. ' . $captureMultiText
-                            : 'The partial capture attempt failed.';
+                        $description = $approved ? 'The partial amount was successfully captured. ' . $captureMultiText : 'The partial capture attempt failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -777,12 +683,8 @@ class Bambora_Online_Checkout_Helper
                 case "partlyinstant":
                 case "multiinstant":
                     {
-                        $title       = $approved
-                            ? 'Instantly captured partial amount'
-                            : 'Instant capture failed';
-                        $description = $approved
-                            ? 'The partial amount was successfully captured. ' . $captureMultiText
-                            : 'The instant partial capture attempt failed.';
+                        $title       = $approved ? 'Instantly captured partial amount' : 'Instant capture failed';
+                        $description = $approved ? 'The partial amount was successfully captured. ' . $captureMultiText : 'The instant partial capture attempt failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -795,12 +697,8 @@ class Bambora_Online_Checkout_Helper
             switch ($subAction) {
                 case "full":
                     {
-                        $title       = $approved
-                            ? 'Refunded full amount'
-                            : 'Refund failed';
-                        $description = $approved
-                            ? 'The full amount was successfully refunded.'
-                            : 'The refund attempt failed.';
+                        $title       = $approved ? 'Refunded full amount' : 'Refund failed';
+                        $description = $approved ? 'The full amount was successfully refunded.' : 'The refund attempt failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -810,17 +708,11 @@ class Bambora_Online_Checkout_Helper
                 case "partly":
                 case "multi":
                     {
-                        $title = $approved
-                            ? 'Refunded partial amount'
-                            : 'Refund failed';
+                        $title = $approved ? 'Refunded partial amount' : 'Refund failed';
 
-                        $refundMultiText = $subAction === "multi"
-                            ? "Further refunds are possible."
-                            : "Further refunds are no longer possible.";
+                        $refundMultiText = $subAction === "multi" ? "Further refunds are possible." : "Further refunds are no longer possible.";
 
-                        $description = $approved
-                            ? 'The amount was successfully refunded. ' . $refundMultiText
-                            : 'The partial refund attempt failed.';
+                        $description = $approved ? 'The amount was successfully refunded. ' . $refundMultiText : 'The partial refund attempt failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -833,13 +725,9 @@ class Bambora_Online_Checkout_Helper
             switch ($subAction) {
                 case "instant":
                     {
-                        $title = $approved
-                            ? 'Canceled'
-                            : 'Cancellation failed';
+                        $title = $approved ? 'Canceled' : 'Cancellation failed';
 
-                        $description = $approved
-                            ? 'The payment was canceled.'
-                            : 'The cancellation failed.';
+                        $description = $approved ? 'The payment was canceled.' : 'The cancellation failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -848,13 +736,9 @@ class Bambora_Online_Checkout_Helper
                     }
                 case "delay":
                     {
-                        $title = $approved
-                            ? 'Cancellation scheduled'
-                            : 'Cancellation scheduling failed';
+                        $title = $approved ? 'Cancellation scheduled' : 'Cancellation scheduling failed';
 
-                        $description = $approved
-                            ? 'The payment was canceled.'
-                            : 'The cancellation failed.';
+                        $description = $approved ? 'The payment was canceled.' : 'The cancellation failed.';
 
                         $eventInfo['title']       = $title;
                         $eventInfo['description'] = $description;
@@ -867,5 +751,31 @@ class Bambora_Online_Checkout_Helper
         $eventInfo['description'] = null;
 
         return $eventInfo;
+    }
+
+    /**
+     *  Get the Card Authentication Brand Name
+     *
+     * @param integer $paymentGroupId
+     *
+     * @return string
+     */
+    public static function getCardAuthenticationBrandName($paymentGroupId)
+    {
+        switch ($paymentGroupId) {
+            case 1:
+                return "Dankort Secured by Nets";
+            case 2:
+                return "Verified by Visa";
+            case 3:
+            case 4:
+                return "MasterCard SecureCode";
+            case 5:
+                return "J/Secure";
+            case 6:
+                return "American Express SafeKey";
+            default:
+                return "3D Secure";
+        }
     }
 }
