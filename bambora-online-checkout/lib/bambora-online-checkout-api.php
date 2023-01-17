@@ -212,13 +212,12 @@ class Bambora_Online_Checkout_Api {
 	 * @return boolean
 	 */
 	public function test_if_valid_credentials() {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/paymenttypefees";
-		$data        = array();
-		$json_data   = wp_json_encode( $data );
-		$result      = $this->call_rest_service( $service_url, $json_data, self::GET );
+
+		$service_url = Bambora_Online_Checkout_Endpoints::get_login_endpoint() . "/merchant/functionpermissionsandfeatures";
+		$result      = $this->call_rest_service( $service_url, null, self::GET );
 		$decoded     = json_decode( $result );
 
-		if ( ! $decoded->meta->result ) {
+		if ( !isset($decoded->meta->result) || ! $decoded->meta->result ) {
 			return false;
 		} else {
 			return true;
