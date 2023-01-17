@@ -203,6 +203,26 @@ class Bambora_Online_Checkout_Api {
 
 		$result = $this->call_rest_service( $service_url, $json_data, self::GET );
 		return json_decode( $result );
+
+	}
+
+	/**
+	 * Check if the credentials for the API are valid
+	 *
+	 * @return boolean
+	 */
+	public function test_if_valid_credentials() {
+		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/paymenttypefees";
+		$data        = array();
+		$json_data   = wp_json_encode( $data );
+		$result      = $this->call_rest_service( $service_url, $json_data, self::GET );
+		$decoded     = json_decode( $result );
+
+		if ( ! $decoded->meta->result ) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	/**

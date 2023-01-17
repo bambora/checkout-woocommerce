@@ -313,7 +313,8 @@ function init_bambora_online_checkout() {
         public function admin_options() {
             $version = BOC_VERSION;
 
-            $html = "<h3>Bambora Online Checkout v{$version}</h3>";
+			$html .= Bambora_Online_Checkout_Helper::create_admin_debug_section();
+			$html .= '<h3 class="wc-settings-sub-title">Module Configuration</h3>';
 
             $html .= Bambora_Online_Checkout_Helper::create_admin_debug_section();
             $html .= '<h3 class="wc-settings-sub-title">Module configuration</h3>';
@@ -329,7 +330,18 @@ function init_bambora_online_checkout() {
 </div>';
 	        }
 
-            $html .= '<table class="form-table">';
+			$api_key           = $this->get_api_key();
+			$api               = new Bambora_Online_Checkout_Api( $api_key );
+			$valid_credentials = $api->test_if_valid_credentials();
+
+			if ( $valid_credentials ) {
+				$html .= "<b><i>The credentials for your Bambora account are valid.</i></b>";
+			} else {
+				$html .= "<b><i>The credentials you have provided for your Bambora account are not valid. Please check them before you enable Bambora as a payment option.</i></b>";
+			}
+
+
+			$html .= '<table class="form-table">';
 
             // Generate the HTML For the settings form.!
             $html .= $this->generate_settings_html( array(), false );
