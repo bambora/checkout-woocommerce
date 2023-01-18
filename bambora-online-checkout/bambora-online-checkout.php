@@ -102,12 +102,12 @@ function init_bambora_online_checkout()
             // Load the settings.!
             $this->init_settings();
 
-            // Initilize Bambora Online Checkout Settings
+            // Initialize Bambora Online Checkout Settings
             $this->init_bambora_online_checkout_settings();
         }
 
         /**
-         * Initilize Bambora Online Checkout Settings
+         * Initialize Bambora Online Checkout Settings
          */
         public function init_bambora_online_checkout_settings()
         {
