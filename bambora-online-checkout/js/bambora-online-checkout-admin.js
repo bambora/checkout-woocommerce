@@ -9,7 +9,6 @@
  * @author    Bambora Online
  * @copyright Bambora Online (https://bambora.com)
  * @license   Bambora Online
- *
  */
 
 jQuery(document).ready(function () {
@@ -44,9 +43,9 @@ jQuery(document).ready(function () {
                 return false;
             }
 
-            var messagDialogText = jQuery("#bambora_capture_message").val();
+            var messageDialogText = jQuery("#bambora_capture_message").val();
 
-            var confirmResult = confirm(messagDialogText);
+            var confirmResult = confirm(messageDialogText);
             if (confirmResult === false) {
                 return false;
             }
