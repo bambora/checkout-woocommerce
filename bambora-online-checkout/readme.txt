@@ -444,7 +444,7 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 
 = 4.0.4 =
 * Adds more logging and exception handling to getPaymentType
-* Fix for log beeing flooded
+* Fix for log being flooded
 
 = 4.0.3 =
 * Adds Payment Type and logo to Order detail page in the backoffice
@@ -483,7 +483,7 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 
 = 3.0.2 =
 * Improved quality for Bambora logo
-* Improved quality for Bambora payment type logoes
+* Improved quality for Bambora payment type logos
 * Adds rounding option in module configuration
 * Fix for warning when using get order tax
 
