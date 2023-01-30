@@ -6,8 +6,8 @@ Tested up to: 6.1
 Stable tag: 4.7.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-WC requires at least: 2.6
-WC tested up to: 7.0
+WC requires at least: 3.1
+WC tested up to: 7.3
 
 Integrates Bambora Checkout payment gateway into your WooCommerce installation.
 
@@ -84,7 +84,7 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 
 9. Enter and adjust the settings which are described in the **Settings** section.
 
-10. Click **Save Changes** when done and you are ready to use Bambora Checkout
+10. Click **Save Changes** when done, and you are ready to use Bambora Checkout
 
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
@@ -327,7 +327,7 @@ Information and Pricing:
 For more details, please visit:
 Bambora Checkout - Denmark
 Bambora Checkout - Sweden
-Bambora Checkout- Norway
+Bambora Checkout - Norway
 Bambora Checkout - Europe
 = Security =
 By using Bambora Checkout you won't have to worry about the security of your client’s payment details. The integration works by redirection the customer to our PCI-DSS secure servers where the customer enters their payment information directly into our secure environment so that the web shop never comes into contact with your payment data. When the payment is done the customer is redirected back to your web shop and our servers will notify your web shop that the payment is completed.
@@ -360,7 +360,7 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 
 9. Enter and adjust the settings which are described in the **Settings** section.
 
-10. Click **Save Changes** when done and you are ready to use Bambora Checkout
+10. Click **Save Changes** when done, and you are ready to use Bambora Checkout
 
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
@@ -444,7 +444,7 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 
 = 4.0.4 =
 * Adds more logging and exception handling to getPaymentType
-* Fix for log beeing flooded
+* Fix for log being flooded
 
 = 4.0.3 =
 * Adds Payment Type and logo to Order detail page in the backoffice
@@ -483,7 +483,7 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 
 = 3.0.2 =
 * Improved quality for Bambora logo
-* Improved quality for Bambora payment type logoes
+* Improved quality for Bambora payment type logos
 * Adds rounding option in module configuration
 * Fix for warning when using get order tax
 
