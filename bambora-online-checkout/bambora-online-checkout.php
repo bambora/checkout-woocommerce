@@ -26,7 +26,7 @@ function init_bambora_online_checkout() {
 	}
 
 	define( 'BOC_LIB', dirname( __FILE__ ) . '/lib/' );
-	define( 'BOC_VERSION', '4.7.2' );
+	define( 'BOC_VERSION', '5.0.0' );
 
 	// Including Bambora files!
 	include( BOC_LIB . 'bambora-online-checkout-api.php' );

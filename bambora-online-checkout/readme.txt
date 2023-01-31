@@ -3,7 +3,7 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
 Tested up to: 6.1
-Stable tag: 4.7.2
+Stable tag: 5.0.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 3.1
@@ -89,6 +89,14 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+
+
+= 5.0.0 =
+* Refactoring & formatting of code
+* Added support for PHP 8.1
+* Removed support for WooCommerce below 3.1
+* Functionality to see if the merchants Bambora Credentials are valid in the settings tab
+* Spelling fixes
 
 = 4.7.2 =
 * Makes sure default values are set if WPML is recently installed.
