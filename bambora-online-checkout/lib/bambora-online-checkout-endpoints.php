@@ -81,14 +81,6 @@ class Bambora_Online_Checkout_Endpoints {
 		return constant( 'BAMBORA_ENDPOINT_CHECKOUT_API' );
 	}
 
-    /**
-     * Get Checkout Endpoint
-     *
-     * @return mixed
-     */
-    public static function get_checkout_api_endpoint() {
-        return constant( 'BAMBORA_ENDPOINT_CHECKOUT_API' );
-    }
 
 	/**
 	 * Get Login Endpoint
