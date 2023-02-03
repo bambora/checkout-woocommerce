@@ -835,9 +835,9 @@ function init_bambora_online_checkout() {
 				$shipping_orderline->totalpriceinclvat   = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total + $shipping_tax ), $minorunits, $this->roundingmode );
 				$shipping_orderline->totalpricevatamount = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $shipping_tax, $minorunits, $this->roundingmode );
 				$shipping_orderline->unitpriceinclvat    = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( ( $shipping_total + $shipping_tax ), $minorunits, $this->roundingmode );
-				$shipping_orderline->unitprice           = $shipping_orderline->totalprice;
-				$shipping_orderline->unitpricevatamount  = $shipping_orderline->unitpriceinclvat - $shipping_orderline->unitprice;
-				$shipping_orderline->vat                 = $shipping_tax > 0 ? ( $shipping_tax / $shipping_total ) * 100 : 0;
+				$shipping_orderline->unitprice           = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $shipping_total, $minorunits, $this->roundingmode );
+				$shipping_orderline->unitpricevatamount  = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $shipping_tax, $minorunits, $this->roundingmode );
+				$shipping_orderline->vat                 = (float) ($shipping_tax > 0 ? ( $shipping_tax / $shipping_total ) * 100 : 0);
 				$bambora_orderlines[]                    = $shipping_orderline;
 			}
 			$order_fees = $order->get_fees();
