@@ -52,6 +52,23 @@ class Bambora_Online_Checkout_Currency {
 	}
 
 	/**
+	 * Get roundingmode
+	 *
+	 * @param string $rounding
+	 *
+	 * @return int
+	 */
+
+	public static function roundingmode( $rounding ) {
+		return match ( $rounding ) {
+			Bambora_Online_Checkout_Currency::ROUND_UP => PHP_ROUND_HALF_UP,
+			Bambora_Online_Checkout_Currency::ROUND_DOWN => PHP_ROUND_HALF_DOWN,
+			default => PHP_ROUND_HALF_EVEN,
+		};
+	}
+
+
+	/**
 	 * Convert an amount from minorunits
 	 *
 	 * @param float $amount_in_minorunits
