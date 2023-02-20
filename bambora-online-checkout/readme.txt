@@ -90,6 +90,8 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 
 == Changelog ==
 
+= 5.0.1 =
+* Rounding changes for Walley
 
 = 5.0.0 =
 * Refactoring & formatting of code
