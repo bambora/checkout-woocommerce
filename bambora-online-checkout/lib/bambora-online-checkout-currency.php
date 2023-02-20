@@ -60,11 +60,19 @@ class Bambora_Online_Checkout_Currency {
 	 */
 
 	public static function roundingmode( $rounding ) {
-		return match ( $rounding ) {
-			Bambora_Online_Checkout_Currency::ROUND_UP => PHP_ROUND_HALF_UP,
-			Bambora_Online_Checkout_Currency::ROUND_DOWN => PHP_ROUND_HALF_DOWN,
-			default => PHP_ROUND_HALF_EVEN,
-		};
+		
+		switch ( $rounding ) {
+			case Bambora_Online_Checkout_Currency::ROUND_UP:
+				$roundingmode = PHP_ROUND_HALF_UP;
+				break;
+			case Bambora_Online_Checkout_Currency::ROUND_DOWN:
+				$roundingmode = PHP_ROUND_HALF_DOWN;
+				break;
+			default:
+				$roundingmode = PHP_ROUND_HALF_EVEN;
+				break;
+		}
+		return $roundingmode;
 	}
 
 
