@@ -90,6 +90,9 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 
 == Changelog ==
 
+= 5.0.2 =
+* Make sure Walley Rounding change compatible with older version of php as well.
+
 = 5.0.1 =
 * Rounding changes for Walley
 
