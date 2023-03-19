@@ -207,3 +207,80 @@
 #boc-admin-documentation {
     margin-right: 5px;
 }
+.bambora_paymentrequest_details,.bambora_paymentrequest_action  {
+    background-color: #F6F7FA;
+    padding: 10px;
+    border-radius: 4px;
+    border-color: #E2E1E6;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+.bambora_pr_label{
+    font-weight: 600;
+    float: left;
+    min-width: 200px;
+}
+.bambora_pr_info{
+    font-weight: 300;
+    float: left;
+    min-width: 200px;
+    line-break: anywhere;
+    display: block;
+}
+.bambora_pr_status_open{
+    color: #5b841b;
+    background-color: #c6e1c6;
+    border-color: #5b841b;
+    border-radius: 4px;
+    display: inline-flex;
+    line-height: 2.5em;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    margin: -.25em 0;
+    white-space: nowrap;
+    max-width: 100%;
+}
+.bambora_pr_status_closed{
+   color: #777;
+    background-color: #e5e5e5;
+    border-color: #777;
+    border-radius: 4px;
+    display: inline-flex;
+    line-height: 2.5em;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    margin: -.25em 0;
+    white-space: nowrap;
+    max-width: 100%;
+}
+.bambora_pr_status_expired{//RED
+    padding:5px;
+    color: #dc3232;
+    background-color: #FFEAE4;
+    border-color: #dc3232;
+    border-radius: 4px;
+    display: inline-flex;
+    line-height: 2.5em;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    margin: -.25em 0;
+    white-space: nowrap;
+    max-width: 100%;
+}
+.bambora_pr_status_deleted{
+    padding:5px;
+    color: #777;
+    background-color: #e5e5e5;
+    border-color: #777;
+    border-radius: 4px;
+    display: inline-flex;
+    line-height: 2.5em;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    margin: -.25em 0;
+    white-space: nowrap;
+    max-width: 100%;
+}
+.bambora_pr_row{
+    float: left;
+    clear: both;
+}
+.pr_status {
+    margin: 0 1em;
+}
