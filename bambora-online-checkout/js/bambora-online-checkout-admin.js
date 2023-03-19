@@ -57,6 +57,69 @@ jQuery(document).ready(function () {
             window.location.href = url;
         });
 
+    jQuery("#bambora_create_pr_submit")
+        .click(function (e) {
+            e.preventDefault();
+            var inputField = jQuery("#bambora_pr_amount");
+            var reg = new RegExp(/^(?:[\d]+([,.]?[\d]{0,3}))$/);
+            var amount = inputField.val();
+            if (inputField.length > 0 && !reg.test(amount)) {
+                jQuery("#bambora-format-error").toggle();
+                return false;
+            }
+            var inputFieldDescription = jQuery("#bambora_pr_description");
+            var description = inputFieldDescription.val();
+            var messageDialogText = jQuery("#bambora_create_pr_message").val();
+
+            var confirmResult = confirm(messageDialogText);
+            if (confirmResult === false) {
+                return false;
+            }
+            var nonce = jQuery("#bambora_nonce").val();
+            var params = "&bambora_paymentrequest_action=create_pr&amount=" + amount + "&description=" + description + "&bambora_nonce=" + nonce;
+            var url = window.location.href + params;
+
+            window.location.href = url;
+        });
+    jQuery("#bambora_send_pr_submit")
+        .click(function (e) {
+            e.preventDefault();
+            var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+            var recipient_email = jQuery("#bambora_pr_recipient_email").val();
+            var recipient_name = jQuery("#bambora_pr_recipient_name").val();
+
+            if (emailRegex.test(recipient_email)) {
+                console.log("Valid recipient_email address");
+            } else {
+                jQuery("#bambora-email-error").toggle();
+
+                console.log("Invalid recipient_email address");
+                return false;
+            }
+
+            var replyto_email = jQuery("#bambora_pr_replyto_email").val();
+            var replyto_name = jQuery("#bambora_pr_replyto_name").val();
+            if (emailRegex.test(replyto_email)) {
+                console.log("Valid replyto_email address");
+            } else {
+                jQuery("#bambora-email-error").toggle();
+                console.log("Invalid replyto_email address");
+                return false;
+            }
+
+            var email_message = jQuery("#bambora_pr_email_message").val();
+            var messageDialogText = jQuery("#bambora_send_pr_message").val();
+            var confirmResult = confirm(messageDialogText);
+            if (confirmResult === false) {
+                return false;
+            }
+            var nonce = jQuery("#bambora_nonce").val();
+            var params = "&bambora_paymentrequest_action=send_pr&recipient_name=" + recipient_name + "&recipient_email=" + recipient_email + "&replyto_name=" + replyto_name + "&replyto_email=" + replyto_email + "&email_message=" + email_message + "&bambora_nonce=" + nonce;
+            var url = window.location.href + params;
+
+            window.location.href = url;
+        });
+
     jQuery("#bambora_delete_pr_submit")
         .click(function (e) {
             e.preventDefault();

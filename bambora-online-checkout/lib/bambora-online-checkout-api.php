@@ -263,6 +263,64 @@ class Bambora_Online_Checkout_Api {
 
 	}
 
+	public function check_if_merchant_has_payment_request_permissions() {
+		$serviceUrl = Bambora_Online_Checkout_Endpoints::get_login_endpoint() . "/merchant/functionpermissionsandfeatures";
+
+		$result  = $this->call_rest_service( $serviceUrl, null, self::GET );
+		$decoded = json_decode( $result );
+
+		if ( isset( $decoded->meta->result ) && $decoded->meta->result ) {
+			$functionPermissions = $decoded->functionpermissions;
+			foreach ( $functionPermissions as $value ) {
+				if ( $value->name == "function#expresscheckoutservice#v1#createpaymentrequest" ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/*
+	* Create a PaymentRequest
+	*
+	* @return mixed
+	*/
+	public function createPaymentRequest( $jsonData ) {
+		$serviceUrl = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . "/paymentrequests";
+		$result     = $this->call_rest_service( $serviceUrl, $jsonData, self::POST );
+
+		return json_decode( $result );
+	}
+
+	/**
+	 * Get a PaymentRequest
+	 *
+	 * @param string $paymentRequestId
+	 *
+	 * @return mixed
+	 */
+	public function getPaymentRequest( $paymentRequestId ) {
+		$serviceUrl = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . "/paymentrequests/{$paymentRequestId}";
+		$result     = $this->call_rest_service( $serviceUrl, null, self::GET );
+
+		return json_decode( $result );
+	}
+
+	/**
+	 * Send PaymentRequest email
+	 *
+	 * @param string $paymentRequestId , $jsonData
+	 *
+	 * @return mixed
+	 */
+	public function sendPaymentRequestEmail( $paymentRequestId, $jsonData ) {
+		$serviceUrl = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . "/paymentrequests/{$paymentRequestId}/email-notifications";
+		$result     = $this->call_rest_service( $serviceUrl, $jsonData, self::POST );
+
+		return json_decode( $result );
+	}
+
 	/**
 	 * Delete a PaymentRequest
 	 *
@@ -289,7 +347,7 @@ class Bambora_Online_Checkout_Api {
 		$result      = $this->call_rest_service( $service_url, null, self::GET );
 		$decoded     = json_decode( $result );
 
-		if ( !isset($decoded->meta->result) || ! $decoded->meta->result ) {
+		if ( ! isset( $decoded->meta->result ) || ! $decoded->meta->result ) {
 			return false;
 		} else {
 			return true;
