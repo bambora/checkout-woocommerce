@@ -1741,6 +1741,39 @@ function init_bambora_online_checkout() {
 
 			return $this->id === $payment_method;
 		}
+	// Add custom column to order listing table
+	add_filter( 'manage_edit-shop_order_columns', 'add_custom_order_column' );
+	function add_custom_order_column( $columns ) {
+		$columns['payment_request_field'] = __( 'Bambora Payment Request', 'bambora-online-checkout' );
+
+		return $columns;
+	}
+
+	// Populate custom column with custom field value
+	add_action( 'manage_shop_order_posts_custom_column', 'populate_custom_order_column' );
+	function populate_custom_order_column( $column ) {
+		global $post;
+		if ( $column === 'payment_request_field' ) {
+			$order              = wc_get_order( $post->ID );
+			$payment_request_id = $order->get_meta( 'bambora_paymentrequest_id' );
+			if ( isset( $payment_request_id ) && $payment_request_id != "" ) {
+				$api_key         = Bambora_Online_Checkout::get_instance()->get_api_key( $post->ID );
+				$api             = new Bambora_Online_Checkout_Api( $api_key );
+				$payment_request = $api->getPaymentRequest( $payment_request_id );
+
+				if ( isset( $payment_request->url ) ) {
+					echo '<div class="bambora_pr_posts_pr"><span><a href="' . $payment_request->url . '" target="_blank">' . $payment_request_id . '</a></span></div>';
+				}
+				if ( isset( $payment_request->status ) ) {
+					$statusclass = 'bambora_pr_status_' . $payment_request->status;
+					echo '<br/><div class="order_status column-order_status ' . $statusclass . '"><span class="pr_status">Status: ' . ucfirst( $payment_request->status ) . '</span></div>';
+				}
+				if ( isset( $payment_request->description ) ) {
+					echo '<br/><span class="bambora_pr_posts_description"> ' . $payment_request->description . '</span>';
+				}
+			}
+
+		}
 	}
 
 	// Load the module into WordPress / WooCommerce
