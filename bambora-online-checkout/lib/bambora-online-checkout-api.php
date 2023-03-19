@@ -264,6 +264,21 @@ class Bambora_Online_Checkout_Api {
 	}
 
 	/**
+	 * Delete a PaymentRequest
+	 *
+	 * @param string $paymentRequestId
+	 *
+	 * @return mixed
+	 */
+	public function deletePaymentRequest( $paymentRequestId ) {
+		$serviceUrl = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . "/paymentrequests/{$paymentRequestId}";
+		$result     = $this->call_rest_service( $serviceUrl, null, "DELETE" );
+
+		return json_decode( $result );
+	}
+
+
+	/**
 	 * Check if the credentials for the API are valid
 	 *
 	 * @return boolean

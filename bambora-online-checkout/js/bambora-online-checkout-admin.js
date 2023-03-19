@@ -57,6 +57,23 @@ jQuery(document).ready(function () {
             window.location.href = url;
         });
 
+    jQuery("#bambora_delete_pr_submit")
+        .click(function (e) {
+            e.preventDefault();
+            var inputField = jQuery("#bambora_pr_id");
+            var payment_request_id = inputField.val();
+            var messageDialogText = jQuery("#bambora_delete_pr_message").val();
+            var confirmResult = confirm(messageDialogText);
+            if (confirmResult === false) {
+                return false;
+            }
+            var nonce = jQuery("#bambora_nonce").val();
+            var params = "&bambora_paymentrequest_action=delete_pr&payment_request_id=" + payment_request_id + "&bambora_nonce=" + nonce;
+            var url = window.location.href + params;
+
+            window.location.href = url;
+        });
+
     jQuery("#bambora_delete_submit")
         .click(function (e) {
             e.preventDefault();

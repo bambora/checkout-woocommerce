@@ -769,6 +769,45 @@ function init_bambora_online_checkout() {
 			return $bambora_url;
 		}
 
+
+		/**
+		 * Delete Bambora Payment Request
+		 *
+		 * @param WC_Order $order
+		 * @param          $amount
+		 * @param          $currency
+		 * @param          $description
+		 *
+		 * @return
+		 */
+
+		protected function bambora_delete_paymentrequest( $order_id, $payment_request_id ) {
+
+			$order                = wc_get_order( $order_id );
+			$apiKey               = $this->get_api_key();
+			$api                  = new Bambora_Online_Checkout_Api( $apiKey );
+			$deletePaymentRequest = $api->deletePaymentRequest( $payment_request_id );
+
+			if ( $deletePaymentRequest->meta->result ) {
+
+				$order->delete_meta_data( 'bambora_paymentrequest_id' );
+				$order->delete_meta_data( 'bambora_paymentrequest_url' );
+				$note = sprintf( __( 'Bambora Payment Request %s deleted for order %s', 'bambora-online-checkout' ), $payment_request_id, $order->get_order_number() );
+				$order->add_order_note( $note );
+				$order->save();
+				$order->save();
+				do_action( 'bambora_online_checkout_after_delete_paymentrequest', $order_id );
+
+				return true;
+
+			} else {
+				$message = sprintf( __( 'Delete payment request failed for order %s', 'bambora-online-checkout' ), $order_id );
+				$this->_boc_log->add( $message );
+
+				return new WP_Error( 'bambora_online_checkout_error', $message );
+			}
+
+		}
 		/**
 		 * Create Bambora subscription
 		 *
@@ -1241,6 +1280,14 @@ function init_bambora_online_checkout() {
 			), 'shop_order', 'side', 'high' );
 		}
 
+
+					$html .= '<div class="bambora_paymentrequest_action bambora_paymentrequest_details">';
+					$html .= '<input type="hidden" id="bambora_pr_id" name="bambora_pr_id" value="' . $payment_request_id . '" />';
+					$html .= '<input type="hidden" id="bambora_delete_pr_message" name="bambora_delete_pr_message" value="' . __( 'Are you sure you want to delete this payment request?', 'bambora-online-checkout' ) . '" />';
+					$html .= '<h3>' . __( 'Delete Payment Request', 'bambora-online-checkout' ) . '</h3>';
+					$html .= '<input id="bambora_delete_pr_submit" class="button delete" name="bambora_delete_pr_submit" type="submit" value="' . __( 'Delete Payment Request', 'bambora-online-checkout' ) . '" />';
+					wp_nonce_field( 'bambora_process_paymentrequest_action', 'bambora_nonce' );
+
 		/**
 		 * Generate the Bambora payment meta box and echos the HTML
 		 */
@@ -1579,6 +1626,56 @@ function init_bambora_online_checkout() {
 				}
 			}
 		}
+
+		/**
+		 * Bambora Online Checkout Payment Request Actions
+		 */
+		public function bambora_online_checkout_paymentrequest_actions() {
+			if ( isset( $_GET['bambora_paymentrequest_action'] ) && isset( $_GET['bambora_nonce'] ) && wp_verify_nonce( $_GET['bambora_nonce'], 'bambora_process_paymentrequest_action' ) ) {
+				$params             = $_GET;
+				$order_id           = $params['post'];
+				$amount             = $params['amount'] ?? 0;
+				$description        = sanitize_text_field( $params['description'] ) ?? "";
+				$recipient_name     = sanitize_text_field( $params['recipient_name'] ) ?? "";
+				$recipient_email    = sanitize_text_field( $params['recipient_email'] ) ?? "";
+				$action             = sanitize_text_field( $params['bambora_paymentrequest_action'] );
+				$payment_request_id = $params['payment_request_id'] ?? "";
+				$replyto_name       = sanitize_text_field( $params['replyto_name'] ) ?? "";
+				$replyto_email      = sanitize_text_field( $params['replyto_email'] ) ?? "";
+				$email_message      = sanitize_text_field( $params['email_message'] ) ?? "";
+				$action             = $params['bambora_paymentrequest_action'];
+
+				$action_result = null;
+				try {
+					switch ( $action ) {
+						case 'create_pr':
+							$action_result = $this->bambora_create_paymentrequest( $order_id, $amount, $description );
+							break;
+						case 'delete_pr':
+							$action_result = $this->bambora_delete_paymentrequest( $order_id, $payment_request_id );
+							break;
+						case 'send_pr':
+							$action_result = $this->bambora_send_paymentrequest( $order_id, $recipient_name, $recipient_email, $replyto_name, $replyto_email, $email_message );
+							break;
+					}
+				} catch ( Exception $ex ) {
+					$action_result = new WP_Error( 'bambora_online_checkout_error', $ex->getMessage() );
+				}
+
+				if ( is_wp_error( $action_result ) ) {
+					$message = $action_result->get_error_message( 'bambora_online_checkout ' );
+					$this->_boc_log->add( $message );
+					Bambora_Online_Checkout_Helper::add_admin_notices( Bambora_Online_Checkout_Helper::ERROR, $message );
+				} else {
+					global $post;
+					$message = sprintf( __( 'The %s action was a success for order %s', 'bambora-online-checkout' ), $action, $order_id );
+					Bambora_Online_Checkout_Helper::add_admin_notices( Bambora_Online_Checkout_Helper::SUCCESS, $message, true );
+					$url = admin_url( 'post.php?post=' . $post->ID . '&action=edit' );
+					wp_safe_redirect( $url );
+				}
+			}
+		}
+
 
 		/**
 		 * Capture a payment
