@@ -37,7 +37,7 @@ class Bambora_Online_Checkout_Order {
 	/** @var Bambora_Online_Checkout_Orderline[] */
 	public $lines;
 	/** @var string */
-	public $ordernumber;
+	public $id;
 	/** @var Bambora_Online_Checkout_Address */
 	public $shippingaddress;
 	/** @var long */
@@ -137,7 +137,7 @@ class Bambora_Online_Checkout_Subscription {
 class Bambora_Online_Checkout_Request {
 	/** @var Bambora_Online_Checkout_Customer */
 	public $customer;
-	/** @var long */
+	/** @var int */
 	public $instantcaptureamount;
 	/** @var string */
 	public $language;
@@ -147,10 +147,44 @@ class Bambora_Online_Checkout_Request {
 	public $subscription;
 	/** @var Bambora_Online_Checkout_Url */
 	public $url;
-	/** @var int */
-	public $paymentwindowid;
+	/** @var Bambora_Online_Checkout_Request_Payment_Window */
+	public $paymentwindow;
 	/** @var string */
 	public $securityexemption;
 	/** @var string */
 	public $securitylevel;
 }
+
+class Bambora_Online_Checkout_Request_Payment_Window {
+	public $id;
+	public $language;
+}
+
+
+class Bambora_Online_Checkout_Payment_Request {
+	public $reference;
+	public $parameters;
+	public $description;
+	public $termsurl;
+}
+
+class Bambora_Online_Checkout_Payment_Request_Parameters {
+	public $order;
+	public $instantcaptureamount;
+	public $paymentwindow;
+	public $customer;
+	public $url;
+}
+
+class Bambora_Online_Checkout_Payment_Request_Email_Recipient {
+	public $message;
+	public $to;
+	public $replyto;
+
+}
+
+class Bambora_Online_Checkout_Payment_Request_Email_Recipient_Address {
+	public $email;
+	public $name;
+}
+
