@@ -125,6 +125,7 @@ function init_bambora_online_checkout() {
 			$this->rolecapturerefunddelete   = array_key_exists( 'rolecapturerefunddelete', $this->settings ) ? $this->settings['rolecapturerefunddelete'] : 'shop_manager';
 			$this->allowlowvalueexemption    = array_key_exists( 'allowlowvalueexemption', $this->settings ) ? $this->settings['allowlowvalueexemption'] : 'no';
 			$this->limitforlowvalueexemption = array_key_exists( 'limitforlowvalueexemption', $this->settings ) ? $this->settings['limitforlowvalueexemption'] : '';
+			$this->termsandconditions        = array_key_exists( 'termsandconditions', $this->settings ) ? $this->settings['termsandconditions'] : '';
 		}
 
 		/**
@@ -340,6 +341,12 @@ function init_bambora_online_checkout() {
 					'title'       => 'Max Amount for Low Value Exemption',
 					'type'        => 'text',
 					'description' => 'Any amount below this max amount might skip SCA if the issuer would allow it. Recommended amount is about €30 in your local currency. <a href="https://developer.bambora.com/europe/checkout/psd2/lowvalueexemption"  target="_blank">See more information here.</a>',
+					'default'     => ''
+				),
+				'termsandconditions'        => array(
+					'title'       => 'URL to Terms & Conditions',
+					'type'        => 'text',
+					'description' => 'If you are using Payment Requests this is where you can set the URL for your Terms & Conditions.',
 					'default'     => ''
 				),
 			);
@@ -2047,13 +2054,11 @@ function init_bambora_online_checkout() {
 
 			return apply_filters( 'woocommerce_gateway_icon', $icon_html, $this->id );
 		}
+
 		/**
 		 * Get the Bambora Api Key
 		 */
-		/**
-		 * Get the Bambora Api Key
-		 */
-		protected function get_api_key( $order_id = null ) {
+		public function get_api_key( $order_id = null ) {
 			if ( isset( $order_id ) ) {
 				if ( class_exists( 'sitepress' ) ) {
 					$order_language = Bambora_Online_Checkout_Helper::getWPMLOrderLanguage( $order_id );
