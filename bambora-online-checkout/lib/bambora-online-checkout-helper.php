@@ -54,9 +54,8 @@ class Bambora_Online_Checkout_Helper {
 		$bambora_version     = BOC_VERSION;
 		$woocommerce_version = $woocommerce->version;
 		$php_version         = phpversion();
-		$result              = "WooCommerce/{$woocommerce_version} Module/{$bambora_version} PHP/{$php_version}";
 
-		return $result;
+		return "WooCommerce/{$woocommerce_version} Module/{$bambora_version} PHP/{$php_version}";
 	}
 
 	/**
@@ -181,7 +180,7 @@ class Bambora_Online_Checkout_Helper {
 	 * Format a number
 	 *
 	 * @param mixed $number
-	 * @param int   $decimals
+	 * @param int $decimals
 	 *
 	 * @return string
 	 */
@@ -268,10 +267,10 @@ class Bambora_Online_Checkout_Helper {
 	/**
 	 * Validate Callback
 	 *
-	 * @param mixed    $params
-	 * @param string   $md5_key
+	 * @param mixed $params
+	 * @param string $md5_key
 	 * @param WC_Order $order
-	 * @param string   $message
+	 * @param string $message
 	 *
 	 * @return bool
 	 */
@@ -420,7 +419,7 @@ class Bambora_Online_Checkout_Helper {
 	 *
 	 * @param string $type
 	 * @param string $message
-	 * @param bool   $keep_post
+	 * @param bool $keep_post
 	 */
 	public static function add_admin_notices( $type, $message, $keep_post = false ) {
 		$message  = array( "type" => $type, "message" => $message );
@@ -525,7 +524,6 @@ class Bambora_Online_Checkout_Helper {
 			// Temporary renaming for Lindorff to Walley & Collector Bank to Walley require until implemented in Acquire. (from 1st September 2021 called Walley)
 			$thirdPartyName = $operation->acquirername;
 			$thirdPartyName = strtolower( $thirdPartyName ) !== ( "lindorff" || "collectorbank" ) ? $thirdPartyName : "Walley";
-
 
 			switch ( $subAction ) {
 				case "threed":
