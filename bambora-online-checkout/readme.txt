@@ -3,7 +3,7 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
 Tested up to: 6.2
-Stable tag: 5.0.0
+Stable tag: 5.1.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 3.2
@@ -89,6 +89,8 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+= 5.1.1 =
+* Fix for Fatal Error when editing anything other than orders.
 
 = 5.1.0 =
 * Bambora Online Payment Requests is now part of the module. Contact Sales or Support if you would like to enable it.
