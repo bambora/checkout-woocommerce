@@ -1400,8 +1400,10 @@ function init_bambora_online_checkout() {
 			$order_id = $post->ID;
 			$status   = $post->post_status;
 
-			$order        = new WC_Order( $order_id );
-			$order_status = $order->get_status();
+			$order = wc_get_order( $order_id );
+			if ( ! $order ) {
+				return;
+			}
 
 			$order_total    = $order->get_total();
 			$transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
