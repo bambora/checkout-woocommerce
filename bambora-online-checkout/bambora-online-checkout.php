@@ -663,7 +663,7 @@ function init_bambora_online_checkout() {
 			$request->language             = str_replace( '_', '-', get_locale() );
 			$paymentWindow                 = new Bambora_Online_Checkout_Request_Payment_Window();
 			$paymentWindow->id             = $this->paymentwindowid;
-			$paymentWindow->language       = get_bloginfo( 'language' );
+			$paymentWindow->language       = str_replace( '_', '-', get_locale() );
 
 			$request->paymentwindow = $paymentWindow;
 			$request->url           = $this->create_bambora_url( $order );
