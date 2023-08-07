@@ -3,7 +3,7 @@
  * Plugin Name: Bambora Online Checkout
  * Plugin URI: https://www.bambora.com
  * Description: Bambora Online Checkout payment gateway for WooCommerce
- * Version: 5.1.1
+ * Version: 5.1.3
  * Author: Bambora
  * Author URI: https://www.bambora.com
  * Text Domain: bambora-online-checkout
@@ -26,7 +26,7 @@ function init_bambora_online_checkout() {
 	}
 
 	define( 'BOC_LIB', dirname( __FILE__ ) . '/lib/' );
-	define( 'BOC_VERSION', '5.1.1' );
+	define( 'BOC_VERSION', '5.1.3' );
 
 	// Including Bambora files!
 	include( BOC_LIB . 'bambora-online-checkout-api.php' );
@@ -1614,6 +1614,19 @@ function init_bambora_online_checkout() {
 								$html .= '<br/><img style="max-width: 65px;max-height:25px;float: right;clear: both;" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/bank-' . $bank_name . '.svg" alt="' . $bank_name . '" title="' . $bank_name . '" />';
 							}
 						}
+						if ( isset( $transactionInfo["information"]["wallets"][0]["name"] ) ) {
+							$wallet_name = $transactionInfo["information"]["wallets"][0]["name"];
+							if ( $wallet_name == "MobilePay" ) {
+								$wallet_img = "13.svg";
+							}
+							if ( $wallet_name == "Vipps" ) {
+								$wallet_img = "14.svg";
+							}
+							if ( isset( $wallet_img ) ) {
+								$html .= '&nbsp;<img style="max-height:51px;clear: both;" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $wallet_img . '" alt="' . $wallet_name . '" title="' . $wallet_name . '" />';
+							}
+						}
+
 						$html .= '<div class="bambora_transactionid">';
 						$html .= '<p>' . __( 'Transaction ID', 'bambora-online-checkout' ) . '</p>';
 						$html .= '<p>' . $transaction->id . '</p>';

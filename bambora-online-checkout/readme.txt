@@ -2,12 +2,12 @@
 Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
-Tested up to: 6.2
-Stable tag: 5.1.1
+Tested up to: 6.3
+Stable tag: 5.1.3
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 3.2
-WC tested up to: 7.6
+WC tested up to: 8.0
 
 Integrates Bambora Checkout payment gateway into your WooCommerce installation.
 
@@ -62,8 +62,8 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 * Credit your payments directly from your WooCommerce order page.
 * Delete your payments directly from your WooCommerce order page.
 * Sign up, process, cancel, reactivate and change subscriptions
-* Supports WooCommerce 2.6 and up.
-* Supports WooCommerce Subscription 2.x and 3.x
+* Supports WooCommerce 3.2 and up.
+* Supports WooCommerce Subscription 2.x, 3.x & 5.x
 
 == Installation ==
 1. Go to your WordPress administration page and log in. Example url: https://www.yourshop.com/wp-admin
@@ -89,6 +89,10 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+
+= 5.1.2 =
+* Fix for language-setting on payment window not working for other languages than English.
+
 = 5.1.1 =
 * Fix for Fatal Error when editing anything other than orders.
 
