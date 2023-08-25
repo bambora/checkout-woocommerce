@@ -90,6 +90,9 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 
 == Changelog ==
 
+= 5.1.4 =
+* Declare that this module is not yet compatible with WooCommerce HPOS
+
 = 5.1.2 =
 * Fix for language-setting on payment window not working for other languages than English.
 
