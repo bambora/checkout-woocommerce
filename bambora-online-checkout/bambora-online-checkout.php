@@ -1030,9 +1030,45 @@ function init_bambora_online_checkout() {
 					$bambora_orderlines[]               = $fee_orderline;
 				}
 			}
+			$rounding_orderline = $this->create_bambora_orderlines_rounding_fee( $order, $minorunits, $bambora_orderlines, $line_number );
+			if ( $rounding_orderline ) {
+				$bambora_orderlines[] = $rounding_orderline;
+			}
 
 			return $bambora_orderlines;
 		}
+
+
+		protected function create_bambora_orderlines_rounding_fee( $order, $minorunits, $bambora_orderlines, $line_number ) {
+
+			$wc_total      = Bambora_Online_Checkout_Currency::convert_price_to_minorunits( $order->get_total(), $minorunits, $this->roundingmode );
+			$bambora_total = 0;
+			foreach ( $bambora_orderlines as $order_line ) {
+				$bambora_total += $order_line->quantity * $order_line->unitpriceinclvat;
+			}
+
+			if ( $wc_total != $bambora_total ) {
+				$rounding_orderline                      = new Bambora_Online_Checkout_Orderline();
+				$rounding_orderline->id                  = __( 'adjustment', 'bambora-online-checkout' );
+				$rounding_orderline->totalprice          = $wc_total - $bambora_total;
+				$rounding_orderline->totalpriceinclvat   = $wc_total - $bambora_total;
+				$rounding_orderline->totalpricevatamount = 0;
+				$rounding_orderline->text                = __( 'Rounding adjustment', 'bambora-online-checkout' );
+				$rounding_orderline->unitprice           = $wc_total - $bambora_total;
+				$rounding_orderline->unitpriceinclvat    = $wc_total - $bambora_total;
+				$rounding_orderline->unitpricevatamount  = 0;
+				$rounding_orderline->quantity            = 1;
+				$rounding_orderline->description         = __( 'Rounding adjustment', 'bambora-online-checkout' );
+				$rounding_orderline->linenumber          = ++ $line_number;
+				$rounding_orderline->unit                = __( 'pcs.', 'bambora-online-checkout' );
+				$rounding_orderline->vat                 = 0.0;
+
+				return $rounding_orderline;
+			}
+
+			return false;
+		}
+
 
 		/**
 		 * Handle for Bambora IPN Response
@@ -2158,9 +2194,9 @@ function init_bambora_online_checkout() {
 	$plugin_dir = basename( dirname( __FILE__ ) );
 	load_plugin_textdomain( 'bambora-online-checkout', false, $plugin_dir . '/languages/' );
 
-    add_action( 'before_woocommerce_init', function () {
-        if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, false );
-        }
-    } );
+	add_action( 'before_woocommerce_init', function () {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, false );
+		}
+	} );
 }
