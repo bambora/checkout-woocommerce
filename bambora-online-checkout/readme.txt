@@ -3,11 +3,11 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
 Tested up to: 6.3
-Stable tag: 5.1.5
+Stable tag: 5.1.6
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 3.2
-WC tested up to: 8.0
+WC tested up to: 8.1
 
 Integrates Bambora Checkout payment gateway into your WooCommerce installation.
 
@@ -90,6 +90,8 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 
 == Changelog ==
 
+= 5.1.6
+* Made sure division of zero does not happen when using 3rd party shipping plugin.
 
 = 5.1.5 =
 * Added adjustment orderline for orders where the rounding gives a minor error for the total.
