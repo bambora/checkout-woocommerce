@@ -185,6 +185,12 @@ function init_bambora_online_checkout() {
 				$this,
 				'enqueue_wc_bambora_online_checkout_front_styles'
 			) );
+			add_filter( 'manage_woocommerce_page_wc-orders_columns', array( $this, 'add_custom_order_column' ), 20 );
+			add_action( 'manage_woocommerce_page_wc-orders_custom_column', array(
+				$this,
+				'populate_custom_order_column_hpos'
+			), 20, 2 );
+
 		}
 
 		/**
@@ -1234,14 +1240,16 @@ function init_bambora_online_checkout() {
 			$bambora_subscription_id = wc_clean( $bambora_subscription_id );
 			$order_id                = $order->get_id();
 			if ( $is_subscription ) {
-				update_post_meta( $order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
+				$subscription = wcs_get_subscription( $order_id );
+				$subscription->update_meta_data( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
+				$subscription->save();
 			} else {
 				// Also store it on the subscriptions being purchased in the order
 				$subscriptions = Bambora_Online_Checkout_Helper::get_subscriptions_for_order( $order_id );
 				foreach ( $subscriptions as $subscription ) {
-					$wc_subscription_id = $subscription->get_id();
-					update_post_meta( $wc_subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
+					$subscription->update_meta_data( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
 					$subscription->add_order_note( sprintf( __( 'Bambora Online Checkout Subscription activated with subscription id: %s by order %s', 'bambora-online-checkout' ), $bambora_subscription_id, $order_id ) );
+					$subscription->save();
 				}
 			}
 		}
@@ -1433,14 +1441,19 @@ function init_bambora_online_checkout() {
 		 */
 		public function bambora_online_checkout_meta_boxes() {
 			global $post;
-			$order_id = $post->ID;
-			$status   = $post->post_status;
 
-			$order = wc_get_order( $order_id );
+			if ( ! isset( $post ) ) { //HPOS might be used
+				$order    = wc_get_order();
+				$order_id = $order->get_id();
+				$status   = $order->get_status();
+			} else {
+				$order_id = $post->ID;
+				$status   = $post->post_status;
+				$order    = wc_get_order( $order_id );
+			}
 			if ( ! $order ) {
 				return;
 			}
-
 			$order_total    = $order->get_total();
 			$transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
 
@@ -1453,6 +1466,11 @@ function init_bambora_online_checkout() {
 						&$this,
 						'bambora_online_checkout_meta_box_payment_request'
 					), 'shop_order', 'side', 'default' );
+					add_meta_box( 'bambora-paymentrequest-actions', __( 'Bambora Online Checkout Payment Request', 'bambora-online-checkout' ), array(
+						&$this,
+						'bambora_online_checkout_meta_box_payment_request'
+					), 'woocommerce_page_wc-orders', 'side', 'default' );
+
 				}
 			}
 			if ( ! $this->module_check( $order_id ) ) {
@@ -1462,13 +1480,27 @@ function init_bambora_online_checkout() {
 				&$this,
 				'bambora_online_checkout_meta_box_payment'
 			), 'shop_order', 'side', 'high' );
+			if ( true ) {
+				add_meta_box( 'bambora-payment-actions', __( 'Bambora Online Checkout', 'bambora-online-checkout' ), array(
+					&$this,
+					'bambora_online_checkout_meta_box_payment'
+				), 'woocommerce_page_wc-orders', 'side', 'high' );
+			}
+
 		}
 
 
 		public function bambora_online_checkout_meta_box_payment_request() {
 			global $post;
-			$order_id            = $post->ID;
-			$order               = wc_get_order( $order_id );
+
+			if ( ! isset( $post ) ) {
+				$order    = wc_get_order();
+				$order_id = $order->get_id();
+			} else {
+				$order_id = $post->ID;
+				$order    = wc_get_order( $order_id );
+			}
+
 			$payment_request_id  = $order->get_meta( 'bambora_paymentrequest_id' );
 			$payment_request_url = $order->get_meta( 'bambora_paymentrequest_url' );
 
@@ -1576,8 +1608,15 @@ function init_bambora_online_checkout() {
 		 */
 		public function bambora_online_checkout_meta_box_payment() {
 			global $post;
-			$order_id = $post->ID;
-			$order    = wc_get_order( $order_id );
+
+			if ( ! isset( $post ) ) { //HPOS
+				$order    = wc_get_order();
+				$order_id = $order->get_id();
+			} else {
+				$order_id = $post->ID;
+				$order    = wc_get_order( $order_id );
+			}
+
 			if ( ! empty( $order ) ) {
 				$transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
 				if ( strlen( $transaction_id ) > 0 ) {
@@ -1849,7 +1888,13 @@ function init_bambora_online_checkout() {
 			$source     = $operation->actionsource;
 			$actionCode = $operation->actioncode;
 			global $post;
-			$id            = $post->ID;
+			if ( ! isset( $post ) ) {
+				$order = wc_get_order();
+				$id    = $order->get_order_id();
+			} else {
+				$id = $post->ID;
+			}
+
 			$webservice    = new Bambora_Online_Checkout_Api( $this->get_api_key( $id ) );
 			$responseCode  = $webservice->get_response_code_data( $source, $actionCode );
 			$merchantLabel = "";
@@ -1883,8 +1928,9 @@ function init_bambora_online_checkout() {
 		 */
 		public function bambora_online_checkout_actions() {
 			if ( isset( $_GET['bambora_action'] ) && isset( $_GET['bambora_nonce'] ) && wp_verify_nonce( $_GET['bambora_nonce'], 'bambora_process_payment_action' ) ) {
-				$params   = $_GET;
-				$order_id = $params['post'];
+				$params = $_GET;
+
+				$order_id = $params['post'] ?? $params['id'];
 				$currency = $params['currency'];
 				$amount   = $params['amount'];
 				$action   = $params['bambora_action'];
@@ -1912,9 +1958,15 @@ function init_bambora_online_checkout() {
 					Bambora_Online_Checkout_Helper::add_admin_notices( Bambora_Online_Checkout_Helper::ERROR, $message );
 				} else {
 					global $post;
+
 					$message = sprintf( __( 'The %s action was a success for order %s', 'bambora-online-checkout' ), $action, $order_id );
 					Bambora_Online_Checkout_Helper::add_admin_notices( Bambora_Online_Checkout_Helper::SUCCESS, $message, true );
-					$url = admin_url( 'post.php?post=' . $post->ID . '&action=edit' );
+					if ( ! isset( $post ) ) {
+						$url = admin_url( 'admin.php?page=wc-orders&action=edit&id=' . $order_id );
+					} else {
+						$url = admin_url( 'post.php?post=' . $post->ID . '&action=edit' );
+					}
+
 					wp_safe_redirect( $url );
 				}
 			}
@@ -1925,8 +1977,10 @@ function init_bambora_online_checkout() {
 		 */
 		public function bambora_online_checkout_paymentrequest_actions() {
 			if ( isset( $_GET['bambora_paymentrequest_action'] ) && isset( $_GET['bambora_nonce'] ) && wp_verify_nonce( $_GET['bambora_nonce'], 'bambora_process_paymentrequest_action' ) ) {
-				$params             = $_GET;
-				$order_id           = $params['post'];
+				$params = $_GET;
+
+				$order_id = $params['post'] ?? $params['id'];
+
 				$amount             = $params['amount'] ?? 0;
 				$description        = sanitize_text_field( $params['description'] ) ?? "";
 				$recipient_name     = sanitize_text_field( $params['recipient_name'] ) ?? "";
@@ -1936,7 +1990,6 @@ function init_bambora_online_checkout() {
 				$replyto_name       = sanitize_text_field( $params['replyto_name'] ) ?? "";
 				$replyto_email      = sanitize_text_field( $params['replyto_email'] ) ?? "";
 				$email_message      = sanitize_text_field( $params['email_message'] ) ?? "";
-				$action             = $params['bambora_paymentrequest_action'];
 
 				$action_result = null;
 				try {
@@ -1963,7 +2016,11 @@ function init_bambora_online_checkout() {
 					global $post;
 					$message = sprintf( __( 'The %s action was a success for order %s', 'bambora-online-checkout' ), $action, $order_id );
 					Bambora_Online_Checkout_Helper::add_admin_notices( Bambora_Online_Checkout_Helper::SUCCESS, $message, true );
-					$url = admin_url( 'post.php?post=' . $post->ID . '&action=edit' );
+					if ( ! isset( $post ) ) {
+						$url = admin_url( 'admin.php?page=wc-orders&action=edit&id=' . $order_id );
+					} else {
+						$url = admin_url( 'post.php?post=' . $post->ID . '&action=edit' );
+					}
 					wp_safe_redirect( $url );
 				}
 			}
@@ -2125,13 +2182,17 @@ function init_bambora_online_checkout() {
 		}
 
 		public function module_check( $order_id ) {
-			$payment_method = get_post_meta( $order_id, '_payment_method', true );
+
+			$order          = wc_get_order( $order_id );
+			$payment_method = $order->get_meta( '_payment_method', true );
 
 			return $this->id === $payment_method;
 		}
 
 		public function order_has_other_payment_method( $order_id ) {
-			$payment_method = get_post_meta( $order_id, '_payment_method', true );
+
+			$order          = wc_get_order( $order_id );
+			$payment_method = $order->get_meta( '_payment_method', true );
 			if ( $this->id === $payment_method || $payment_method === "" ) {
 				return false;
 			} else {
@@ -2139,25 +2200,65 @@ function init_bambora_online_checkout() {
 			}
 		}
 
+		public function add_custom_order_column( $columns ) {
+
+			$columns['payment_request_field'] = __( 'Bambora Payment Request', 'bambora-online-checkout' );
+
+			return $columns;
+		}
+
+		public function populate_custom_order_column_hpos( $column, $order ) {
+
+			if ( $column === 'payment_request_field' ) {
+				if ( ! isset( $order ) ) {
+					return;
+				}
+				$orderId            = $order->get_id();
+				$payment_request_id = $order->get_meta( 'bambora_paymentrequest_id' );
+				if ( isset( $payment_request_id ) && $payment_request_id != "" ) {
+					$api_key         = Bambora_Online_Checkout::get_instance()->get_api_key( $orderId );
+					$api             = new Bambora_Online_Checkout_Api( $api_key );
+					$payment_request = $api->getPaymentRequest( $payment_request_id );
+
+					if ( isset( $payment_request->url ) ) {
+						echo '<div class="bambora_pr_posts_pr"><span><a href="' . $payment_request->url . '" target="_blank">' . $payment_request_id . '</a></span></div>';
+					}
+					if ( isset( $payment_request->status ) ) {
+						$statusclass = 'bambora_pr_status_' . $payment_request->status;
+						echo '<br/><div class="order_status column-order_status ' . $statusclass . '"><span class="pr_status">Status: ' . ucfirst( $payment_request->status ) . '</span></div>';
+					}
+					if ( isset( $payment_request->description ) ) {
+						echo '<br/><span class="bambora_pr_posts_description"> ' . $payment_request->description . '</span>';
+					}
+				}
+
+			}
+		}
 	}
 
-	// Add custom column to order listing table
-	add_filter( 'manage_edit-shop_order_columns', 'add_custom_order_column' );
-	function add_custom_order_column( $columns ) {
+	add_filter( 'manage_edit-shop_order_columns', 'add_custom_order_column_posts' );
+	add_action( 'manage_shop_order_posts_custom_column', 'populate_custom_order_column_posts' );
+	// Load the module into WordPress / WooCommerce
+	function add_custom_order_column_posts( $columns ) {
+
 		$columns['payment_request_field'] = __( 'Bambora Payment Request', 'bambora-online-checkout' );
 
 		return $columns;
 	}
 
-	// Populate custom column with custom field value
-	add_action( 'manage_shop_order_posts_custom_column', 'populate_custom_order_column' );
-	function populate_custom_order_column( $column ) {
+	function populate_custom_order_column_posts( $column ) {
 		global $post;
+
 		if ( $column === 'payment_request_field' ) {
-			$order              = wc_get_order( $post->ID );
+			if ( isset( $post ) ) {
+				$order = wc_get_order( $post->ID );
+			} else {
+				return;
+			}
+			$orderId            = $order->get_id();
 			$payment_request_id = $order->get_meta( 'bambora_paymentrequest_id' );
 			if ( isset( $payment_request_id ) && $payment_request_id != "" ) {
-				$api_key         = Bambora_Online_Checkout::get_instance()->get_api_key( $post->ID );
+				$api_key         = Bambora_Online_Checkout::get_instance()->get_api_key( $orderId );
 				$api             = new Bambora_Online_Checkout_Api( $api_key );
 				$payment_request = $api->getPaymentRequest( $payment_request_id );
 
@@ -2175,8 +2276,6 @@ function init_bambora_online_checkout() {
 
 		}
 	}
-
-	// Load the module into WordPress / WooCommerce
 
 	add_filter( 'woocommerce_payment_gateways', 'add_bambora_online_checkout' );
 	Bambora_Online_Checkout::get_instance()->init_hooks();
@@ -2196,7 +2295,7 @@ function init_bambora_online_checkout() {
 
 	add_action( 'before_woocommerce_init', function () {
 		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, false );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 		}
 	} );
 }

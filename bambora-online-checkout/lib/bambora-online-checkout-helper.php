@@ -334,7 +334,8 @@ class Bambora_Online_Checkout_Helper {
 	 * @return string
 	 */
 	public static function getWPMLOrderLanguage( $orderId ) {
-		$order_language = get_post_meta( $orderId, 'wpml_language', true );
+		$order          = wc_get_order( $orderId );
+		$order_language = $order->get_meta( 'wpml_language', true );
 
 		return $order_language;
 	}
@@ -376,7 +377,8 @@ class Bambora_Online_Checkout_Helper {
 	 */
 	public static function get_bambora_online_checkout_subscription_id( $subscription ) {
 		$subscription_id         = $subscription->get_id();
-		$bambora_subscription_id = get_post_meta( $subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, true );
+		$subscription            = wcs_get_subscription( $subscription_id );
+		$bambora_subscription_id = $subscription->get_meta( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, true );
 
 		// For Legacy
 		if ( empty( $bambora_subscription_id ) ) {
@@ -384,8 +386,11 @@ class Bambora_Online_Checkout_Helper {
 			$bambora_subscription_id = get_post_meta( $parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY, true );
 			if ( ! empty( $bambora_subscription_id ) ) {
 				// Transform Legacy to new standards
-				update_post_meta( $subscription_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
-				delete_post_meta( $parent_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY );
+				$subscription->update_meta_data( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
+				$subscription->save();
+				$parent = wc_get_order( $parent_order_id );
+				$parent->delete_meta( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY );
+				$parent->save();
 			}
 		}
 
