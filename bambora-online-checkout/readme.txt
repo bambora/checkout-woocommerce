@@ -3,11 +3,11 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
 Tested up to: 6.3
-Stable tag: 5.1.6
+Stable tag: 6.0.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 3.2
-WC tested up to: 8.1
+WC tested up to: 8.2
 
 Integrates Bambora Checkout payment gateway into your WooCommerce installation.
 
@@ -89,6 +89,10 @@ By using Bambora Checkout you won't have to worry about the security of your cli
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+
+= 6.0.0
+* Support for WooCommerce HPOS (High Performance Order Storage) and WooCommerce 8.2.
+* Before upgrading to HPOS, please make sure to make a database backup. HPOS stores the orders in new database tables. Recommending compatibility mode to start with.
 
 = 5.1.6
 * Made sure division of zero does not happen when using 3rd party shipping plugin.
