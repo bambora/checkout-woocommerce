@@ -662,14 +662,20 @@ function init_bambora_online_checkout() {
 		protected function create_bambora_checkout_request( $order ) {
 			$is_request_to_change_payment_method = Bambora_Online_Checkout_Helper::order_is_subscription( $order );
 
+			$language = str_replace( '_', '-', get_locale() );
+
+			if ( $language == "fi" ) {
+				$language = "fi-FI";
+			}
+
 			$request                       = new Bambora_Online_Checkout_Request();
 			$request->customer             = $this->create_bambora_customer( $order );
 			$request->order                = $this->create_bambora_order( $order, $is_request_to_change_payment_method );
 			$request->instantcaptureamount = $this->instantcapture === 'yes' ? $request->order->total : 0;
-			$request->language             = str_replace( '_', '-', get_locale() );
+			$request->language             = $language;
 			$paymentWindow                 = new Bambora_Online_Checkout_Request_Payment_Window();
 			$paymentWindow->id             = $this->paymentwindowid;
-			$paymentWindow->language       = str_replace( '_', '-', get_locale() );
+			$paymentWindow->language       = $language;
 
 			$request->paymentwindow = $paymentWindow;
 			$request->url           = $this->create_bambora_url( $order );
