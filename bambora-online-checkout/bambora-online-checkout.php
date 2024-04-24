@@ -1703,6 +1703,14 @@ function init_bambora_online_checkout() {
 							if ( $wallet_name == "Vipps" ) {
 								$wallet_img = "14.svg";
 							}
+                            if ( $wallet_name == "GooglePay" ) {
+                                $wallet_img = "22.svg";
+                                $wallet_name = "Google Pay";
+                            }
+                            if ( $wallet_name == "ApplePay" ) {
+                                $wallet_img = "21.svg";
+                                $wallet_name = "Apple Pay";
+                            }
 							if ( isset( $wallet_img ) ) {
 								$html .= '&nbsp;<img style="max-height:51px;clear: both;" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $wallet_img . '" alt="' . $wallet_name . '" title="' . $wallet_name . '" />';
 							}
