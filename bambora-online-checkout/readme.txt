@@ -2,17 +2,17 @@
 Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, psp, subscription, subscriptions
 Requires at least: 4.0.0
-Tested up to: 6.4
+Tested up to: 6.5
 Stable tag: 6.0.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 3.2
-WC tested up to: 8.3
+WC tested up to: 8.8
 
 Integrates Bambora Checkout payment gateway into your WooCommerce installation.
 
 == Description ==
-Bambora will now be known as Worldline. As your payment partner, we’re now becoming stronger and better.
+Bambora is now known as Worldline. As your payment partner, we’re now becoming stronger and better.
 However, all the things that you love about Bambora will remain the same – the contract, the people, and the solutions.
 This extension is for the European Merchants using the Bambora Checkout payment system.
 
