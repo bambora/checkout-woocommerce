@@ -373,7 +373,7 @@ class Bambora_Online_Checkout_Api {
 		$data['authorize']['amount']   = intval($amount);
 		$data['authorize']['orderid']  = $orderId;
 		if ( $instantCaptureAmount > 0 ) {
-			$data['authorize']['instantcaptureamount'] = inval($instantCaptureAmount);
+			$data['authorize']['instantcaptureamount'] = intval($instantCaptureAmount);
 		}
 
 		$json_data = wp_json_encode( $data );
