@@ -150,7 +150,7 @@ class Bambora_Online_Checkout_Api {
 		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/capture";
 
 		$data             = array();
-		$data['amount']   = $amount;
+		$data['amount']   = intval($amount);
 		$data['currency'] = $currency;
 		if ( isset( $capture_lines ) ) {
 			$data['invoicelines'] = $capture_lines;
@@ -176,7 +176,7 @@ class Bambora_Online_Checkout_Api {
 		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/credit";
 
 		$data             = array();
-		$data['amount']   = $amount;
+		$data['amount']   = intval($amount);
 		$data['currency'] = $currency;
 		if ( isset( $credit_lines ) ) {
 			$data['invoicelines'] = $credit_lines;
@@ -370,10 +370,10 @@ class Bambora_Online_Checkout_Api {
 
 		$data                          = array();
 		$data['authorize']['currency'] = $currency;
-		$data['authorize']['amount']   = $amount;
+		$data['authorize']['amount']   = intval($amount);
 		$data['authorize']['orderid']  = $orderId;
 		if ( $instantCaptureAmount > 0 ) {
-			$data['authorize']['instantcaptureamount'] = $instantCaptureAmount;
+			$data['authorize']['instantcaptureamount'] = intval($instantCaptureAmount);
 		}
 
 		$json_data = wp_json_encode( $data );
