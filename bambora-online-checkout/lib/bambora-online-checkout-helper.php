@@ -371,7 +371,7 @@ class Bambora_Online_Checkout_Helper {
 	}
 
 	/**
-	 * Get the Bambora Online Checkout Subscription id from the order
+	 * Get the Worldline Checkout Subscription id from the order
 	 *
 	 * @param WC_Subscription $subscription
 	 */
@@ -398,7 +398,7 @@ class Bambora_Online_Checkout_Helper {
 	}
 
 	/**
-	 * get the Bambora Online Checkout Transaction id from the order
+	 * get the Worldline Checkout Transaction id from the order
 	 *
 	 * @param WC_Order $order
 	 */
