@@ -1450,6 +1450,9 @@ function init_bambora_online_checkout() {
 
 			if ( ! isset( $post ) ) { //HPOS might be used
 				$order    = wc_get_order();
+                if (!$order){ //in case of not on order page.
+                    return;
+                }
 				$order_id = $order->get_id();
 				$status   = $order->get_status();
 			} else {
@@ -1501,6 +1504,9 @@ function init_bambora_online_checkout() {
 
 			if ( ! isset( $post ) ) {
 				$order    = wc_get_order();
+                if ( ! $order ) {
+                    return;
+                }
 				$order_id = $order->get_id();
 			} else {
 				$order_id = $post->ID;
@@ -1615,8 +1621,11 @@ function init_bambora_online_checkout() {
 		public function bambora_online_checkout_meta_box_payment() {
 			global $post;
 
-			if ( ! isset( $post ) ) { //HPOS
+			if ( ! isset( $post ) ) { //HPOS might be used
 				$order    = wc_get_order();
+                if ( ! $order ) {
+                    return;
+                }
 				$order_id = $order->get_id();
 			} else {
 				$order_id = $post->ID;
@@ -2266,6 +2275,9 @@ function init_bambora_online_checkout() {
 		if ( $column === 'payment_request_field' ) {
 			if ( isset( $post ) ) {
 				$order = wc_get_order( $post->ID );
+                if ( ! $order ) {
+                    return;
+                }
 			} else {
 				return;
 			}
