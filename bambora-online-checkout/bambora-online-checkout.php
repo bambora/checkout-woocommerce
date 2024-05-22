@@ -256,25 +256,25 @@ function init_bambora_online_checkout() {
 				'merchant'                  => array(
 					'title'       => 'Merchant number',
 					'type'        => 'text',
-					'description' => 'The number identifying your Bambora merchant account.',
+					'description' => 'The number identifying your Worldline merchant account.',
 					'default'     => ''
 				),
 				'accesstoken'               => array(
 					'title'       => 'Access token',
 					'type'        => 'text',
-					'description' => 'The Access token for the API user received from the Bambora administration.',
+					'description' => 'The Access token for the API user received from the Worldline administration.',
 					'default'     => ''
 				),
 				'secrettoken'               => array(
 					'title'       => 'Secret token',
 					'type'        => 'password',
-					'description' => 'The Secret token for the API user received from the Bambora administration.',
+					'description' => 'The Secret token for the API user received from the Worldline administration.',
 					'default'     => ''
 				),
 				'md5key'                    => array(
 					'title'       => 'MD5 Key',
 					'type'        => 'text',
-					'description' => 'The MD5 key is used to stamp data sent between WooCommerce and Bambora to prevent it from being tampered with. The MD5 key is optional but if used here, must be the same as in the Bambora administration.',
+					'description' => 'The MD5 key is used to stamp data sent between WooCommerce and Worldline to prevent it from being tampered with. The MD5 key is optional but if used here, must be the same as in the Bambora administration.',
 					'default'     => ''
 				),
 				'paymentwindowid'           => array(
