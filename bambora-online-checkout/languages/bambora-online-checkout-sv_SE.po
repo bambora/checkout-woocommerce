@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Worldline Checkout\n"
 "POT-Creation-Date: 2024-05-22 21:16+0200\n"
-"PO-Revision-Date: 2024-05-22 21:58+0200\n"
+"PO-Revision-Date: 2024-05-22 22:27+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv\n"
@@ -52,7 +52,7 @@ msgstr ""
 
 #: bambora-online-checkout.php:535
 msgid "Worldline Checkout Subscription id was not found"
-msgstr "Worldline Checkout Subscription ID hittades inte"
+msgstr "Worldline Checkout Prenumerations-ID hittades inte"
 
 #: bambora-online-checkout.php:555
 #, php-format
@@ -70,7 +70,7 @@ msgstr "Worldline Checkout Prenumeration kunde inte avbrytas - %s"
 
 #: bambora-online-checkout.php:593
 msgid "Worldline Checkout Subscription ID was not found"
-msgstr "Worldline Checkout Subscription ID hittades inte"
+msgstr "Worldline Checkout Prenumerations-ID hittades inte"
 
 #: bambora-online-checkout.php:603
 #, php-format
@@ -82,7 +82,7 @@ msgstr ""
 #: bambora-online-checkout.php:605
 #, php-format
 msgid "Worldline Checkout Subscription Id: %s"
-msgstr "Worldline Checkout Subscription ID: %s"
+msgstr "Worldline Checkout Prenumerations-ID: %s"
 
 #: bambora-online-checkout.php:639
 msgid "Could not retrive the payment window. Reason:"
@@ -330,7 +330,7 @@ msgstr "Transaktion ID"
 
 #: bambora-online-checkout.php:1725
 msgid "Payment Type"
-msgstr "Betalnings typ"
+msgstr "Betalningstyp"
 
 #: bambora-online-checkout.php:1733
 msgid "ECI"
