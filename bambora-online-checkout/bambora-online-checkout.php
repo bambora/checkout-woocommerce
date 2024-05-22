@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Bambora Online Checkout
- * Plugin URI: https://www.bambora.com
- * Description: Bambora Online Checkout payment gateway for WooCommerce
+ * Plugin Name: Worldline Checkout
+ * Plugin URI: https://worldline.com/sv-se/
+ * Description: Worldline Checkout Payment Gateway for WooCommerce (prev. Bambora Online Checkout)
  * Version: 6.0.1
  * Author: Bambora
- * Author URI: https://www.bambora.com
+ * Author URI: https://worldline.com/sv-se/
  * Text Domain: bambora-online-checkout
  *
  * @author  Bambora
@@ -15,7 +15,7 @@
 add_action( 'plugins_loaded', 'init_bambora_online_checkout', 0 );
 
 /**
- * Add Bambora Online Checkout
+ * Add Worldline Checkout
  *
  * @return void
  * @throws Exception
@@ -35,7 +35,7 @@ function init_bambora_online_checkout() {
 	include( BOC_LIB . 'bambora-online-checkout-log.php' );
 
 	/**
-	 * Bambora Online Checkout
+	 * Worldline Checkout
 	 **/
 	class Bambora_Online_Checkout extends WC_Payment_Gateway {
 		/**
@@ -72,8 +72,8 @@ function init_bambora_online_checkout() {
 		 */
 		public function __construct() {
 			$this->id                 = 'bambora';
-			$this->method_title       = 'Bambora Online Checkout';
-			$this->method_description = 'Bambora Online Checkout enables easy and secure payments on your shop';
+			$this->method_title       = 'Worldline Checkout';
+			$this->method_description = 'Worldline Checkout enables easy and secure payments on your shop';
 			$this->icon               = WP_PLUGIN_URL . '/' . plugin_basename( dirname( __FILE__ ) ) . '/bambora-logo.svg';
 			$this->has_fields         = false;
 
@@ -90,7 +90,7 @@ function init_bambora_online_checkout() {
 				'multiple_subscriptions'
 			);
 
-			// Init the Bambora Online Checkout logger
+			// Init the Worldline Checkout logger
 			$this->_boc_log = new Bambora_Online_Checkout_Log();
 
 			// Load the form fields.!
@@ -99,18 +99,18 @@ function init_bambora_online_checkout() {
 			// Load the settings.!
 			$this->init_settings();
 
-			// Initialize Bambora Online Checkout Settings
+			// Initialize Worldline Checkout Settings
 			$this->init_bambora_online_checkout_settings();
 		}
 
 		/**
-		 * Initialize Bambora Online Checkout Settings
+		 * Initialize Worldline Checkout Settings
 		 */
 		public function init_bambora_online_checkout_settings() {
 			// Define user set variables!
 			$this->enabled                   = array_key_exists( 'enabled', $this->settings ) ? $this->settings['enabled'] : 'yes';
-			$this->title                     = array_key_exists( 'title', $this->settings ) ? $this->settings['title'] : 'Bambora Online Checkout';
-			$this->description               = array_key_exists( 'description', $this->settings ) ? $this->settings['description'] : 'Pay using Bambora Online Checkout';
+			$this->title                     = array_key_exists( 'title', $this->settings ) ? $this->settings['title'] : 'Worldline Checkout';
+			$this->description               = array_key_exists( 'description', $this->settings ) ? $this->settings['description'] : 'Pay using Worldline Checkout';
 			$this->merchant                  = array_key_exists( 'merchant', $this->settings ) ? $this->settings['merchant'] : '';
 			$this->accesstoken               = array_key_exists( 'accesstoken', $this->settings ) ? $this->settings['accesstoken'] : '';
 			$this->secrettoken               = array_key_exists( 'secrettoken', $this->settings ) ? $this->settings['secrettoken'] : '';
@@ -238,20 +238,20 @@ function init_bambora_online_checkout() {
 				'enabled'                   => array(
 					'title'   => 'Activate module',
 					'type'    => 'checkbox',
-					'label'   => 'Enable Bambora Online Checkout as a payment option.',
+					'label'   => 'Enable Worldline Checkout as a payment option.',
 					'default' => 'yes'
 				),
 				'title'                     => array(
 					'title'       => 'Title',
 					'type'        => 'text',
 					'description' => 'The title of the payment method displayed to the customers.',
-					'default'     => 'Bambora Online Checkout'
+					'default'     => 'Worldline Checkout'
 				),
 				'description'               => array(
 					'title'       => 'Description',
 					'type'        => 'textarea',
 					'description' => 'The description of the payment method displayed to the customers.',
-					'default'     => 'Pay using Bambora Online Checkout'
+					'default'     => 'Pay using Worldline Checkout'
 				),
 				'merchant'                  => array(
 					'title'       => 'Merchant number',
@@ -364,7 +364,7 @@ function init_bambora_online_checkout() {
 		public function admin_options() {
 			$version = BOC_VERSION;
 
-			$html = "<h3>Bambora Online Checkout v{$version}</h3>";
+			$html = "<h3>Worldline Checkout v{$version}</h3>";
 
 			$html .= Bambora_Online_Checkout_Helper::create_admin_debug_section();
 			$html .= '<h3 class="wc-settings-sub-title">Module Configuration</h3>';
@@ -492,7 +492,7 @@ function init_bambora_online_checkout() {
 		}
 
 		/**
-		 * Get the bambora online checkout logger
+		 * Get the Worldline Checkout logger
 		 *
 		 * @return Bambora_Online_Checkout_Log
 		 */
@@ -511,11 +511,11 @@ function init_bambora_online_checkout() {
 			$result           = $this->process_subscription_payment( $amount_to_charge, $renewal_order, $subscription );
 			$renewal_order_id = $renewal_order->get_id();
 
-			// Remove the Bambora Online Checkout subscription id copied from the subscription
+			// Remove the Worldline Checkout subscription id copied from the subscription
 			delete_post_meta( $renewal_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID );
 
 			if ( is_wp_error( $result ) ) {
-				$message = sprintf( __( 'Bambora Online Checkout Subscription could not be authorized for renewal order # %s - %s', 'bambora-online-checkout' ), $renewal_order_id, $result->get_error_message( 'bambora_online_checkout_error' ) );
+				$message = sprintf( __( 'Worldline Checkout Subscription could not be authorized for renewal order # %s - %s', 'bambora-online-checkout' ), $renewal_order_id, $result->get_error_message( 'bambora_online_checkout_error' ) );
 				$renewal_order->update_status( 'failed', $message );
 				$this->_boc_log->add( $message );
 			}
@@ -532,7 +532,7 @@ function init_bambora_online_checkout() {
 			try {
 				$bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_subscription_id( $subscription );
 				if ( strlen( $bambora_subscription_id ) === 0 ) {
-					return new WP_Error( 'bambora_online_checkout_error', __( 'Bambora Online Checkout Subscription id was not found', 'bambora-online-checkout' ) );
+					return new WP_Error( 'bambora_online_checkout_error', __( 'Worldline Checkout Subscription id was not found', 'bambora-online-checkout' ) );
 				}
 
 				$order_currency = $renewal_order->get_currency();
@@ -552,7 +552,7 @@ function init_bambora_online_checkout() {
 				$renewal_order->payment_complete( $authorize_response->transactionid );
 
 				// Add order note
-				$message = sprintf( __( 'Bambora Online Checkout Subscription was authorized for renewal order %s with transaction id %s', 'bambora-online-checkout' ), $renewal_order_id, $authorize_response->transactionid );
+				$message = sprintf( __( 'Worldline Checkout Subscription was authorized for renewal order %s with transaction id %s', 'bambora-online-checkout' ), $renewal_order_id, $authorize_response->transactionid );
 				$renewal_order->add_order_note( $message );
 				$subscription->add_order_note( $message );
 
@@ -573,7 +573,7 @@ function init_bambora_online_checkout() {
 				$result = $this->process_subscription_cancellation( $subscription );
 
 				if ( is_wp_error( $result ) ) {
-					$message = sprintf( __( 'Bambora Online Checkout Subscription could not be canceled - %s', 'bambora-online-checkout' ), $result->get_error_message( 'bambora_online_checkout_error' ) );
+					$message = sprintf( __( 'Worldline Checkout Subscription could not be canceled - %s', 'bambora-online-checkout' ), $result->get_error_message( 'bambora_online_checkout_error' ) );
 					$subscription->add_order_note( $message );
 					$this->_boc_log->add( $message );
 				}
@@ -590,7 +590,7 @@ function init_bambora_online_checkout() {
 				if ( Bambora_Online_Checkout_Helper::order_is_subscription( $subscription ) ) {
 					$bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_subscription_id( $subscription );
 					if ( strlen( $bambora_subscription_id ) === 0 ) {
-						$orderNote = __( 'Bambora Online Checkout Subscription ID was not found', 'bambora-online-checkout' );
+						$orderNote = __( 'Worldline Checkout Subscription ID was not found', 'bambora-online-checkout' );
 
 						return new WP_Error( 'bambora_online_checkout_error', $orderNote );
 					}
@@ -600,9 +600,9 @@ function init_bambora_online_checkout() {
 					$delete_response = $api->delete_subscription( $bambora_subscription_id );
 
 					if ( $delete_response->meta->result ) {
-						$subscription->add_order_note( sprintf( __( 'Subscription successfully Canceled. - Bambora Online Checkout Subscription Id: %s', 'bambora-online-checkout' ), $bambora_subscription_id ) );
+						$subscription->add_order_note( sprintf( __( 'Subscription successfully Cancelled. - Worldline Checkout Subscription Id: %s', 'bambora-online-checkout' ), $bambora_subscription_id ) );
 					} else {
-						$orderNote = sprintf( __( 'Bambora Online Checkout Subscription Id: %s', 'bambora-online-checkout' ), $bambora_subscription_id );
+						$orderNote = sprintf( __( 'Worldline Checkout Subscription Id: %s', 'bambora-online-checkout' ), $bambora_subscription_id );
 						$orderNote = " - {$delete_response->meta->message->merchant}";
 
 						return new WP_Error( 'bambora_online_checkout_error', $orderNote );
@@ -800,7 +800,7 @@ function init_bambora_online_checkout() {
 		}
 
 		/**
-		 * Create Bambora Payment Request
+		 * Create Worldline Checkout Payment Request
 		 *
 		 * @param WC_Order $order
 		 * @param          $amount
@@ -848,7 +848,7 @@ function init_bambora_online_checkout() {
 				$order->update_meta_data( 'bambora_paymentrequest_url', $createPaymentRequest->url );
 				$order->set_payment_method( $this->id );
 				$order->set_payment_method_title( $this->method_title );
-				$note = sprintf( __( 'Bambora Payment Request with id %s created for order %s', 'bambora-online-checkout' ), $createPaymentRequest->id, $order->get_order_number() );
+				$note = sprintf( __( 'Worldline Checkout Payment Request with id %s created for order %s', 'bambora-online-checkout' ), $createPaymentRequest->id, $order->get_order_number() );
 				$order->add_order_note( $note );
 				$order->save();
 				do_action( 'bambora_online_checkout_after_create_paymentrequest', $order_id );
@@ -867,7 +867,7 @@ function init_bambora_online_checkout() {
 		}
 
 		/**
-		 * Delete Bambora Payment Request
+		 * Delete Worldline Checkout Payment Request
 		 *
 		 * @param WC_Order $order
 		 * @param          $amount
@@ -888,7 +888,7 @@ function init_bambora_online_checkout() {
 
 				$order->delete_meta_data( 'bambora_paymentrequest_id' );
 				$order->delete_meta_data( 'bambora_paymentrequest_url' );
-				$note = sprintf( __( 'Bambora Payment Request %s deleted for order %s', 'bambora-online-checkout' ), $payment_request_id, $order->get_order_number() );
+				$note = sprintf( __( 'Worldline Checkout Payment Request %s deleted for order %s', 'bambora-online-checkout' ), $payment_request_id, $order->get_order_number() );
 				$order->add_order_note( $note );
 				$order->save();
 				$order->save();
@@ -906,7 +906,7 @@ function init_bambora_online_checkout() {
 		}
 
 		/**
-		 * Send Bambora Payment Request
+		 * Send Worldline Checkout Payment Request
 		 *
 		 *
 		 * @return
@@ -932,7 +932,7 @@ function init_bambora_online_checkout() {
 			$sendPaymentRequest = $api->sendPaymentRequestEmail( $payment_request_id, $jsonData );
 
 			if ( $sendPaymentRequest->meta->result ) {
-				$note = sprintf( __( 'Bambora Payment Request with id %s sent with email to %s', 'bambora-online-checkout' ), $payment_request_id, $recipient_email );
+				$note = sprintf( __( 'Worldline Checkout Payment Request with id %s sent with email to %s', 'bambora-online-checkout' ), $payment_request_id, $recipient_email );
 				$order->add_order_note( $note );
 				$order->save();
 				do_action( 'bambora_online_checkout_after_send_paymentrequest', $order_id );
@@ -1150,7 +1150,7 @@ function init_bambora_online_checkout() {
 				throw $e;
 			}
 
-			return "Bambora Online Checkout Callback completed - {$type}";
+			return "Worldline Checkout Callback completed - {$type}";
 		}
 
 		protected function process_standard_payments( $order, $bambora_transaction ) {
@@ -1158,7 +1158,7 @@ function init_bambora_online_checkout() {
 			$old_transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
 			if ( empty( $old_transaction_id ) ) {
 				$this->add_surcharge_fee_to_order( $order, $bambora_transaction );
-				$order->add_order_note( sprintf( __( 'Bambora Online Checkout Payment completed with transaction id %s', 'bambora-online-checkout' ), $bambora_transaction->id ) );
+				$order->add_order_note( sprintf( __( 'Worldline Checkout Payment completed with transaction id %s', 'bambora-online-checkout' ), $bambora_transaction->id ) );
 				$action = 'created';
 			} else {
 				$action = 'created (Called multiple times)';
@@ -1183,7 +1183,7 @@ function init_bambora_online_checkout() {
 				if ( $bambora_subscription_id != $old_bambora_subscription_id ) {
 					$this->subscription_cancellation( $order, true );
 					$action = 'changed';
-					$order->add_order_note( sprintf( __( 'Bambora Online Checkout Subscription changed from: %s to: %s', 'bambora-online-checkout' ), $old_bambora_subscription_id, $bambora_subscription_id ) );
+					$order->add_order_note( sprintf( __( 'Worldline Checkout Subscription changed from: %s to: %s', 'bambora-online-checkout' ), $old_bambora_subscription_id, $bambora_subscription_id ) );
 					$order->payment_complete();
 					$this->save_subscription_meta( $order, $bambora_subscription_id, true );
 				} else {
@@ -1195,7 +1195,7 @@ function init_bambora_online_checkout() {
 				if ( $bambora_transaction->id != $old_transaction_id ) {
 					$this->add_surcharge_fee_to_order( $order, $bambora_transaction );
 					$action = 'activated';
-					$order->add_order_note( sprintf( __( 'Bambora Online Checkout Subscription activated with subscription id: %s', 'bambora-online-checkout' ), $bambora_subscription_id ) );
+					$order->add_order_note( sprintf( __( 'Worldline Checkout Subscription activated with subscription id: %s', 'bambora-online-checkout' ), $bambora_subscription_id ) );
 					$order->payment_complete( $bambora_transaction->id );
 					$this->save_subscription_meta( $order, $bambora_subscription_id, false );
 				} else {
@@ -1237,7 +1237,7 @@ function init_bambora_online_checkout() {
 		}
 
 		/**
-		 * Store the Bambora Online Checkout subscription id on subscriptions in the order.
+		 * Store the Worldline Checkout subscription id on subscriptions in the order.
 		 *
 		 * @param WC_Order $order_id
 		 * @param string $bambora_subscription_id
@@ -1254,7 +1254,7 @@ function init_bambora_online_checkout() {
 				$subscriptions = Bambora_Online_Checkout_Helper::get_subscriptions_for_order( $order_id );
 				foreach ( $subscriptions as $subscription ) {
 					$subscription->update_meta_data( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
-					$subscription->add_order_note( sprintf( __( 'Bambora Online Checkout Subscription activated with subscription id: %s by order %s', 'bambora-online-checkout' ), $bambora_subscription_id, $order_id ) );
+					$subscription->add_order_note( sprintf( __( 'Worldline Checkout Subscription activated with subscription id: %s by order %s', 'bambora-online-checkout' ), $bambora_subscription_id, $order_id ) );
 					$subscription->save();
 				}
 			}
@@ -1275,7 +1275,7 @@ function init_bambora_online_checkout() {
 				// The user has the role required for  "Capture, Refund, Delete"  and can perform those actions.
 			} else {
 				// The user can only view the data.
-				return new WP_Error( 'notpermitted', __( "Your user role is not allowed to refund via Bambora Online", "bambora-online-checkout" ) );
+				return new WP_Error( 'notpermitted', __( "Your user role is not allowed to refund via Worldline Checkout    ", "bambora-online-checkout" ) );
 			}
 
 			if ( ! isset( $amount ) ) {
@@ -1450,6 +1450,9 @@ function init_bambora_online_checkout() {
 
 			if ( ! isset( $post ) ) { //HPOS might be used
 				$order    = wc_get_order();
+                if (!$order){ //in case of not on order page.
+                    return;
+                }
 				$order_id = $order->get_id();
 				$status   = $order->get_status();
 			} else {
@@ -1468,11 +1471,11 @@ function init_bambora_online_checkout() {
 				$api_key = $this->get_api_key( $order_id );
 				$api     = new Bambora_Online_Checkout_Api( $api_key );
 				if ( $api->check_if_merchant_has_payment_request_permissions() ) {
-					add_meta_box( 'bambora-paymentrequest-actions', __( 'Bambora Online Checkout Payment Request', 'bambora-online-checkout' ), array(
+					add_meta_box( 'bambora-paymentrequest-actions', __( 'Worldline Checkout Payment Request', 'bambora-online-checkout' ), array(
 						&$this,
 						'bambora_online_checkout_meta_box_payment_request'
 					), 'shop_order', 'side', 'default' );
-					add_meta_box( 'bambora-paymentrequest-actions', __( 'Bambora Online Checkout Payment Request', 'bambora-online-checkout' ), array(
+					add_meta_box( 'bambora-paymentrequest-actions', __( 'Worldline Checkout Payment Request', 'bambora-online-checkout' ), array(
 						&$this,
 						'bambora_online_checkout_meta_box_payment_request'
 					), 'woocommerce_page_wc-orders', 'side', 'default' );
@@ -1482,12 +1485,12 @@ function init_bambora_online_checkout() {
 			if ( ! $this->module_check( $order_id ) ) {
 				return;
 			}
-			add_meta_box( 'bambora-payment-actions', __( 'Bambora Online Checkout', 'bambora-online-checkout' ), array(
+			add_meta_box( 'bambora-payment-actions', __( 'Worldline Checkout', 'bambora-online-checkout' ), array(
 				&$this,
 				'bambora_online_checkout_meta_box_payment'
 			), 'shop_order', 'side', 'high' );
 			if ( true ) {
-				add_meta_box( 'bambora-payment-actions', __( 'Bambora Online Checkout', 'bambora-online-checkout' ), array(
+				add_meta_box( 'bambora-payment-actions', __( 'Worldline Checkout', 'bambora-online-checkout' ), array(
 					&$this,
 					'bambora_online_checkout_meta_box_payment'
 				), 'woocommerce_page_wc-orders', 'side', 'high' );
@@ -1501,6 +1504,9 @@ function init_bambora_online_checkout() {
 
 			if ( ! isset( $post ) ) {
 				$order    = wc_get_order();
+                if ( ! $order ) {
+                    return;
+                }
 				$order_id = $order->get_id();
 			} else {
 				$order_id = $post->ID;
@@ -1615,8 +1621,11 @@ function init_bambora_online_checkout() {
 		public function bambora_online_checkout_meta_box_payment() {
 			global $post;
 
-			if ( ! isset( $post ) ) { //HPOS
+			if ( ! isset( $post ) ) { //HPOS might be used
 				$order    = wc_get_order();
+                if ( ! $order ) {
+                    return;
+                }
 				$order_id = $order->get_id();
 			} else {
 				$order_id = $post->ID;
@@ -1938,7 +1947,7 @@ function init_bambora_online_checkout() {
 
 
 		/**
-		 * Bambora Online Checkout Actions
+		 * Worldline Checkout Actions
 		 */
 		public function bambora_online_checkout_actions() {
 			if ( isset( $_GET['bambora_action'] ) && isset( $_GET['bambora_nonce'] ) && wp_verify_nonce( $_GET['bambora_nonce'], 'bambora_process_payment_action' ) ) {
@@ -1987,7 +1996,7 @@ function init_bambora_online_checkout() {
 		}
 
 		/**
-		 * Bambora Online Checkout Payment Request Actions
+		 * Worldline Checkout Payment Request Actions
 		 */
 		public function bambora_online_checkout_paymentrequest_actions() {
 			if ( isset( $_GET['bambora_paymentrequest_action'] ) && isset( $_GET['bambora_nonce'] ) && wp_verify_nonce( $_GET['bambora_nonce'], 'bambora_process_paymentrequest_action' ) ) {
@@ -2216,7 +2225,7 @@ function init_bambora_online_checkout() {
 
 		public function add_custom_order_column( $columns ) {
 
-			$columns['payment_request_field'] = __( 'Bambora Payment Request', 'bambora-online-checkout' );
+			$columns['payment_request_field'] = __( 'Worldline Checkout Payment Request', 'bambora-online-checkout' );
 
 			return $columns;
 		}
@@ -2255,7 +2264,7 @@ function init_bambora_online_checkout() {
 	// Load the module into WordPress / WooCommerce
 	function add_custom_order_column_posts( $columns ) {
 
-		$columns['payment_request_field'] = __( 'Bambora Payment Request', 'bambora-online-checkout' );
+		$columns['payment_request_field'] = __( 'Worldline Checkout Payment Request', 'bambora-online-checkout' );
 
 		return $columns;
 	}
@@ -2266,6 +2275,9 @@ function init_bambora_online_checkout() {
 		if ( $column === 'payment_request_field' ) {
 			if ( isset( $post ) ) {
 				$order = wc_get_order( $post->ID );
+                if ( ! $order ) {
+                    return;
+                }
 			} else {
 				return;
 			}
