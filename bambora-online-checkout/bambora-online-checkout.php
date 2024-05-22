@@ -1447,6 +1447,10 @@ function init_bambora_online_checkout() {
 		 */
 		public function bambora_online_checkout_meta_boxes() {
 			global $post;
+			
+			if ( !wc_get_order() ) {
+				return;
+			}
 
 			if ( ! isset( $post ) ) { //HPOS might be used
 				$order    = wc_get_order();
