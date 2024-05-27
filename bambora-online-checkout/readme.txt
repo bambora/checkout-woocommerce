@@ -3,7 +3,7 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, worldline checkout, woocommerce worldline, worldline nordics, psp, subscription, subscriptions
 Requires at least: 4.0.0
 Tested up to: 6.5
-Stable tag: 7.0.0
+Stable tag: 7.0.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 3.2
@@ -91,7 +91,7 @@ By using Worldline Checkout you won't have to worry about the security of your c
 == Changelog ==
 
 
-= 7.0.0
+= 7.0.1
 
 * Rebranding to Worldline Checkout
 * Fixes for Fatal Errors for some meta boxes
