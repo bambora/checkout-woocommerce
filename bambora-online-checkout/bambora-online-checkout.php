@@ -3,7 +3,7 @@
  * Plugin Name: Worldline Checkout
  * Plugin URI: https://worldline.com/sv-se/
  * Description: Worldline Checkout Payment Gateway for WooCommerce (prev. Bambora Online Checkout)
- * Version: 6.0.1
+ * Version: 7.0.0
  * Author: Bambora
  * Author URI: https://worldline.com/sv-se/
  * Text Domain: bambora-online-checkout
@@ -26,7 +26,7 @@ function init_bambora_online_checkout() {
 	}
 
 	define( 'BOC_LIB', dirname( __FILE__ ) . '/lib/' );
-	define( 'BOC_VERSION', '6.0.1' );
+	define( 'BOC_VERSION', '7.0.0' );
 
 	// Including Bambora files!
 	include( BOC_LIB . 'bambora-online-checkout-api.php' );
@@ -385,9 +385,9 @@ function init_bambora_online_checkout() {
 			$valid_credentials = $api->test_if_valid_credentials();
 
 			if ( $valid_credentials ) {
-				$html .= "<b><i>The credentials for your Bambora account are valid.</i></b>";
+				$html .= "<b><i>The credentials for your Worldline account are valid.</i></b>";
 			} else {
-				$html .= "<b><i>The credentials you have provided for your Bambora account are not valid. Please check them before you enable Bambora as a payment option.</i></b>";
+				$html .= "<b><i>The credentials you have provided for your Worldline account are not valid. Please check them before you enable Worldline as a payment option.</i></b>";
 			}
 
 			$html .= '<table class="form-table">';
@@ -1451,8 +1451,8 @@ function init_bambora_online_checkout() {
 			if ( ! isset( $post ) ) { //HPOS might be used
 				$order = wc_get_order();
 				if ( ! $order ) { //in case of not on order page.
-                    return;
-                }
+					return;
+				}
 				$order_id = $order->get_id();
 				$status   = $order->get_status();
 			} else {
@@ -1504,9 +1504,9 @@ function init_bambora_online_checkout() {
 
 			if ( ! isset( $post ) ) {
 				$order = wc_get_order();
-                if ( ! $order ) {
-                    return;
-                }
+				if ( ! $order ) {
+					return;
+				}
 				$order_id = $order->get_id();
 			} else {
 				$order_id = $post->ID;
@@ -1623,9 +1623,9 @@ function init_bambora_online_checkout() {
 
 			if ( ! isset( $post ) ) { //HPOS might be used
 				$order = wc_get_order();
-                if ( ! $order ) {
-                    return;
-                }
+				if ( ! $order ) {
+					return;
+				}
 				$order_id = $order->get_id();
 			} else {
 				$order_id = $post->ID;
@@ -1712,14 +1712,14 @@ function init_bambora_online_checkout() {
 							if ( $wallet_name == "Vipps" ) {
 								$wallet_img = "14.svg";
 							}
-                            if ( $wallet_name == "GooglePay" ) {
+							if ( $wallet_name == "GooglePay" ) {
 								$wallet_img  = "22.svg";
-                                $wallet_name = "Google Pay";
-                            }
-                            if ( $wallet_name == "ApplePay" ) {
+								$wallet_name = "Google Pay";
+							}
+							if ( $wallet_name == "ApplePay" ) {
 								$wallet_img  = "21.svg";
-                                $wallet_name = "Apple Pay";
-                            }
+								$wallet_name = "Apple Pay";
+							}
 							if ( isset( $wallet_img ) ) {
 								$html .= '&nbsp;<img style="max-height:51px;clear: both;" src="https://d3r1pwhfz7unl9.cloudfront.net/paymentlogos/' . $wallet_img . '" alt="' . $wallet_name . '" title="' . $wallet_name . '" />';
 							}
@@ -2275,9 +2275,9 @@ function init_bambora_online_checkout() {
 		if ( $column === 'payment_request_field' ) {
 			if ( isset( $post ) ) {
 				$order = wc_get_order( $post->ID );
-                if ( ! $order ) {
-                    return;
-                }
+				if ( ! $order ) {
+					return;
+				}
 			} else {
 				return;
 			}

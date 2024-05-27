@@ -1,13 +1,13 @@
 === Worldline Checkout ===
 Contributors: bambora
-Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, worldline checkout, psp, subscription, subscriptions
+Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, worldline checkout, woocommerce worldline, worldline nordics, psp, subscription, subscriptions
 Requires at least: 4.0.0
 Tested up to: 6.5
-Stable tag: 6.0.1
+Stable tag: 7.0.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 3.2
-WC tested up to: 8.8
+WC tested up to: 8.9
 
 Integrates Worldline Checkout payment gateway into your WooCommerce installation.
 
@@ -89,6 +89,15 @@ By using Worldline Checkout you won't have to worry about the security of your c
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+
+
+= 7.0.0
+
+* Rebranding to Worldline Checkout
+* Fixes for Fatal Errors for some meta boxes
+* Making sure amount is sent as integer to the api
+* Wallet logos updated
+* Updates to all translations
 
 = 6.0.1
 
