@@ -11,6 +11,7 @@
  * @author  Bambora
  * @package bambora_online_checkout
  */
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 add_action( 'plugins_loaded', 'init_bambora_online_checkout', 0 );
 
@@ -440,7 +441,7 @@ function init_bambora_online_checkout() {
 		/**
 		 * Set the WC Payment Gateway description for the checkout page
 		 */
-		public function set_bambora_description_for_checkout() {
+		public function set_bambora_description_for_checkout($blocks = false) {
 			global $woocommerce;
 			$description = '';
 			$cart        = WC()->cart;
@@ -488,7 +489,12 @@ function init_bambora_online_checkout() {
 					$this->_boc_log->add( "Could not load the payment types - Reason: {$exception_message}" );
 				}
 			}
-			$this->description .= $description;
+			if ( $blocks ) {
+				$this->description = "<p>" . $this->description . "</p>" . $description;
+			} else {
+				$this->description .= $description;
+			}
+
 		}
 
 		/**
@@ -1629,7 +1635,7 @@ function init_bambora_online_checkout() {
 				$order_id = $order->get_id();
 			} else {
 				$order_id = $post->ID;
-				$order    = wc_get_order( $order_id );
+				$order = wc_get_order($order_id);
 			}
 
 			if ( ! empty( $order ) ) {
@@ -2316,12 +2322,77 @@ function init_bambora_online_checkout() {
 		return $methods;
 	}
 
-	$plugin_dir = basename( dirname( __FILE__ ) );
-	load_plugin_textdomain( 'bambora-online-checkout', false, $plugin_dir . '/languages/' );
+    $plugin_dir = basename(dirname(__FILE__));
+    load_plugin_textdomain(
+        'bambora-online-checkout',
+        false,
+        $plugin_dir . '/languages/'
+    );
 
-	add_action( 'before_woocommerce_init', function () {
-		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
-		}
-	} );
+    add_action('before_woocommerce_init', function () {
+        if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+                'custom_order_tables',
+                __FILE__,
+                true
+            );
+        }
+    });
+
+    function bambora_online_declare_cart_checkout_blocks_compatibility()
+    {
+        // Check if the required class exists
+        if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
+            // Declare compatibility for 'cart_checkout_blocks'
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+                'cart_checkout_blocks',
+                __FILE__,
+                true
+            );
+        }
+    }
+
+    // Hook the custom function to the 'before_woocommerce_init' action
+    add_action(
+        'before_woocommerce_init',
+        'bambora_online_declare_cart_checkout_blocks_compatibility'
+    );
+
+
+    // Hook the custom function to the 'woocommerce_blocks_loaded' action
+    add_action(
+        'woocommerce_blocks_loaded',
+        'bambora_online_register_order_approval_payment_method_type'
+    );
+
+    /**
+     * Custom function to register a payment method type
+     */
+    function bambora_online_register_order_approval_payment_method_type()
+    {
+        // Check if the required class exists
+        if ( ! class_exists(
+            'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType'
+        )) {
+            return;
+        }
+
+        // Include the custom Blocks Checkout class
+        require_once plugin_dir_path(
+                         __FILE__
+                     ) . 'bambora-online-checkout-blocks.php';
+
+        // Hook the registration function to the 'woocommerce_blocks_payment_method_type_registration' action
+        add_action(
+            'woocommerce_blocks_payment_method_type_registration',
+            function (
+                Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry
+            ) {
+                // Register an instance
+                $payment_method_registry->register(
+                    new Bambora_Online_Checkout_Blocks
+                );
+            }
+        );
+    }
 }
