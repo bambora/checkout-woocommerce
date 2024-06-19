@@ -61,7 +61,7 @@ class Bambora_Online_Checkout_Api {
 	 * Call the rest service at the specified Url
 	 *
 	 * @param string $service_url
-	 * @param mixed  $json_data
+	 * @param mixed $json_data
 	 * @param string $method
 	 *
 	 * @return mixed
@@ -139,9 +139,9 @@ class Bambora_Online_Checkout_Api {
 	/**
 	 * Make a capture request to Bambora
 	 *
-	 * @param string                              $transaction_id
-	 * @param int                                 $amount
-	 * @param string                              $currency
+	 * @param string $transaction_id
+	 * @param int $amount
+	 * @param string $currency
 	 * @param Bambora_Online_Checkout_Orderline[] $capture_lines
 	 *
 	 * @return mixed
@@ -150,7 +150,7 @@ class Bambora_Online_Checkout_Api {
 		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/capture";
 
 		$data             = array();
-		$data['amount']   = intval($amount);
+		$data['amount']   = intval( $amount );
 		$data['currency'] = $currency;
 		if ( isset( $capture_lines ) ) {
 			$data['invoicelines'] = $capture_lines;
@@ -165,9 +165,9 @@ class Bambora_Online_Checkout_Api {
 	/**
 	 * Make a credit request to Bambora
 	 *
-	 * @param string                              $transaction_id
-	 * @param int                                 $amount
-	 * @param string                              $currency
+	 * @param string $transaction_id
+	 * @param int $amount
+	 * @param string $currency
 	 * @param Bambora_Online_Checkout_Orderline[] $credit_lines
 	 *
 	 * @return mixed
@@ -176,7 +176,7 @@ class Bambora_Online_Checkout_Api {
 		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/credit";
 
 		$data             = array();
-		$data['amount']   = intval($amount);
+		$data['amount']   = intval( $amount );
 		$data['currency'] = $currency;
 		if ( isset( $credit_lines ) ) {
 			$data['invoicelines'] = $credit_lines;
@@ -247,7 +247,7 @@ class Bambora_Online_Checkout_Api {
 	 * Get available payment types for the amount and currency from Bambora
 	 *
 	 * @param string $currency
-	 * @param int    $amount
+	 * @param int $amount
 	 *
 	 * @return mixed
 	 */
@@ -358,10 +358,10 @@ class Bambora_Online_Checkout_Api {
 	 * Authorize subscription by subscription Id
 	 *
 	 * @param string $subscriptionId
-	 * @param int    $amount
+	 * @param int $amount
 	 * @param string $currency
 	 * @param string $orderId
-	 * @param int    $instantCaptureAmount
+	 * @param int $instantCaptureAmount
 	 *
 	 * @return mixed
 	 */
@@ -370,10 +370,10 @@ class Bambora_Online_Checkout_Api {
 
 		$data                          = array();
 		$data['authorize']['currency'] = $currency;
-		$data['authorize']['amount']   = intval($amount);
+		$data['authorize']['amount']   = intval( $amount );
 		$data['authorize']['orderid']  = $orderId;
 		if ( $instantCaptureAmount > 0 ) {
-			$data['authorize']['instantcaptureamount'] = intval($instantCaptureAmount);
+			$data['authorize']['instantcaptureamount'] = intval( $instantCaptureAmount );
 		}
 
 		$json_data = wp_json_encode( $data );

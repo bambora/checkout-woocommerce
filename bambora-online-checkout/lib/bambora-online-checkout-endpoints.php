@@ -91,12 +91,12 @@ class Bambora_Online_Checkout_Endpoints {
 		return constant( 'BAMBORA_ENDPOINT_LOGIN' );
 	}
 
-    /**
-     * Get Assets Endpoint
-     *
-     * @return mixed
-     */
-    public static function get_checkout_assets() {
-        return constant( 'BAMBORA_CHECKOUT_ASSETS' );
-    }
+	/**
+	 * Get Assets Endpoint
+	 *
+	 * @return mixed
+	 */
+	public static function get_checkout_assets() {
+		return constant( 'BAMBORA_CHECKOUT_ASSETS' );
+	}
 }

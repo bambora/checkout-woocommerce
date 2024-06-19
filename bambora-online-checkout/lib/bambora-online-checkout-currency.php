@@ -25,8 +25,8 @@ class Bambora_Online_Checkout_Currency {
 	/**
 	 * Converts an amount to the specified minor units format
 	 *
-	 * @param mixed  $amount
-	 * @param int    $minorunits
+	 * @param mixed $amount
+	 * @param int $minorunits
 	 * @param string $rounding
 	 *
 	 * @return int
@@ -60,7 +60,7 @@ class Bambora_Online_Checkout_Currency {
 	 */
 
 	public static function roundingmode( $rounding ) {
-		
+
 		switch ( $rounding ) {
 			case Bambora_Online_Checkout_Currency::ROUND_UP:
 				$roundingmode = PHP_ROUND_HALF_UP;
@@ -72,6 +72,7 @@ class Bambora_Online_Checkout_Currency {
 				$roundingmode = PHP_ROUND_HALF_EVEN;
 				break;
 		}
+
 		return $roundingmode;
 	}
 
@@ -80,7 +81,7 @@ class Bambora_Online_Checkout_Currency {
 	 * Convert an amount from minorunits
 	 *
 	 * @param float $amount_in_minorunits
-	 * @param int   $minorunits
+	 * @param int $minorunits
 	 *
 	 * @return float
 	 */
