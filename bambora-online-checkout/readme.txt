@@ -91,6 +91,8 @@ By using Worldline Checkout you won't have to worry about the security of your c
 == Changelog ==
 
 
+= 7.1.1 =
+* Fix for build.
 
 = 7.1.0 =
 * Support for WooCommerce Blocks
