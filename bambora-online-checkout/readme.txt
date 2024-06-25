@@ -2,7 +2,7 @@
 Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, worldline checkout, woocommerce worldline, worldline nordics, psp, subscription, subscriptions
 Requires at least: 4.0.0
-Tested up to: 6.5
+Tested up to: 6.6
 Stable tag: 7.1.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -92,10 +92,10 @@ By using Worldline Checkout you won't have to worry about the security of your c
 
 
 
-= 7.1.0
+= 7.1.0 =
 * Support for WooCommerce Blocks
 
-= 7.0.1
+= 7.0.1 =
 
 * Rebranding to Worldline Checkout
 * Fixes for Fatal Errors for some meta boxes
@@ -103,15 +103,15 @@ By using Worldline Checkout you won't have to worry about the security of your c
 * Wallet logos updated
 * Updates to all translations
 
-= 6.0.1
+= 6.0.1 =
 
 * Fix to make Finnish language work.
 
-= 6.0.0
+= 6.0.0 =
 * Support for WooCommerce HPOS (High Performance Order Storage) and WooCommerce 8.2.
 * Before upgrading to HPOS, please make sure to make a database backup. HPOS stores the orders in new database tables. Recommending compatibility mode to start with.
 
-= 5.1.6
+= 5.1.6 =
 * Made sure division of zero does not happen when using 3rd party shipping plugin.
 
 = 5.1.5 =
