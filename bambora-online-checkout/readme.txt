@@ -1,41 +1,42 @@
-=== Worldline Checkout ===
+=== Worldline Online Checkout ===
 Contributors: bambora
-Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, worldline checkout, woocommerce worldline, worldline nordics, psp, subscription, subscriptions
-Requires at least: 4.0.0
-Tested up to: 6.6
-Stable tag: 7.1.1
-License: GPLv3 or later
+Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, Worldline Online Checkout, woocommerce worldline, worldline nordics, psp, subscription, subscriptions
+Requires at least: 6.6
+Tested up to: 6.8.1
+Stable tag: 8.0.0
+Requires PHP: 7.4
+WC requires at least: 8.0
+WC tested up to: 9.8.4
+License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-WC requires at least: 3.2
-WC tested up to: 9.0
 
-Integrates Worldline Checkout payment gateway into your WooCommerce installation.
+Integrates Worldline Online Checkout payment gateway into your WooCommerce installation.
 
 == Description ==
 Bambora is now known as Worldline. As your payment partner, we’re now becoming stronger and better.
 However, all the things that you love about Bambora will remain the same – the contract, the people, and the solutions.
-This extension is for the European Merchants using the Worldline Checkout payment system.
+This extension is for the European Merchants using the Worldline Online Checkout payment system.
 
 = Seamless shopping experience with high security and conversion rates =
 
-Worldline Checkout is a Payment Service Provider that provide payment solutions for all types of businesses. We offer functional, flexible e-commerce solutions to meet your every needs.
+Worldline Online Checkout is a Payment Service Provider that provide payment solutions for all types of businesses. We offer functional, flexible e-commerce solutions to meet your every needs.
 Whether you want a secure solution that is quick and easy to implement in your online store, or a fully integrated, customized solution that meets your specific needs,
-Worldline Checkout solution has the answer.
+Worldline Online Checkout solution has the answer.
 
 With our payment service, your customers will enjoy an effortless shopping experience thanks to our user-friendly design and one-click payment system.
 Customer card details are stored, so multiple purchases can be made with a single click.
-Customer convenience, and top marks for your conversion! With this extension, you will get the Worldline Checkout payment system integrated into your store
+Customer convenience, and top marks for your conversion! With this extension, you will get the Worldline Online Checkout payment system integrated into your store
 and with a few clicks, you are able to start receiving secure online payments from all major payment cards
 
 Our process of getting you on board is one of the fastest on the market. Simply create an account, and a few click later you are ready to go.
 
-To get started with Worldline Checkout head over to our boarding page and signup for a free merchant test account in one of the following link:
+To get started with Worldline Online Checkout head over to our boarding page and signup for a free merchant test account in one of the following link:
 <a href="https://boarding.bambora.com/CheckoutTestaccount-dk" >Get a free test account – Denmark</a>
 <a href="https://boarding.bambora.com/CheckoutTestaccount-se" >Get a free test account – Sweden</a>
 <a href="https://boarding.bambora.com/CheckoutTestaccount-no" >Get a free test account – Norway</a>
 <a href="https://boarding.bambora.com/CheckoutTestaccount-GB" >Get a free test account – Europe</a>
 
-Worldline Checkout Key Features
+Worldline Online Checkout Key Features
 Fast payments
 Safe, fast, direct daily deposits are made to the account of your choice.
 
@@ -48,22 +49,22 @@ Extension Features
 Information and Pricing:
 
 For more details, please visit:
-<a href="https://worldline.com/da-dk/home/main-navigation/solutions/merchants/solutions-and-services/online.html" >Worldline Checkout - Denmark</a>
-<a href="https://worldline.com/sv-se/home/main-navigation/solutions/merchants/solutions-and-services/online.html" >Worldline Checkout - Sweden</a>
-<a href="https://worldline.com/no-no/home/main-navigation/solutions/merchants/solutions-and-services/online.html" >Worldline Checkout - Norway</a>
+<a href="https://worldline.com/da-dk/home/main-navigation/solutions/merchants/solutions-and-services/online.html" >Worldline Online Checkout - Denmark</a>
+<a href="https://worldline.com/sv-se/home/main-navigation/solutions/merchants/solutions-and-services/online.html" >Worldline Online Checkout - Sweden</a>
+<a href="https://worldline.com/no-no/home/main-navigation/solutions/merchants/solutions-and-services/online.html" >Worldline Online Checkout - Norway</a>
 
 
 = Security =
-By using Worldline Checkout you won't have to worry about the security of your client’s payment details. The integration works by redirection the customer to our PCI-DSS secure servers where the customer enters their payment information directly into our secure environment so that the web shop never comes into contact with your payment data. When the payment is done the customer is redirected back to your web shop and our servers will notify your web shop that the payment is completed.
+By using Worldline Online Checkout you won't have to worry about the security of your client’s payment details. The integration works by redirection the customer to our PCI-DSS secure servers where the customer enters their payment information directly into our secure environment so that the web shop never comes into contact with your payment data. When the payment is done the customer is redirected back to your web shop and our servers will notify your web shop that the payment is completed.
 = Features =
-* Receive payments securely through the Worldline Checkout payment window
+* Receive payments securely through the Worldline Online Checkout payment window
 * Get an overview over the status for your payments directly from your WooCommerce order page.
 * Capture your payments directly from your WooCommerce order page.
 * Credit your payments directly from your WooCommerce order page.
 * Delete your payments directly from your WooCommerce order page.
 * Sign up, process, cancel, reactivate and change subscriptions
-* Supports WooCommerce 3.2 and up.
-* Supports WooCommerce Subscription 2.x, 3.x & 5.x
+* Supports WooCommerce
+* Supports WooCommerce Subscription
 
 == Installation ==
 1. Go to your WordPress administration page and log in. Example url: https://www.yourshop.com/wp-admin
@@ -84,11 +85,19 @@ By using Worldline Checkout you won't have to worry about the security of your c
 
 9. Enter and adjust the settings which are described in the **Settings** section.
 
-10. Click **Save Changes** when done, and you are ready to use Worldline Checkout
+10. Click **Save Changes** when done, and you are ready to use Worldline Online Checkout
 
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+= 8.0.0 =
+* Added support for WordPress 6.8.1
+* Added support for Woocommerce 9.8.4
+* Added support for Woocommerce Subscriptions 7.4.0
+* Added support for PHP 8.4
+* Enhanced error handling, logging and performance
+* Bug and translation fixes
+* Code optimization and refactoring to comply with WordPress Code Standard
 
 
 = 7.1.1 =
@@ -99,7 +108,7 @@ By using Worldline Checkout you won't have to worry about the security of your c
 
 = 7.0.1 =
 
-* Rebranding to Worldline Checkout
+* Rebranding to Worldline Online Checkout
 * Fixes for Fatal Errors for some meta boxes
 * Making sure amount is sent as integer to the api
 * Wallet logos updated
