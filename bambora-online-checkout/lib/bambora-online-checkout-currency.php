@@ -1,95 +1,65 @@
 <?php
-/**
- * Copyright (c) 2017. All rights reserved Bambora Online.
- *
- * This program is free software. You are allowed to use the software but NOT
- * allowed to modify the software. It is also not legal to do any changes to the
- * software and distribute it in your own name / brand.
- *
- * All use of the payment modules happens at your own risk. We offer a free test
- * account that you can use to test the module.
- *
- * @author    Bambora Online
- * @copyright Bambora Online (https://bambora.com)
- * @license   Bambora Online
- */
 
 /**
  * Bambora Online Checkout Currency
  */
 class Bambora_Online_Checkout_Currency {
-	const ROUND_UP = "round_up";
-	const ROUND_DOWN = "round_down";
-	const ROUND_DEFAULT = "round_default";
+	const ROUND_UP      = 'round_up';
+	const ROUND_DOWN    = 'round_down';
+	const ROUND_DEFAULT = 'round_default';
 
 	/**
 	 * Converts an amount to the specified minor units format
 	 *
-	 * @param mixed $amount
-	 * @param int $minorunits
-	 * @param string $rounding
-	 *
+	 * @param mixed  $amount - Amount.
+	 * @param int    $minorunits - MinorUnits.
+	 * @param string $rounding - Rounding Mode.
 	 * @return int
 	 */
 	public static function convert_price_to_minorunits( $amount, $minorunits, $rounding ) {
-		if ( ! isset( $amount ) || $amount == "" ) {
+		if ( ! isset( $amount ) || empty( $amount ) ) {
 			return 0;
 		}
 
 		switch ( $rounding ) {
-			case Bambora_Online_Checkout_Currency::ROUND_UP:
-				$amount = ceil( $amount * pow( 10, $minorunits ) );
-				break;
-			case Bambora_Online_Checkout_Currency::ROUND_DOWN:
-				$amount = floor( $amount * pow( 10, $minorunits ) );
-				break;
+			case self::ROUND_UP:
+				return ceil( (float) $amount * pow( 10, $minorunits ) );
+			case self::ROUND_DOWN:
+				return floor( (float) $amount * pow( 10, $minorunits ) );
 			default:
-				$amount = round( $amount * pow( 10, $minorunits ) );
-				break;
+				return round( (float) $amount * pow( 10, $minorunits ) );
 		}
-
-		return $amount;
 	}
 
 	/**
 	 * Get roundingmode
 	 *
-	 * @param string $rounding
-	 *
+	 * @param string $rounding - Rounding Mode.
 	 * @return int
 	 */
-
 	public static function roundingmode( $rounding ) {
-
 		switch ( $rounding ) {
-			case Bambora_Online_Checkout_Currency::ROUND_UP:
-				$roundingmode = PHP_ROUND_HALF_UP;
-				break;
-			case Bambora_Online_Checkout_Currency::ROUND_DOWN:
-				$roundingmode = PHP_ROUND_HALF_DOWN;
-				break;
+			case self::ROUND_UP:
+				return PHP_ROUND_HALF_UP;
+			case self::ROUND_DOWN:
+				return PHP_ROUND_HALF_DOWN;
 			default:
-				$roundingmode = PHP_ROUND_HALF_EVEN;
-				break;
+				return PHP_ROUND_HALF_EVEN;
 		}
-
-		return $roundingmode;
 	}
 
 
 	/**
 	 * Convert an amount from minorunits
 	 *
-	 * @param float $amount_in_minorunits
-	 * @param int $minorunits
-	 *
+	 * @param float $amount_in_minorunits - Amount in MinorUnits.
+	 * @param int   $minorunits - MinorUnits.
 	 * @return float
 	 */
 	public static function convert_price_from_minorunits( $amount_in_minorunits, $minorunits ) {
-		if ( empty( $amount_in_minorunits ) || $amount_in_minorunits === 0 ) {
+		if ( empty( $amount_in_minorunits ) || 0 === $amount_in_minorunits ) {
 			return 0;
 		}
-
 		return (float) ( $amount_in_minorunits / pow( 10, $minorunits ) );
 	}
 
@@ -97,8 +67,7 @@ class Bambora_Online_Checkout_Currency {
 	/**
 	 * Get minor unit format for the specified currency
 	 *
-	 * @param string $currency_code
-	 *
+	 * @param string $currency_code - Currency Code.
 	 * @return int
 	 */
 	public static function get_currency_minorunits( $currency_code ) {

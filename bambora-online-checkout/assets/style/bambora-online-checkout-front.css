@@ -18,10 +18,25 @@
     border-color: #d6e9c6;
 }
 
-.bambora_payment_types {
-    display: inline-block;
+.bambora_payment_description {
+    font-size: 20px;
 }
 
-.bambora_payment_type {
-    margin-right: 5px !important;
+.bambora_payment_types {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.bambora_payment_label_icon {
+    display: flex;
+    align-items: center;
+}
+
+.bambora_payment_icon {
+    width: 100px;
+    height: 24px;
+    margin-left: 20px;
 }
