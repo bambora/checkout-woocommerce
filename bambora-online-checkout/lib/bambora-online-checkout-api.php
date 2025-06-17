@@ -37,16 +37,14 @@ class Bambora_Online_Checkout_Api {
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
 	private function call_rest_service( $service_url, $json_data, $method ) {
-		$content_length = isset( $json_data ) ? strlen( $json_data ) : 0;
-		$headers        = array(
-			'Content-Type'   => 'application/json',
-			'Content-Length' => $content_length,
-			'Accept'         => 'application/json',
-			'Authorization'  => $this->api_key,
-			'X-EPay-System'  => Bambora_Online_Checkout_Helper::get_module_header_info(),
+		$headers  = array(
+			'Content-Type'  => 'application/json',
+			'Accept'        => 'application/json',
+			'Authorization' => $this->api_key,
+			'X-EPay-System' => Bambora_Online_Checkout_Helper::get_module_header_info(),
 		);
-		$timeout        = 15; // Defined in secounds.
-		$response       = null;
+		$timeout  = 30; // Defined in secounds.
+		$response = null;
 		switch ( $method ) {
 			case self::GET:
 				$response = wp_remote_get(
