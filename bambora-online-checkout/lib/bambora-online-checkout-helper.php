@@ -278,7 +278,7 @@ class Bambora_Online_Checkout_Helper {
 		}
 
 		$order = wc_get_order( $params['wcorderid'] );
-		if ( ! isset( $order ) ) {
+		if ( ! isset( $order ) || false === $order ) {
 			$message = "Could not find order with WooCommerce Order id {$params['wcorderid']}";
 			return false;
 		}

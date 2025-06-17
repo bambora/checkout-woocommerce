@@ -3,10 +3,10 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, Worldline Online Checkout, woocommerce worldline, worldline nordics, psp, subscription, subscriptions
 Requires at least: 6.6
 Tested up to: 6.8.1
-Stable tag: 8.0.0
+Stable tag: 8.0.1
 Requires PHP: 7.4
 WC requires at least: 8.0
-WC tested up to: 9.8.4
+WC tested up to: 9.9.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -90,6 +90,10 @@ By using Worldline Online Checkout you won't have to worry about the security of
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+= 8.0.1 =
+* Fix header content-length bug
+* Fix Callback fatal error if order do not exist
+
 = 8.0.0 =
 * Added support for WordPress 6.8.1
 * Added support for Woocommerce 9.8.4
