@@ -1533,7 +1533,7 @@ function init_bambora_online_checkout() {
 		 */
 		public function process_refund( $order_id, $amount = null, $reason = '' ) {
 			$user = wp_get_current_user();
-			if ( ! in_array( $this->rolecapturerefunddelete, $user->roles, true ) || ! in_array( 'administrator', $user->roles, true ) ) {
+			if ( ! in_array( $this->rolecapturerefunddelete, $user->roles, true ) && ! in_array( 'administrator', $user->roles, true ) ) {
 				// The user can only view the data.
 				return new WP_Error( 'notpermitted', __( 'Your user role is not allowed to refund via Worldline Online Checkout', 'bambora-online-checkout' ) );
 			}
