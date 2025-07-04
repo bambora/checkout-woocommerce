@@ -4,12 +4,12 @@
  * Plugin Name: Worldline Online Checkout
  * Plugin URI: https://worldline.com/
  * Description: Worldline Online Checkout Payment Gateway for WooCommerce (prev. Bambora Online Checkout)
- * Version: 8.0.1
+ * Version: 8.0.2
  * Author: Bambora
  * Author URI: https://worldline.com/
  * Text Domain: bambora-online-checkout
  * WC requires at least: 8.0
- * WC tested up to: 9.9.4
+ * WC tested up to: 9.9.5
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -34,7 +34,7 @@ function init_bambora_online_checkout() {
 
 	define( 'BOC_LIB', __DIR__ . '/lib/' );
 	define( 'BOC_MODELS', __DIR__ . '/models/' );
-	define( 'BOC_VERSION', '8.0.1' );
+	define( 'BOC_VERSION', '8.0.2' );
 
 	// Including Bambora files!
 	include BOC_LIB . 'bambora-online-checkout-api.php';
@@ -1533,7 +1533,7 @@ function init_bambora_online_checkout() {
 		 */
 		public function process_refund( $order_id, $amount = null, $reason = '' ) {
 			$user = wp_get_current_user();
-			if ( ! in_array( $this->rolecapturerefunddelete, $user->roles, true ) || ! in_array( 'administrator', $user->roles, true ) ) {
+			if ( ! in_array( $this->rolecapturerefunddelete, $user->roles, true ) && ! in_array( 'administrator', $user->roles, true ) ) {
 				// The user can only view the data.
 				return new WP_Error( 'notpermitted', __( 'Your user role is not allowed to refund via Worldline Online Checkout', 'bambora-online-checkout' ) );
 			}
