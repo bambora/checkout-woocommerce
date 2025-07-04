@@ -3,10 +3,10 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, Worldline Online Checkout, woocommerce worldline, worldline nordics, psp, subscription, subscriptions
 Requires at least: 6.6
 Tested up to: 6.8.1
-Stable tag: 8.0.1
+Stable tag: 8.0.2
 Requires PHP: 7.4
 WC requires at least: 8.0
-WC tested up to: 9.9.4
+WC tested up to: 9.9.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -90,6 +90,9 @@ By using Worldline Online Checkout you won't have to worry about the security of
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+= 8.0.2 =
+* Fix user role bug for WC Refund
+
 = 8.0.1 =
 * Fix header content-length bug
 * Fix Callback fatal error if order do not exist
@@ -103,7 +106,6 @@ By using Worldline Online Checkout you won't have to worry about the security of
 * Bug and translation fixes
 * Code optimization and refactoring to comply with WordPress Code Standard
 
-
 = 7.1.1 =
 * Fix for build.
 
@@ -111,7 +113,6 @@ By using Worldline Online Checkout you won't have to worry about the security of
 * Support for WooCommerce Blocks
 
 = 7.0.1 =
-
 * Rebranding to Worldline Online Checkout
 * Fixes for Fatal Errors for some meta boxes
 * Making sure amount is sent as integer to the api
@@ -119,7 +120,6 @@ By using Worldline Online Checkout you won't have to worry about the security of
 * Updates to all translations
 
 = 6.0.1 =
-
 * Fix to make Finnish language work.
 
 = 6.0.0 =
@@ -170,11 +170,9 @@ By using Worldline Online Checkout you won't have to worry about the security of
 * Added alt-tags to cards for accessibility.
 
 = 4.6.4 =
-
 * Added support for proxy. Settings for proxy should be made in wp-config.
 
 = 4.6.3 =
-
 * Logo change Rebranding Worldline
 
 = 4.6.2 =
@@ -190,7 +188,6 @@ By using Worldline Online Checkout you won't have to worry about the security of
 * Added fees to orderlines
 * Only allow Collector to refund full orderlines.
 * Minor fixes for shipping orderlines.
-
 
 = 4.5.1 =
 * Fix for possible division of zero/null when refunding without quantity.
