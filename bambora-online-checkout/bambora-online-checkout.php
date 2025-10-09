@@ -4,12 +4,12 @@
  * Plugin Name: Worldline Online Checkout
  * Plugin URI: https://worldline.com/
  * Description: Worldline Online Checkout Payment Gateway for WooCommerce (prev. Bambora Online Checkout)
- * Version: 8.0.2
+ * Version: 8.0.3
  * Author: Bambora
  * Author URI: https://worldline.com/
  * Text Domain: bambora-online-checkout
  * WC requires at least: 8.0
- * WC tested up to: 9.9.5
+ * WC tested up to: 10.2.2
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -34,7 +34,7 @@ function init_bambora_online_checkout() {
 
 	define( 'BOC_LIB', __DIR__ . '/lib/' );
 	define( 'BOC_MODELS', __DIR__ . '/models/' );
-	define( 'BOC_VERSION', '8.0.2' );
+	define( 'BOC_VERSION', '8.0.3' );
 
 	// Including Bambora files!
 	include BOC_LIB . 'bambora-online-checkout-api.php';
@@ -823,10 +823,11 @@ function init_bambora_online_checkout() {
 					try {
 						$authorize_subscription_response = $api->authorize_subscription( $bambora_subscription_id, $amount, $order_currency, $renewal_order_id, $instant_capture_amount );
 						if ( $authorize_subscription_response->meta->result ) {
-							$renewal_order->payment_complete( $authorize_subscription_response->transactionid );
 							/* translators: %s: search term */
 							$order_note = sprintf( __( 'Worldline Online Checkout Subscription was authorized for renewal order %1$s with transaction id %2$s', 'bambora-online-checkout' ), $renewal_order_id, $authorize_subscription_response->transactionid );
-							$result     = true;
+							$renewal_order->add_order_note( $order_note );
+							$renewal_order->payment_complete( $authorize_subscription_response->transactionid );
+							$result = true;
 						} else {
 							throw new Exception( $authorize_subscription_response->meta->message->merchant );
 						}
@@ -834,11 +835,11 @@ function init_bambora_online_checkout() {
 						/* translators: %s: search term */
 						$order_note = sprintf( __( 'Worldline Online Checkout Subscription Id: %1$s could not be renewed - %2$s', 'bambora-online-checkout' ), $bambora_subscription_id, $e->getMessage() );
 						$this->boc_log->add( $order_note );
+						$renewal_order->update_status( 'failed', $order_note );
 					}
 				}
 				// Remove the Worldline Online Checkout subscription id copied from the subscription.
 				delete_post_meta( $renewal_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID );
-				$renewal_order->add_order_note( $order_note );
 				$subscription->add_order_note( $order_note );
 			}
 			return $result;
@@ -1892,7 +1893,7 @@ function init_bambora_online_checkout() {
 				$html .= '<div class="bambora_paymentrequest_action">';
 				$html .= '<h3>' . esc_attr( __( 'Create Payment Request for Order', 'bambora-online-checkout' ) ) . ' ' . esc_attr( $order->get_order_number() ) . '</h3>';
 				$html .= '<div class="pr_create_description">' . esc_attr( __( 'Once you have created the Payment Request, you will be able to send it directly to the customer.', 'bambora-online-checkout' ) ) . '</div>';
-				$html .= '<div class="bambora_pr_label">' . esc_attr( __( 'Order Amount in Request', 'bambora-online-checkout' ) ) . '</div>';
+				$html .= '<div class="bambora_pr_label">' . esc_attr( __( 'Order Amount in Request', 'bambora-online-checkout' ) ) . ':</div>';
 				$html .= '<div class="bambora_pr_info">' . esc_attr( $order->get_currency() ) . ' ' . esc_attr( $amount ) . '</div>';
 				$html .= '<div class="bambora_pr_label">' . esc_attr( __( 'Description', 'bambora-online-checkout' ) ) . ':</div>';
 				$html .= '<input type="text" id="bambora_pr_description" value="" class="bambora" name="bambora_pr_description" />';
