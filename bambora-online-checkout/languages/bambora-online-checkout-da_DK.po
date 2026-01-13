@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Worldline Online Checkout\n"
 "POT-Creation-Date: 2024-05-22 21:54+0200\n"
-"PO-Revision-Date: 2025-05-12 07:48+0000\n"
+"PO-Revision-Date: 2026-01-12 12:49+0000\n"
 "Last-Translator: \n"
-"Language-Team: Dansk\n"
+"Language-Team: Danish\n"
 "Language: da_DK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -416,6 +416,19 @@ msgstr ""
 "til %2$s"
 
 #. %s: search term
+#: bambora-online-checkout.php:828
+#, php-format
+#| msgid ""
+#| "Worldline Online Checkout Subscription was authorized for renewal order "
+#| "%1$s with transaction id %2$s"
+msgid ""
+"Worldline Online Checkout Subscription (%1$s) was authorized for renewal "
+"order %2$s with transaction id %3$s"
+msgstr ""
+"Worldline Online Checkout -abonnement (%1$s) blev godkendt til "
+"fornyelsesordre %2$s med transaktions-id %3$s"
+
+#. %s: search term
 #: bambora-online-checkout.php:1516
 #, php-format
 #| msgid ""
@@ -462,19 +475,6 @@ msgid ""
 "Worldline Online Checkout Subscription Id: %1$s could not be renewed - %2$s"
 msgstr ""
 "Worldline Online Checkout Abonnements Id: %1$s kunne ikke fornyes - %2$s"
-
-#. %s: search term
-#: bambora-online-checkout.php:828
-#, php-format
-#| msgid ""
-#| "Worldline Online Checkout Subscription was authorized for renewal order "
-#| "%s with transaction id %s"
-msgid ""
-"Worldline Online Checkout Subscription was authorized for renewal order %1$s "
-"with transaction id %2$s"
-msgstr ""
-"Worldline Online Checkout -abonnement blev godkendt til fornyelsesordre %1$s "
-"med transaktions-id %2$s"
 
 #: bambora-online-checkout.php:1615 bambora-online-checkout.php:1656
 msgid "You can only refund complete order lines for payments made with Walley."

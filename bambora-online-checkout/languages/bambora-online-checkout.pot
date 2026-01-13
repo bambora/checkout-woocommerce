@@ -430,8 +430,7 @@ msgstr ""
 #: bambora-online-checkout.php:828
 #, php-format
 msgid ""
-"Worldline Online Checkout Subscription was authorized for renewal order %1$s "
-"with transaction id %2$s"
+"Worldline Online Checkout Subscription (%1$s) was authorized for renewal order %2$s with transaction id %3$s"
 msgstr ""
 
 #: bambora-online-checkout.php:1615 bambora-online-checkout.php:1656
