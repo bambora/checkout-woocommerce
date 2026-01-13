@@ -61,7 +61,7 @@ class Bambora_Online_Checkout_Helper {
 	 * Checks if Woocommerce Subscriptions is enabled or not
 	 */
 	public static function woocommerce_subscription_plugin_is_active() {
-		return class_exists( 'WC_Subscriptions' ); // && WC_Subscriptions::$name = 'subscription';
+		return class_exists( 'WC_Subscriptions' );
 	}
 
 	/**

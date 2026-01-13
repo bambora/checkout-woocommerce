@@ -4,7 +4,7 @@
  * Plugin Name: Worldline Online Checkout
  * Plugin URI: https://worldline.com/
  * Description: Worldline Online Checkout Payment Gateway for WooCommerce (prev. Bambora Online Checkout)
- * Version: 8.0.4
+ * Version: 8.0.5
  * Author: Bambora
  * Author URI: https://worldline.com/
  * Text Domain: bambora-online-checkout
@@ -34,7 +34,7 @@ function init_bambora_online_checkout() {
 
 	define( 'BOC_LIB', __DIR__ . '/lib/' );
 	define( 'BOC_MODELS', __DIR__ . '/models/' );
-	define( 'BOC_VERSION', '8.0.4' );
+	define( 'BOC_VERSION', '8.0.5' );
 
 	// Including Bambora files!
 	include BOC_LIB . 'bambora-online-checkout-api.php';
@@ -289,7 +289,7 @@ function init_bambora_online_checkout() {
 				'woocommerce_subscription_cancelled_' . $this->id,
 				array(
 					$this,
-					'subscription_cancellation',
+					'bambora_subscription_cancellation',
 				)
 			);
 
@@ -798,8 +798,8 @@ function init_bambora_online_checkout() {
 		/**
 		 * Handle scheduled subscription payments
 		 *
-		 * @param mixed $amount_to_charge - Amount to Charge.
-		 * @param mixed $renewal_order - Order to Renew.
+		 * @param mixed    $amount_to_charge - Amount to Charge.
+		 * @param WC_Order $renewal_order - Order to Renew.
 		 * @return bool
 		 * @throws Exception - In case of error Throw an Exception.
 		 */
@@ -824,7 +824,7 @@ function init_bambora_online_checkout() {
 						$authorize_subscription_response = $api->authorize_subscription( $bambora_subscription_id, $amount, $order_currency, $renewal_order_id, $instant_capture_amount );
 						if ( $authorize_subscription_response->meta->result ) {
 							/* translators: %s: search term */
-							$order_note = sprintf( __( 'Worldline Online Checkout Subscription was authorized for renewal order %1$s with transaction id %2$s', 'bambora-online-checkout' ), $renewal_order_id, $authorize_subscription_response->transactionid );
+							$order_note = sprintf( __( 'Worldline Online Checkout Subscription (%1$s) was authorized for renewal order %2$s with transaction id %3$s', 'bambora-online-checkout' ), $bambora_subscription_id, $renewal_order_id, $authorize_subscription_response->transactionid );
 							$renewal_order->add_order_note( $order_note );
 							$renewal_order->payment_complete( $authorize_subscription_response->transactionid );
 							$result = true;
@@ -839,8 +839,10 @@ function init_bambora_online_checkout() {
 					}
 				}
 				// Remove the Worldline Online Checkout subscription id copied from the subscription.
-				delete_post_meta( $renewal_order_id, Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID );
+				$renewal_order->delete_meta_data( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID );
+				$renewal_order->save();
 				$subscription->add_order_note( $order_note );
+				$subscription->save();
 			}
 			return $result;
 		}
@@ -853,7 +855,7 @@ function init_bambora_online_checkout() {
 		 * @return bool
 		 * @throws Exception - In case of error Throw an Exception.
 		 */
-		public function subscription_cancellation( $subscription, $force_delete = false ) {
+		public function bambora_subscription_cancellation( $subscription, $force_delete = false ) {
 			$result = false;
 			if ( Bambora_Online_Checkout_Helper::order_is_subscription( $subscription ) && ( 'cancelled' === $subscription->get_status() || $force_delete ) ) {
 					$bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_subscription_id( $subscription );
@@ -879,6 +881,7 @@ function init_bambora_online_checkout() {
 					}
 				}
 					$subscription->add_order_note( $order_note );
+					$subscription->save();
 			}
 			return $result;
 		}
@@ -1432,38 +1435,51 @@ function init_bambora_online_checkout() {
 		/**
 		 * Process the subscription
 		 *
-		 * @param WC_Subscription $order - WC_Subscription.
-		 * @param mixed           $bambora_transaction - Bambora Transaction.
-		 * @param string          $bambora_subscription_id - Bambora Subscription Id.
+		 * @param WC_Order|WC_Subscription $order - WC_Order or WC_Subscription.
+		 * @param mixed                    $bambora_transaction - Bambora Transaction.
+		 * @param string                   $bambora_subscription_id - Bambora Subscription Id.
 		 * @return string
 		 */
 		protected function process_subscription( $order, $bambora_transaction, $bambora_subscription_id ) {
 			$action = '';
 			if ( Bambora_Online_Checkout_Helper::order_is_subscription( $order ) ) {
+				$subscription = $order;
 				// Do not cancel subscription if the callback is called more than once !
-				$old_bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_subscription_id( $order );
-				if ( $bambora_subscription_id !== $old_bambora_subscription_id ) {
-					$this->subscription_cancellation( $order, true );
+				$existing_bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_subscription_id( $subscription );
+				if ( ! empty( $existing_bambora_subscription_id ) && $bambora_subscription_id !== $existing_bambora_subscription_id ) {
+					$this->bambora_subscription_cancellation( $subscription, true );
 					$action = 'changed';
 					/* translators: %s: search term */
-					$order->add_order_note( sprintf( __( 'Worldline Online Checkout Subscription changed from: %1$s to: %2$s', 'bambora-online-checkout' ), $old_bambora_subscription_id, $bambora_subscription_id ) );
-					$order->payment_complete();
-					$this->save_subscription_meta( $order, $bambora_subscription_id, false );
+					$subscription->add_order_note( sprintf( __( 'Worldline Online Checkout Subscription changed from: %1$s to: %2$s', 'bambora-online-checkout' ), $existing_bambora_subscription_id, $bambora_subscription_id ) );
+					$this->save_subscription_meta( $subscription, $bambora_subscription_id );
 				} else {
 					$action = 'changed (Called multiple times)';
 				}
 			} else {
 				// Do not add surcharge if the callback is called more than once!
-				$old_transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
-				if ( $bambora_transaction->id !== $old_transaction_id ) {
+				$existing_transaction_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_transaction_id( $order );
+				if ( $bambora_transaction->id !== $existing_transaction_id ) {
 					$this->add_surcharge_fee_to_order( $order, $bambora_transaction );
 					$action = 'activated';
+
+					$subscriptions = Bambora_Online_Checkout_Helper::get_subscriptions_for_order( $order );
+					foreach ( $subscriptions as $subscription ) {
+						// Cancel an existing subscription if a new one is created.
+						$existing_bambora_subscription_id = Bambora_Online_Checkout_Helper::get_bambora_online_checkout_subscription_id( $subscription );
+						if ( ! empty( $existing_bambora_subscription_id ) && $bambora_subscription_id !== $existing_bambora_subscription_id ) {
+							$action = 'changed';
+							/* translators: %s: search term */
+							$subscription->add_order_note( sprintf( __( 'Worldline Online Checkout Subscription changed from: %1$s to: %2$s', 'bambora-online-checkout' ), $existing_bambora_subscription_id, $bambora_subscription_id ) );
+							$this->bambora_subscription_cancellation( $subscription, true );
+						}
+						$this->save_subscription_meta( $subscription, $bambora_subscription_id );
+					}
 					/* translators: %s: search term */
 					$order->add_order_note( sprintf( __( 'Worldline Online Checkout Subscription activated with subscription id: %s', 'bambora-online-checkout' ), $bambora_subscription_id ) );
+					$order->delete_meta_data( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID );
 					$order->payment_complete( $bambora_transaction->id );
-					$this->save_subscription_meta( $order, $bambora_subscription_id, true );
 				} else {
-					$action = 'activated (Called multiple times)';
+					$action = 'activated or changed (Called multiple times)';
 				}
 			}
 			return $action;
@@ -1500,28 +1516,17 @@ function init_bambora_online_checkout() {
 		/**
 		 * Store the Worldline Online Checkout subscription id on subscriptions in the order.
 		 *
-		 * @param WC_Order|WC_Subscription $order - WC Order.
-		 * @param string                   $bambora_subscription_id - Bambora Subscription Id.
-		 * @param bool                     $is_new_subscription - Is New Subscription.
+		 * @param WC_Subscription $subscription - Subscription.
+		 * @param string          $bambora_subscription_id - Bambora Subscription Id.
 		 * @return void
 		 */
-		protected function save_subscription_meta( $order, $bambora_subscription_id, $is_new_subscription ) {
+		protected function save_subscription_meta( $subscription, $bambora_subscription_id ) {
 			$bambora_subscription_id = wc_clean( $bambora_subscription_id );
-			$order_id                = $order->get_id();
-			if ( $is_new_subscription ) {
-				// Also store it on the subscriptions being purchased in the order.
-				$subscriptions = Bambora_Online_Checkout_Helper::get_subscriptions_for_order( $order_id );
-				foreach ( $subscriptions as $subscription ) {
-					$subscription->update_meta_data( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
-					/* translators: %s: search term */
-					$subscription->add_order_note( sprintf( __( 'Worldline Online Checkout Subscription activated with subscription id: %1$s by order %2$s', 'bambora-online-checkout' ), $bambora_subscription_id, $order_id ) );
-					$subscription->save();
-				}
-			} else {
-				$subscription = wcs_get_subscription( $order_id );
-				$subscription->update_meta_data( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
-				$subscription->save();
-			}
+			$subscription_id         = $subscription->get_id();
+			/* translators: %s: search term */
+			$subscription->add_order_note( sprintf( __( 'Worldline Online Checkout Subscription activated with subscription id: %1$s by order %2$s', 'bambora-online-checkout' ), $bambora_subscription_id, $subscription_id ) );
+			$subscription->update_meta_data( Bambora_Online_Checkout_Helper::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
+			$subscription->save();
 		}
 
 		/**
