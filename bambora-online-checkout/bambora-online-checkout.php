@@ -4,7 +4,7 @@
  * Plugin Name: Worldline Online Checkout
  * Plugin URI: https://worldline.com/
  * Description: Worldline Online Checkout Payment Gateway for WooCommerce (prev. Bambora Online Checkout)
- * Version: 8.0.6
+ * Version: 8.0.7
  * Author: Bambora
  * Author URI: https://worldline.com/
  * Text Domain: bambora-online-checkout
@@ -34,7 +34,7 @@ function init_bambora_online_checkout() {
 
 	define( 'BOC_LIB', __DIR__ . '/lib/' );
 	define( 'BOC_MODELS', __DIR__ . '/models/' );
-	define( 'BOC_VERSION', '8.0.5' );
+	define( 'BOC_VERSION', '8.0.7' );
 
 	// Including Bambora files!
 	include BOC_LIB . 'bambora-online-checkout-api.php';
