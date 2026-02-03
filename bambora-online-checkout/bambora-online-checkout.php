@@ -4,12 +4,12 @@
  * Plugin Name: Worldline Online Checkout
  * Plugin URI: https://worldline.com/
  * Description: Worldline Online Checkout Payment Gateway for WooCommerce (prev. Bambora Online Checkout)
- * Version: 8.0.5
+ * Version: 8.0.6
  * Author: Bambora
  * Author URI: https://worldline.com/
  * Text Domain: bambora-online-checkout
  * WC requires at least: 8.0
- * WC tested up to: 10.4.2
+ * WC tested up to: 10.4.3
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -827,6 +827,7 @@ function init_bambora_online_checkout() {
 							$order_note = sprintf( __( 'Worldline Online Checkout Subscription (%1$s) was authorized for renewal order %2$s with transaction id %3$s', 'bambora-online-checkout' ), $bambora_subscription_id, $renewal_order_id, $authorize_subscription_response->transactionid );
 							$renewal_order->add_order_note( $order_note );
 							$renewal_order->payment_complete( $authorize_subscription_response->transactionid );
+							$subscription->payment_complete_for_order( $renewal_order );
 							$result = true;
 						} else {
 							throw new Exception( $authorize_subscription_response->meta->message->merchant );
@@ -835,7 +836,8 @@ function init_bambora_online_checkout() {
 						/* translators: %s: search term */
 						$order_note = sprintf( __( 'Worldline Online Checkout Subscription Id: %1$s could not be renewed - %2$s', 'bambora-online-checkout' ), $bambora_subscription_id, $e->getMessage() );
 						$this->boc_log->add( $order_note );
-						$renewal_order->update_status( 'failed', $order_note );
+						$renewal_order->add_order_note( $order_note );
+						$subscription->payment_failed_for_related_order( 'on-hold', $renewal_order );
 					}
 				}
 				// Remove the Worldline Online Checkout subscription id copied from the subscription.

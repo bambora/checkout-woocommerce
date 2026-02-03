@@ -3,10 +3,10 @@ Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, Worldline Online Checkout, woocommerce worldline, worldline nordics, psp, subscription, subscriptions
 Requires at least: 6.6
 Tested up to: 6.9
-Stable tag: 8.0.5
+Stable tag: 8.0.6
 Requires PHP: 7.4
 WC requires at least: 8.0
-WC tested up to: 10.4.2
+WC tested up to: 10.4.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -90,6 +90,9 @@ By using Worldline Online Checkout you won't have to worry about the security of
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Changelog ==
+= 8.0.6 =
+* Fix bug related to Renewal date not marked correctly
+
 = 8.0.5 =
 * Fix bug related to Change Subscription Payment Method
 * Added support for Woocommerce 10.4.3
