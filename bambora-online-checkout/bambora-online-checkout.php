@@ -4,12 +4,12 @@
  * Plugin Name: Worldline Online Checkout
  * Plugin URI: https://worldline.com/
  * Description: Worldline Online Checkout Payment Gateway for WooCommerce (prev. Bambora Online Checkout)
- * Version: 8.0.7
+ * Version: 8.0.8
  * Author: Bambora
  * Author URI: https://worldline.com/
  * Text Domain: bambora-online-checkout
  * WC requires at least: 8.0
- * WC tested up to: 10.4.3
+ * WC tested up to: 10.7.0
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -34,7 +34,7 @@ function init_bambora_online_checkout() {
 
 	define( 'BOC_LIB', __DIR__ . '/lib/' );
 	define( 'BOC_MODELS', __DIR__ . '/models/' );
-	define( 'BOC_VERSION', '8.0.7' );
+	define( 'BOC_VERSION', '8.0.8' );
 
 	// Including Bambora files!
 	include BOC_LIB . 'bambora-online-checkout-api.php';
@@ -503,11 +503,12 @@ function init_bambora_online_checkout() {
 				require_once ABSPATH . 'wp-admin/includes/user.php';
 			}
 
-			$roles = wp_roles()->roles;
-
+			$roles         = wp_roles()->roles;
+			$roles_options = array();
 			foreach ( $roles as $role => $details ) {
-				$roles_options[ $role ] = translate_user_role( $details['name'] );
+				$roles_options[ $role ] = $details['name'];
 			}
+
 			$this->form_fields = array(
 				'enabled'                   => array(
 					'title'   => 'Activate module',
@@ -675,10 +676,10 @@ function init_bambora_online_checkout() {
 				if ( ! $get_merchant_api_permissions_response->meta->result ) {
 					throw new Exception( $get_merchant_api_permissions_response->meta->message->merchant );
 				} else {
-					$html .= '<b><i>The credentials for your Worldline account are valid.</i></b>';
+					$html .= '<p class="bambora_credentials_success">The credentials for your Worldline account are valid.</p>';
 				}
 			} catch ( Exception $e ) {
-				$html .= '<b><i>The credentials you have provided for your Worldline account are not valid. Please check them before you enable Worldline as a payment option.</i></b>';
+				$html .= '<p class="bambora_credentials_error">The credentials you have provided for your Worldline account are not valid. Please check them before you enable Worldline as a payment option.</p>';
 				$this->boc_log->add( "Credential validation failed: {$e->getMessage()}" );
 			}
 			$html .= '<table class="form-table">';
