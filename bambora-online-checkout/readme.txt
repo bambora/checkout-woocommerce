@@ -2,11 +2,11 @@
 Contributors: bambora
 Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, Worldline Online Checkout, woocommerce worldline, worldline nordics, psp, subscription, subscriptions
 Requires at least: 6.6
-Tested up to: 6.9.4
-Stable tag: 8.0.8
-Requires PHP: 7.4
+Tested up to: 7.1.4
+Stable tag: 9.0.0
+Requires PHP: 8.2
 WC requires at least: 8.0
-WC tested up to: 10.7.0
+WC tested up to: 11.3.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -62,6 +62,7 @@ By using Worldline Online Checkout you won't have to worry about the security of
 * Capture your payments directly from your WooCommerce order page.
 * Credit your payments directly from your WooCommerce order page.
 * Delete your payments directly from your WooCommerce order page.
+* Create payment requests and send them to your customers directly from your WooCommerce order page.
 * Sign up, process, cancel, reactivate and change subscriptions
 * Supports WooCommerce
 * Supports WooCommerce Subscription
@@ -89,7 +90,72 @@ By using Worldline Online Checkout you won't have to worry about the security of
 
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
+== Upgrade Notice ==
+= 9.0.0 =
+The MD5 key is now required. Configure the same MD5 key in the plugin settings and in the Worldline administration BEFORE you update. Without it the payment method is hidden at checkout and callbacks are rejected. Requires PHP 8.2 or newer.
+
 == Changelog ==
+= 9.0.0 =
+This is a major release. Please read the breaking changes before updating.
+
+Breaking changes:
+* The MD5 key is now required. Callbacks are rejected when no MD5 key is configured, and the orders are not marked as paid. Configure the same MD5 key in the plugin settings and in the Worldline administration before updating
+* Callbacks are validated against the transaction in the Merchant API (order id, currency and amount)
+* Callbacks with parameters after the hash are rejected
+* Requires PHP 8.2 or newer
+* Capture, delete and payment request actions in the order administration require the "edit_shop_orders" capability and the role selected in the plugin settings (administrators are always allowed). Users without the role no longer see the payment request actions
+* Refunds via Worldline Online Checkout require the same capability and role
+* Low Value Exemption is only used when the setting is enabled
+* The payment method is hidden at checkout while the MD5 key is missing, and a notice is shown in the administration
+* An order is put on hold instead of being marked as paid when the authorized amount or currency does not match the order (ex. the cart was changed after the payment window was opened). Developers can turn the check off with the filter bambora_online_checkout_validate_callback_amount
+* Developers: Removed verify_action_nounce() and the GET based admin actions (?bambora_action=...). The actions are now posted to admin-post.php. Changed parameters of create_bambora_address(), get_event_extra() and the meta box callbacks. Replaced build_transaction_log_table() and build_transaction_log_rows() with build_transaction_history_html()
+
+Fixes:
+* Fixed amounts being one minor unit too low (ex. 19.99 charged as 19.98) with the rounding mode "Round down"
+* Fixed TTD using 0 decimals instead of 2
+* Fixed refunds below 1.00 being rejected
+* Fixed full refund detection and refund line descriptions
+* Fixed the billing address being sent as both billing and shipping address
+* Fixed the subscription description not being sent to Worldline
+* Fixed the Walley name in the transaction history
+* Fixed payment type, bank logo and payment request created date in the order administration
+* Fixed HPOS support for legacy transaction and subscription ids and for the order meta boxes
+* Fixed payment requests using the wrong merchant with WPML
+* Fixed blocks checkout reading the wrong settings
+* Fixed escaping of notices in the order administration
+* Fixed a React error in the browser console on the block checkout
+* Fixed cancelling one subscription deleting the Worldline subscription shared with other subscriptions from the same order
+* Fixed the Worldline subscription not being stored when a customer changes the payment method from another payment method to Worldline
+* Fixed "Capture on status Completed" failing when the payment was already captured fully or partly. Only the remaining amount is captured
+* Fixed the VAT percentage on refund lines always being 0
+* Fixed an error for order lines with quantity 0
+* Fixed empty error messages when the Worldline API does not answer with a valid response
+* Fixed the payment request recipient being taken from the customer account instead of the billing address of the order
+* Fixed the payment request status not being updated right after a payment request was created, sent or deleted
+* An incomplete renewal order (missing currency or customer) is no longer sent to Worldline. The order fails with a note that explains why. WooCommerce Subscriptions can save such an order when the database rolls back part of it, ex. on MariaDB 11.6 or newer while another order is saved at the same time
+
+Improvements:
+* Refreshed the payment method at checkout: a small Worldline logo next to the title, smaller payment logos and the description as a short line underneath
+* Redesigned the Worldline Online Checkout box on the order page to match the WordPress administration, including wallet details and a transaction history timeline
+* Redesigned the payment request box on the order page: the amount and status at the top, a button to copy the payment link, a message over several lines, and a warning for an invalid email address
+* The payment request column in the order list is now called "Payment Request" and shows the status as a badge, or "Unavailable" when the status cannot be retrieved from Worldline
+* Added a warning in the administration and in Site Health when PHP is missing security fixes
+* Validated the arguments of the payment types REST endpoint
+* Scripts and styles are reloaded by the browser whenever they change
+* Added a notice when the browser uses an outdated cached version of the administration script
+* Notices in the administration are only shown to the user who performed the action
+* Faster checkout and order administration: payment types, payment request permissions, payment request status and response code texts are cached for a short time
+* The payment types request at checkout has a 5 second timeout
+* The files of the module can no longer be requested directly
+* Developers: Removed the unused Bambora_Online_Checkout_Helper::format_date_time(), format_number(), translate_action() and get_order_id()
+* Developers: Removed Bambora_Online_Checkout_Api::get_checkout_payment_window_url() and get_checkout_payment_window_js_url(). They have not been used since version 4.1.0
+* Developers: The URL of the payment logos is now in Bambora_Online_Checkout_Endpoints::get_payment_logos_endpoint()
+
+Compatibility:
+* Added support for WordPress 7.1.4
+* Added support for Woocommerce 11.3.0
+* Added support for Woocommerce Subscriptions 9.4.1
+
 = 8.0.8 =
 * Fix WP_Debug translation error
 * Added support for WordPress 6.9.4

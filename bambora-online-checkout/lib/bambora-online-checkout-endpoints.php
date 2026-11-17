@@ -1,5 +1,7 @@
 <?php
 
+defined( 'ABSPATH' ) || exit;
+
 const BAMBORA_ENDPOINT_TRANSACTION  = 'https://transaction-v1.api-eu.bambora.com';
 const BAMBORA_ENDPOINT_MERCHANT     = 'https://merchant-v1.api-eu.bambora.com';
 const BAMBORA_ENDPOINT_DATA         = 'https://data-v1.api-eu.bambora.com';
@@ -8,6 +10,7 @@ const BAMBORA_ENDPOINT_CHECKOUT     = 'https://v1.checkout.bambora.com';
 const BAMBORA_ENDPOINT_CHECKOUT_API = 'https://api.v1.checkout.bambora.com';
 const BAMBORA_CHECKOUT_ASSETS       = 'https://v1.checkout.bambora.com/Assets';
 const BAMBORA_ENDPOINT_LOGIN        = 'https://login-v1.api-eu.bambora.com';
+const BAMBORA_STATIC_ASSETS         = 'https://static.bambora.com';
 
 /**
  * Bambora Online Checkout Endpoints
@@ -84,5 +87,14 @@ class Bambora_Online_Checkout_Endpoints {
 	 */
 	public static function get_checkout_assets() {
 		return BAMBORA_CHECKOUT_ASSETS;
+	}
+
+	/**
+	 * Get Payment Logos Endpoint
+	 *
+	 * @return string
+	 */
+	public static function get_payment_logos_endpoint() {
+		return BAMBORA_STATIC_ASSETS . '/assets/paymentlogos';
 	}
 }

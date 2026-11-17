@@ -1,5 +1,7 @@
 <?php
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Bambora Online Checkout Currency
  */
@@ -21,13 +23,16 @@ class Bambora_Online_Checkout_Currency {
 			return 0;
 		}
 
+		// Remove floating point noise first, ex. 1.15 * 100 = 114.99999999999999 which would otherwise floor to 114.
+		$amount_in_minorunits = round( (float) $amount * pow( 10, $minorunits ), 6 );
+
 		switch ( $rounding ) {
 			case self::ROUND_UP:
-				return ceil( (float) $amount * pow( 10, $minorunits ) );
+				return (int) ceil( $amount_in_minorunits );
 			case self::ROUND_DOWN:
-				return floor( (float) $amount * pow( 10, $minorunits ) );
+				return (int) floor( $amount_in_minorunits );
 			default:
-				return round( (float) $amount * pow( 10, $minorunits ) );
+				return (int) round( $amount_in_minorunits );
 		}
 	}
 
@@ -72,7 +77,6 @@ class Bambora_Online_Checkout_Currency {
 	 */
 	public static function get_currency_minorunits( $currency_code ) {
 		$currency_minorunits = array(
-			'TTD' => 0,
 			'KMF' => 0,
 			'ADP' => 0,
 			'TPE' => 0,

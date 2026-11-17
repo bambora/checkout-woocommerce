@@ -1,5 +1,11 @@
 const { createElement, useState, useEffect } = window.wp.element;
 
+const PAYMENT_METHOD_ID = 'bambora_online_checkout';
+
+/**
+ * The content shown when the payment method is selected:
+ * the logos of the payment types in the payment window, followed by the description from the module configuration.
+ */
 const PaymentDescriptionWithCardLogos = (props) => {
     const [logos, setLogos] = useState([]);
     const fetchLogos = async () => {
@@ -14,18 +20,18 @@ const PaymentDescriptionWithCardLogos = (props) => {
             });
             if (!response.ok) {
                 console.warn('Failed to fetch payment logos. Status:', response.status);
-                return null;
+                return;
             }
             const logoData = await response.json();
-            const logoDataMap = logoData.flat().map(item => ({
-                name: item.displayname,
-                url: item.assets.find(asset => asset.type === 'logo')?.data
-            }));
-            if (Array.isArray(logoDataMap)) {
-                setLogos(logoDataMap);
-            }
+            const logoDataMap = logoData.flat()
+                .map(item => ({
+                    name: item.displayname,
+                    url: item.assets.find(asset => asset.type === 'logo')?.data
+                }))
+                .filter(logo => logo.url);
+            setLogos(logoDataMap);
         } catch (error) {
-            console.error(`Error loading logos for ${paymentMethodId}:`, error);
+            console.error(`Error loading logos for ${PAYMENT_METHOD_ID}:`, error);
         }
     };
 
@@ -34,49 +40,49 @@ const PaymentDescriptionWithCardLogos = (props) => {
     }, [props.billing.cartTotal.value, props.billing.currency.code]);
 
     const children = [];
-    if (props.description) {
-        children.push(
-            createElement('span', null, props.description)
-        );
-    }
     if (logos.length > 0) {
-        const logoElements = logos.map((logo, i) =>
-            createElement('img', {
-                key: i,
-                src: logo.url,
-                title: logo.name,
-                alt: `${logo.name} logo ${i + 1}`,
-            })
-        );
         children.push(
             createElement(
                 'div',
-                { class: 'bambora_payment_types' },
-                ...logoElements
+                { key: 'logos', className: 'bambora_payment_types' },
+                ...logos.map((logo, i) =>
+                    createElement('img', {
+                        key: i,
+                        src: logo.url,
+                        title: logo.name,
+                        alt: logo.name,
+                    })
+                )
             )
         );
     }
-    return createElement('div', { class: 'bambora_payment_description' }, ...children);
+    if (props.description) {
+        children.push(
+            createElement('p', { key: 'description', className: 'bambora_payment_text' }, props.description)
+        );
+    }
+    return createElement('div', { className: 'bambora_payment_description' }, ...children);
 };
 
+/**
+ * The payment method label: the title from the module configuration with a small Worldline logo on the right.
+ */
 const LabelWithIcon = ({ label, icon }) => {
-    const children = [];
-
-    children.push(
-        createElement('strong', null, label)
-    );
-
-    children.push(
-        createElement('img', {
-            key: 0,
-            src: icon,
-            title: label,
-            alt: `${icon} logo`,
-            class: 'bambora_payment_icon'
-        })
-    );
-    return createElement('div', { class: 'bambora_payment_label_icon' }, ...children);
-}
+    const children = [
+        createElement('span', { key: 'label', className: 'bambora_payment_label' }, label)
+    ];
+    if (icon) {
+        children.push(
+            createElement('img', {
+                key: 'icon',
+                src: icon,
+                alt: 'Worldline',
+                className: 'bambora_payment_icon'
+            })
+        );
+    }
+    return createElement('span', { className: 'bambora_payment_label_icon' }, ...children);
+};
 
 const buildCustomPaymentMethod = (config) => ({
     name: config.id || 'bambora',
@@ -102,12 +108,8 @@ const buildCustomPaymentMethod = (config) => ({
     const registry = window.wc?.wcBlocksRegistry;
     const settings = window.wc?.wcSettings;
 
-    const targetMethodId = 'bambora_online_checkout';
+    if (!registry?.registerPaymentMethod || !settings?.getSetting(`${PAYMENT_METHOD_ID}_data`)) return;
 
-    if (!registry?.registerPaymentMethod || !settings?.getSetting(`${targetMethodId}_data`)) return;
-
-    const methodConfig = settings.getSetting(`${targetMethodId}_data`);
-    const customMethod = buildCustomPaymentMethod(methodConfig);
-
-    registry.registerPaymentMethod(customMethod);
+    const methodConfig = settings.getSetting(`${PAYMENT_METHOD_ID}_data`);
+    registry.registerPaymentMethod(buildCustomPaymentMethod(methodConfig));
 })();

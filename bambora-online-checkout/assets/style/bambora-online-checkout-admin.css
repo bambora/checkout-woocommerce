@@ -1,184 +1,262 @@
-.bambora_transactionid p,
-.bambora_paymenttype p {
-    line-height: 6px;
+/* Worldline Online Checkout payment meta box */
+.boc-box {
+    margin: -6px -12px -12px;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
-.bambora_transactionid p:first-child,
-.bambora_paymenttype p:first-child {
-    font-size: 12px;
-    font-weight: 400;
-    color: grey;
+.boc-section {
+    padding: 10px 12px;
 }
 
-.bambora_transactionid p:last-child,
-.bambora_paymenttype p:last-child {
-    font-weight: 600;
+.boc-section + .boc-section {
+    border-top: 1px solid #f0f0f1;
 }
 
-.bambora_card_logo {
-    max-width: 42px;
-    float: right;
+.boc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
 }
 
-.bambora_bank_logo {
-    max-width: 65px;
-    max-height: 25px;
-    float: right;
-    clear: both;
+.boc-row > span:last-child {
+    white-space: nowrap;
 }
 
-.bambora_wallet_logo {
-    max-height: 51px;
-    clear: both;
-}
-
-.bambora_info_overview {
-    font-weight: 600;
-}
-
-.bambora_info_overview p {
-    display: inline-block;
-    margin: 0;
-}
-
-.bambora_info_overview p:last-child {
-    float: right;
-}
-
-.bambora_action_container {
-    background-color: #eaecf0;
-    border: 1px solid #b9c4e2;
-    padding: 15px 9px 0 9px;
-    margin: 20px 0;
-    -moz-box-shadow: 0 0 3px #ccc;
-    -webkit-box-shadow: 0 0 3px #ccc;
-    box-shadow: 0 0 3px #ccc;
-}
-
-.bambora_action {
-    position: relative;
-    display: table;
-    border-collapse: separate;
-    width: 100%;
-}
-
-.bambora_action p,
-.bambora_action input,
-.bambora_action a {
-    display: inline-block;
-}
-
-.bambora_action p {
-    padding: 6px 0;
-    font-weight: 400;
-    line-height: 0.9;
-    color: #555;
-    text-align: center;
-    background-color: #eee;
-    border: 1px solid #ccc;
-    -ms-border-radius: 4px 0 0 4px;
-    border-radius: 4px 0 0 4px;
-    margin: 0;
-    width: 20%;
-}
-
-.bambora_action input {
-    margin: 0;
-}
-
-.bambora_action a {
-    box-shadow: none !important;
-    height: inherit !important;
-    color: #ffffff !important;
-}
-
-.bambora_action .capture,
-.bambora_action .delete {
-    box-shadow: none !important;
-    height: inherit !important;
-    color: #ffffff !important;
-}
-
-.bambora_action .capture {
-    background-color: #67b168 !important;
-    border-color: #67b168;
-    padding: 0;
-    -ms-border-radius: 0 4px 4px 0 !important;
-    border-radius: 0 4px 4px 0 !important;
-    width: 34%;
-    text-align: center;
-    line-height: 24px;
-}
-
-.bambora_action .capture:hover {
-    background-color: #88a755 !important;
-    border-color: #88a755 !important;
-}
-
-.bambora_action .delete {
-    background-color: #fa8564 !important;
-    border-color: #fa8564 !important;
-    -ms-border-radius: 4px !important;
-    border-radius: 4px !important;
-    float: right;
-    margin: 0 0 10px 0;
-    padding: 0;
-    width: 34%;
-    text-align: center;
-}
-
-.bambora_action .delete:hover {
-    background-color: #ec6459 !important;
-    border-color: #ec6459 !important;
-}
-
-.bambora_amount {
-    width: 45%;
-}
-
-.bambora_table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.bambora_transaction_row_header {
-    font-size: 11px;
-    font-weight: 400;
-    color: grey;
-    line-height: 9px;
-}
-
-.bambora_transaction_row_header td {
-    padding-top: 5px;
-}
-
-.bambora_transaction_row_header td:nth-child(even) {
-    float: right;
-}
-
-.bambora_transaction_header {
-    font-weight: 600;
+.boc-muted {
+    color: #646970;
     font-size: 12px;
 }
 
-.bambora_transaction_header td,
-.bambora_transaction_description td {
-    padding: 2px 0 4px 5px;
+.boc-mono {
+    font-family: Consolas, Monaco, monospace;
 }
 
-.bambora_transaction_description {
-    border-bottom: 1px solid #C1C1C1;
-    font-weight: 400;
-    padding-bottom: 10px;
+.boc-help {
+    border-bottom: 1px dotted #8c8f94;
+    cursor: help;
+}
+
+.boc-payment-type {
+    font-weight: 600;
+}
+
+.boc-logos {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.boc-logos img {
+    height: 28px;
+    width: auto;
+    display: block;
+}
+
+.boc-total {
+    border-top: 1px solid #dcdcde;
+    margin-top: 4px;
+    padding-top: 4px;
+    font-weight: 600;
+}
+
+.boc-label {
+    display: block;
+    margin-bottom: 4px;
+    color: #646970;
     font-size: 12px;
 }
 
-.bambora_transaction_description td:last-child {
-    padding-bottom: 5px;
+.boc-input-group {
+    display: flex;
 }
 
-#bambora-format-error {
+.boc-input-group input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.boc-input-group input[readonly] {
+    background: #f6f7f7;
+    color: #50575e;
+}
+
+.boc-input-group input.boc-input-error {
+    border-color: #d63638;
+    box-shadow: 0 0 0 1px #d63638;
+}
+
+.boc-input-suffix {
+    display: flex;
+    align-items: center;
+    border: 1px solid #8c8f94;
+    border-left: 0;
+    border-radius: 0 4px 4px 0;
+    background: #f6f7f7;
+    color: #50575e;
+    padding: 0 8px;
+}
+
+.boc-hint {
+    margin: 6px 0 0;
+    color: #646970;
+    font-size: 12px;
+}
+
+.boc-inline-notice {
     display: none;
+    margin-top: 8px;
+    padding: 6px 8px;
+    border-left: 4px solid #d63638;
+    background: #fcf0f1;
+    font-size: 12px;
+}
+
+.boc-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: #f6f7f7;
+    border-top: 1px solid #dcdcde;
+}
+
+.boc-box .boc-history {
+    border-top-color: #dcdcde;
+}
+
+.boc-history h4 {
+    margin: 0 0 8px;
+    font-size: 13px;
+}
+
+.boc-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 14px;
+    border-left: 2px solid #dcdcde;
+}
+
+.boc-timeline li {
+    position: relative;
+    margin: 0;
+    padding: 0 0 10px 6px;
+}
+
+.boc-timeline li:last-child {
+    padding-bottom: 0;
+}
+
+.boc-timeline li::before {
+    content: "";
+    position: absolute;
+    left: -21px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #8c8f94;
+    box-sizing: border-box;
+}
+
+.boc-timeline li.boc-event-capture::before {
+    border-color: #2271b1;
+}
+
+.boc-timeline li.boc-event-refund::before,
+.boc-timeline li.boc-event-failed::before {
+    border-color: #b32d2e;
+}
+
+.boc-event-title {
+    font-weight: 600;
+}
+
+.boc-event-extra {
+    color: #b32d2e;
+    font-size: 12px;
+}
+
+.boc-strong {
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.boc-heading {
+    margin: 0 0 8px;
+    font-size: 13px;
+}
+
+.boc-field + .boc-field {
+    margin-top: 8px;
+}
+
+.boc-field > input[type="text"],
+.boc-field > textarea {
+    display: block;
+    width: 100%;
+    margin: 0;
+}
+
+.boc-value {
+    overflow-wrap: anywhere;
+}
+
+.boc-input-group .button {
+    margin: 0 0 0 -1px;
+    border-color: #8c8f94;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    color: #50575e;
+}
+
+.boc-footer .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.boc-badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 4px;
+    background: #e5e5e5;
+    color: #454545;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.boc-badge-open {
+    background: #c6e1c6;
+    color: #2c4700;
+}
+
+.boc-badge-expired {
+    background: #f8dda7;
+    color: #573b00;
+}
+
+/* Payment request status in the order list, sized like the WooCommerce order status next to it */
+.boc-badge-list {
+    margin: -.25em 0;
+    padding: 0 1em;
+    line-height: 2.5em;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.boc-badge-list.tips {
+    cursor: help;
 }
 
 .bambora_message {
@@ -220,96 +298,4 @@
 
 #boc-admin-documentation {
     margin-right: 5px;
-}
-
-.bambora_paymentrequest_details,
-.bambora_paymentrequest_action {
-    display: inline-block;
-}
-
-#bambora_send_pr_submit,
-#bambora_create_pr_submit {
-    margin-top: 5px;
-}
-
-.pr_create_description {
-    margin-bottom: 5px;
-}
-
-.bambora_pr_label {
-    font-weight: 600;
-    float: left;
-    min-width: 200px;
-    margin-bottom: 2px;
-}
-
-.bambora_pr_info {
-    font-weight: 400;
-    float: left;
-    min-width: 200px;
-    line-break: anywhere;
-    display: block;
-    margin-bottom: 2px;
-}
-
-.bambora_pr_status {
-    border-radius: 4px;
-    display: inline-flex;
-    line-height: 2.5em;
-    margin: -.25em 0;
-    white-space: nowrap;
-    max-width: 100%;
-    cursor: inherit !important;
-}
-
-.bambora_pr_status>span {
-    margin: 0 1em;
-    overflow: hidden;
-    text-overflow: ellipsis
-}
-
-.bambora_pr_status_open {
-    color: #5b841b;
-    background-color: #c6e1c6;
-    border-color: #5b841b;
-}
-
-.bambora_pr_status_closed {
-    color: #777;
-    background-color: #e5e5e5;
-    border-color: #777;
-
-}
-
-.bambora_pr_status_expired {
-    color: #dc3232;
-    background-color: #FFEAE4;
-    border-color: #dc3232;
-}
-
-.bambora_pr_status_deleted {
-    padding: 5px;
-    color: #777;
-    background-color: #e5e5e5;
-    border-color: #777;
-    border-radius: 4px;
-    display: inline-flex;
-    line-height: 2.5em;
-    border-bottom: 1px solid rgba(0, 0, 0, .05);
-    margin: -.25em 0;
-    white-space: nowrap;
-    max-width: 100%;
-}
-
-.bambora_pr_row {
-    float: left;
-    clear: both;
-}
-
-.pr_status {
-    margin: 0 1em;
-}
-
-.bambora_transaction_not_approved {
-    color: #ec6459;
 }

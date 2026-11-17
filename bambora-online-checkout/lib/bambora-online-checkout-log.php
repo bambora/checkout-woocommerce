@@ -1,22 +1,19 @@
 <?php
 
-/**
- * Bambora Online Checkout Log
- */
+defined( 'ABSPATH' ) || exit;
 
-use Automattic\WooCommerce\Utilities\LoggingUtil;
 /**
  * Bambora Online Checkout Log
  */
 class Bambora_Online_Checkout_Log {
-	/* The domain handler used to name the log */
+	/* The source used to name the log */
 	const DOMAIN = 'bambora-online-checkout';
 
 
 	/**
-	 * The WC_Logger instance
+	 * The WooCommerce logger
 	 *
-	 * @var WC_Logger
+	 * @var WC_Logger_Interface
 	 */
 	private $logger;
 
@@ -28,7 +25,7 @@ class Bambora_Online_Checkout_Log {
 	 * @return void
 	 */
 	public function __construct() {
-		$this->logger = new WC_Logger();
+		$this->logger = wc_get_logger();
 	}
 
 
@@ -45,7 +42,7 @@ class Bambora_Online_Checkout_Log {
 			$param = wp_json_encode( $param );
 		}
 
-		$this->logger->add( self::DOMAIN, $param );
+		$this->logger->notice( (string) $param, array( 'source' => self::DOMAIN ) );
 	}
 
 	/**
@@ -58,35 +55,18 @@ class Bambora_Online_Checkout_Log {
 	}
 
 	/**
-	 * Returns a link to the log files in the WP backend.
+	 * Returns a link to the log files of the module in the WP backend.
 	 *
 	 * @return string
 	 */
 	public function get_admin_link() {
-		$log_path       = $this->get_log_file_path( self::DOMAIN );
-		$log_path_parts = explode( '/', $log_path );
-
 		return add_query_arg(
 			array(
-				'page'     => 'wc-status',
-				'tab'      => 'logs',
-				'log_file' => end( $log_path_parts ),
+				'page'   => 'wc-status',
+				'tab'    => 'logs',
+				'source' => self::DOMAIN,
 			),
 			admin_url( 'admin.php' )
 		);
-	}
-	/**
-	 * Get Log File path
-	 *
-	 * @param mixed $handle - The source of the log file.
-	 * @return string
-	 */
-	private function get_log_file_path( $handle ) {
-
-		$directory = LoggingUtil::get_log_directory();
-		$file_id   = LoggingUtil::generate_log_file_id( $handle, null, time() );
-		$hash      = LoggingUtil::generate_log_file_hash( $file_id );
-
-		return "{$directory}{$file_id}-{$hash}.log";
 	}
 }

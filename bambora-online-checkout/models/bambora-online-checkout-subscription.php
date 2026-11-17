@@ -1,5 +1,7 @@
 <?php
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Bambora Online Checkout Request
  */
@@ -15,7 +17,7 @@ class Bambora_Online_Checkout_Subscription {
 	 *
 	 * @var string
 	 */
-	public $decription;
+	public $description;
 	/**
 	 * Subscription Reference
 	 *

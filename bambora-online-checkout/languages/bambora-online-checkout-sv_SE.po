@@ -1,500 +1,584 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Worldline Online Checkout\n"
-"POT-Creation-Date: 2024-05-22 21:16+0200\n"
-"PO-Revision-Date: 2026-01-12 12:51+0000\n"
+"Report-Msgid-Bugs-To: \n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
-"Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-05-22 21:16+0200\n"
+"PO-Revision-Date: 2026-01-12 12:51+0000\n"
+"Language: sv_SE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Loco https://localise.biz/\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: bambora-online-checkout.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: bambora-online-checkout.php:2020
-msgid "Acquirer Reference"
-msgstr "Inlösarreferens"
-
-#: bambora-online-checkout.php:1306
+#: bambora-online-checkout.php:1427
 msgid "adjustment"
 msgstr "justering"
 
-#. %s: search term
-#: bambora-online-checkout.php:1852
+#. translators: %s: search term
+#: bambora-online-checkout.php:1954
 #, php-format
-#| msgid ""
-#| "Are you sure that you want to send the Payment Request to %s, requesting "
-#| "an amount of %s ?"
-msgid ""
-"Are you sure that you want to send the Payment Request to %1$s, requesting "
-"an amount of %2$s ?"
-msgstr ""
-"Är du säker på att du vill skicka betalningsförfrågan till %1$s på summan "
-"%2$s?"
+msgid "Are you sure that you want to send the Payment Request to %1$s, requesting an amount of %2$s ?"
+msgstr "Är du säker på att du vill skicka betalningsförfrågan till %1$s på summan %2$s?"
 
-#: bambora-online-checkout.php:2058
+#: bambora-online-checkout.php:2226
 msgid "Are you sure you want to capture the payment?"
 msgstr "Är du säker på att du vill fånga betalningen?"
 
-#: bambora-online-checkout.php:1891
+#: bambora-online-checkout.php:1994
 msgid "Are you sure you want to create a payment request?"
 msgstr "Är du säker på att du vill skapa en betalningsförfrågan?"
 
-#: bambora-online-checkout.php:2071
+#: bambora-online-checkout.php:2242
 msgid "Are you sure you want to delete the payment?"
 msgstr "Är du säker på att du vill radera betalningen?"
 
-#: bambora-online-checkout.php:1870
+#: bambora-online-checkout.php:1972
 msgid "Are you sure you want to delete this payment request?"
 msgstr "Är du säker på att du vill radera den här betalningsförfrågan?"
 
-#: lib/bambora-online-checkout-helper.php:182
+#: bambora-online-checkout.php:2181
+#: lib/bambora-online-checkout-helper.php:194
 msgid "Authorized"
 msgstr "Auktoriserad"
 
-#: bambora-online-checkout.php:2035
-msgid "Authorized:"
-msgstr "Auktoriserad:"
-
 #. Author of the plugin
+#: bambora-online-checkout.php
 msgid "Bambora"
 msgstr "Bambora"
 
-#: bambora-online-checkout.php:2063 bambora-online-checkout.php:2255
+#: bambora-online-checkout.php:2248
+#: bambora-online-checkout.php:2489
 msgid "Capture"
 msgstr "Fånga"
 
-#. %s: search term
-#: bambora-online-checkout.php:2388
+#. translators: %s: search term
+#: bambora-online-checkout.php:2577
 #, php-format
-#| msgid "Capture action failed for order %s - %s"
 msgid "Capture action failed for order %1$s - %2$s"
 msgstr "Betalningsfångst misslyckades för order %1$s - %2$s"
 
-#: lib/bambora-online-checkout-helper.php:184
+#: bambora-online-checkout.php:2182
+#: lib/bambora-online-checkout-helper.php:196
 msgid "Captured"
 msgstr "Fångad"
 
-#: bambora-online-checkout.php:2039
-msgid "Captured:"
-msgstr "Fångad:"
-
-#: bambora-online-checkout.php:2082
-msgid "Correct format is: 1234.56"
-msgstr "Korrekt format är: 1234.56"
-
-#: bambora-online-checkout.php:907
+#: bambora-online-checkout.php:1019
 msgid "Could not retrive the payment window. Reason:"
 msgstr "Kunde inte hämta betalningsfönstret. Anledning:"
 
-#: bambora-online-checkout.php:1899 bambora-online-checkout.php:2313
+#: bambora-online-checkout.php:2002
+#: bambora-online-checkout.php:2520
 msgid "Create Payment Request"
 msgstr "Skapa betalningsförfrågan"
 
-#. %s: search term
-#: bambora-online-checkout.php:1105
+#. translators: %s: search term
+#: bambora-online-checkout.php:1226
 #, php-format
 msgid "Create payment request failed for order %s"
 msgstr "Skapandet av betalningsförfrågan misslyckades för order %s"
 
-#: bambora-online-checkout.php:1893
+#: bambora-online-checkout.php:1996
 msgid "Create Payment Request for Order"
 msgstr "Skapa betalningsförfrågan för order"
 
-#: bambora-online-checkout.php:1830
+#: bambora-online-checkout.php:1932
 msgid "Created"
 msgstr "Skapad"
 
-#: bambora-online-checkout.php:2074 bambora-online-checkout.php:2263
+#: bambora-online-checkout.php:2493
 msgid "Delete"
 msgstr "Radera"
 
-#. %s: search term
-#: bambora-online-checkout.php:2471
+#. translators: %s: search term
+#: bambora-online-checkout.php:2658
 #, php-format
 msgid "Delete action failed - %s"
 msgstr "Raderingsåtgärden misslyckades -%s"
 
-#: bambora-online-checkout.php:1871 bambora-online-checkout.php:1872
-#: bambora-online-checkout.php:2318
+#: bambora-online-checkout.php:1973
+#: bambora-online-checkout.php:1974
+#: bambora-online-checkout.php:2524
 msgid "Delete Payment Request"
 msgstr "Radera betalningsförfrågan"
 
-#. %s: search term
-#: bambora-online-checkout.php:1138
+#. translators: %s: search term
+#: bambora-online-checkout.php:1259
 #, php-format
 msgid "Delete payment request failed for order %s"
 msgstr "Raderandet av betalningsförfråga för order %s misslyckades"
 
-#: lib/bambora-online-checkout-helper.php:188
+#: lib/bambora-online-checkout-helper.php:200
 msgid "Deleted"
 msgstr "Raderad"
 
-#: bambora-online-checkout.php:1831 bambora-online-checkout.php:1897
+#: bambora-online-checkout.php:1933
+#: bambora-online-checkout.php:2000
 msgid "Description"
 msgstr "Beskrivning"
 
-#: bambora-online-checkout.php:2011
-msgid "ECI"
-msgstr "ECI"
-
-#: bambora-online-checkout.php:2029
-msgid "Exemptions"
-msgstr "Undantag"
-
-#: bambora-online-checkout.php:1663 bambora-online-checkout.php:1664
+#: bambora-online-checkout.php:1767
+#: bambora-online-checkout.php:1768
 msgid "Fee"
 msgstr "Avgift"
 
-#: bambora-online-checkout.php:1260 bambora-online-checkout.php:1661
+#: bambora-online-checkout.php:1381
+#: bambora-online-checkout.php:1765
 msgid "fee"
 msgstr "avgift"
 
-#. %s: search term
-#: bambora-online-checkout.php:1935
+#. translators: %s: search term
+#: bambora-online-checkout.php:2036
 #, php-format
-#| msgid "Get transaction failed for order %s - %s"
 msgid "Get transaction failed for order %1$s - %2$s"
 msgstr "Hämtning av transaktion misslyckades för order %1$s - %2$s"
 
-#. %s: search term
-#: bambora-online-checkout.php:1960
+#. translators: %s: search term
+#: bambora-online-checkout.php:2055
 #, php-format
 msgid "Get transaction operations failed - %s"
 msgstr "Hämtning av transaktions operationer misslyckades - %s"
 
-#. URI of the plugin
+#. Plugin URI of the plugin
 #. Author URI of the plugin
-#| msgid "https://worldline.com/sv-se/"
+#: bambora-online-checkout.php
 msgid "https://worldline.com/"
 msgstr "https://worldline.com/sv-se"
 
-#: bambora-online-checkout.php:1644
+#: bambora-online-checkout.php:1748
 msgid "Invalid refund amount for fees"
 msgstr "Felaktig återbetalningssumma för avgifter"
 
-#: bambora-online-checkout.php:1609
+#: bambora-online-checkout.php:1713
 msgid "Invalid refund amount for shipping"
 msgstr "Felaktig återbetalningssumma för frakt"
 
-#: bambora-online-checkout.php:1862
+#: bambora-online-checkout.php:1964
 msgid "Message"
 msgstr "Meddelande"
 
-#. %s: search term
-#: bambora-online-checkout.php:1925
+#. translators: %s: search term
+#: bambora-online-checkout.php:2026
 #, php-format
 msgid "No transaction was found for order %s"
 msgstr "Ingen transaktion hittades för order %s"
 
-#: bambora-online-checkout.php:1894
-msgid ""
-"Once you have created the Payment Request, you will be able to send it "
-"directly to the customer."
-msgstr ""
-"När du har skapat betalningsförfrågan kommer du kunna skicka den direkt till "
-"kunden."
+#: bambora-online-checkout.php:1997
+msgid "Once you have created the Payment Request, you will be able to send it directly to the customer."
+msgstr "När du har skapat betalningsförfrågan kommer du kunna skicka den direkt till kunden."
 
-#: bambora-online-checkout.php:1895
+#: bambora-online-checkout.php:1998
 msgid "Order Amount in Request"
 msgstr "Totalsumma i betalningsförfrågan"
 
-#: bambora-online-checkout.php:1809
+#: bambora-online-checkout.php:1911
 msgid "Payment Request Details"
 msgstr "Betalningsförfrågedetaljer"
 
-#: bambora-online-checkout.php:1810
+#: bambora-online-checkout.php:1912
 msgid "Payment Request ID"
 msgstr "Betalningsförfråge ID"
 
-#: bambora-online-checkout.php:1834
+#: bambora-online-checkout.php:1936
 msgid "Payment Request URL"
 msgstr "Betalningsförfråge-URL"
 
-#: bambora-online-checkout.php:2004
-msgid "Payment Type"
-msgstr "Betalningstyp"
-
-#: bambora-online-checkout.php:2332
+#: bambora-online-checkout.php:2539
 msgid "PaymentRequest Action is incorrect"
 msgstr "Handlingen for betalingsforespørsel er feil"
 
-#: bambora-online-checkout.php:1229 bambora-online-checkout.php:1246
-#: bambora-online-checkout.php:1269 bambora-online-checkout.php:1317
-#: bambora-online-checkout.php:1596 bambora-online-checkout.php:1625
-#: bambora-online-checkout.php:1666 bambora-online-checkout.php:1688
+#: bambora-online-checkout.php:1350
+#: bambora-online-checkout.php:1367
+#: bambora-online-checkout.php:1390
+#: bambora-online-checkout.php:1438
+#: bambora-online-checkout.php:1700
+#: bambora-online-checkout.php:1729
+#: bambora-online-checkout.php:1770
+#: bambora-online-checkout.php:1792
 msgid "pcs."
 msgstr "st."
 
-#: bambora-online-checkout.php:1854
+#: bambora-online-checkout.php:1956
 msgid "Recipient Email"
 msgstr "Mottagarepostadress"
 
-#: bambora-online-checkout.php:1856
+#: bambora-online-checkout.php:1958
 msgid "Recipient Name"
 msgstr "Mottagarnamn"
 
-#: bambora-online-checkout.php:1833
+#: bambora-online-checkout.php:1935
 msgid "Reference"
 msgstr "Referens"
 
-#: bambora-online-checkout.php:1683 bambora-online-checkout.php:1685
-#: bambora-online-checkout.php:1686 bambora-online-checkout.php:2259
+#: bambora-online-checkout.php:1787
+#: bambora-online-checkout.php:1789
+#: bambora-online-checkout.php:1790
 msgid "Refund"
 msgstr "Återbetalning"
 
-#. %s: search term
-#: bambora-online-checkout.php:2445
+#. translators: %s: search term
+#: bambora-online-checkout.php:2632
 #, php-format
-#| msgid "Refund action failed for order %s - %s"
 msgid "Refund action failed for order %1$s - %2$s"
 msgstr "Återbetalningsåtgärden misslyckades för order %1$s - %2$s"
 
-#: lib/bambora-online-checkout-helper.php:186
+#: bambora-online-checkout.php:2183
+#: lib/bambora-online-checkout-helper.php:198
 msgid "Refunded"
 msgstr "Återbetald"
 
-#: bambora-online-checkout.php:2043
-msgid "Refunded:"
-msgstr "Återbetald:"
-
-#: bambora-online-checkout.php:1858
+#: bambora-online-checkout.php:1960
 msgid "Reply-To Email"
 msgstr "Reply-to epostadress"
 
-#: bambora-online-checkout.php:1860
+#: bambora-online-checkout.php:1962
 msgid "Reply-To Name"
 msgstr "Reply-to namn"
 
-#: bambora-online-checkout.php:1310 bambora-online-checkout.php:1315
+#: bambora-online-checkout.php:1431
+#: bambora-online-checkout.php:1436
 msgid "Rounding adjustment"
 msgstr "Justering av avrundning"
 
-#: bambora-online-checkout.php:1842 bambora-online-checkout.php:2323
+#: bambora-online-checkout.php:1944
+#: bambora-online-checkout.php:2528
 msgid "Send Payment Request"
 msgstr "Skicka betalningsförfråga"
 
-#: bambora-online-checkout.php:1864
+#: bambora-online-checkout.php:1966
 msgid "Send Payment Request by Email"
 msgstr "Skicka betalningsförfrågan via epost"
 
-#. %s: search term
-#: bambora-online-checkout.php:1182
+#. translators: %s: search term
+#: bambora-online-checkout.php:1303
 #, php-format
 msgid "Send payment request email failed for order %s"
 msgstr "Skickandet av epost med betalningsförfråga misslyckades för order %s"
 
-#: bambora-online-checkout.php:1832
+#: bambora-online-checkout.php:1934
 msgid "Status"
 msgstr "Status"
 
-#. %s: search term
-#: bambora-online-checkout.php:869
+#. translators: %s: search term
+#: bambora-online-checkout.php:976
 #, php-format
-#| msgid ""
-#| "Subscription successfully Cancelled. - Worldline Online "
-#| "CheckoutSubscription Id: %s"
-msgid ""
-"Subscription successfully Cancelled. - Worldline Online Checkout "
-"Subscription Id: %s"
-msgstr ""
-"Prenumerationen har avbrutits. - Prenumerations-ID för Worldline Online "
-"Checkout: %s"
+msgid "Subscription successfully Cancelled. - Worldline Online Checkout Subscription Id: %s"
+msgstr "Prenumerationen har avbrutits. - Prenumerations-ID för Worldline Online Checkout: %s"
 
-#: bambora-online-checkout.php:1485
+#: bambora-online-checkout.php:1601
 msgid "Surcharge Fee"
 msgstr "Tilläggsavgift"
 
-#. %s: search term
-#: bambora-online-checkout.php:2282 bambora-online-checkout.php:2347
+#. translators: %s: search term
+#: bambora-online-checkout.php:2467
 #, php-format
-#| msgid "The %s action was a success for order %s"
 msgid "The %1$s action was a success for order %2$s"
 msgstr "Åtgärd %1$s slutförd för order %2$s"
 
-#: bambora-online-checkout.php:2080
-msgid "The amount you entered was in the wrong format."
-msgstr "Summan du angivit har fel format."
-
-#. %s: search term
-#: bambora-online-checkout.php:713
+#. translators: %s: search term
+#: bambora-online-checkout.php:812
 #, php-format
 msgid "The Capture action was a success for order %s"
 msgstr "Betalningsfångsten var framgångsrik för order %s"
 
-#. %s: search term
-#: bambora-online-checkout.php:1550
+#. translators: %s: search term
+#: bambora-online-checkout.php:1654
 #, php-format
 msgid "The Refund action was a success for order %s"
 msgstr "Återbetalningsåtgärden var framgångsfull för order %s"
 
-#: bambora-online-checkout.php:2267
+#: bambora-online-checkout.php:2497
 msgid "Transaction Action is incorrect"
 msgstr "Transaksjonshandlingen er feil"
 
-#: bambora-online-checkout.php:2107
-msgid "Transaction History"
-msgstr "Transaktionshistorik"
-
-#: bambora-online-checkout.php:2000
-msgid "Transaction ID"
-msgstr "Transaktion ID"
-
-#: bambora-online-checkout.php:2082
-msgid "Warning"
-msgstr "Varning"
-
-#: bambora-online-checkout.php:2052
-msgid ""
-"With Payment Provider Walley only full capture is possible here. For partial "
-"capture, please use Bambora Merchant Portal."
-msgstr ""
-"Med betalmetoden Walley så är bara full fångst möjlig. Använd Bambora "
-"Merchant Portal för delfångst."
-
-#. Name of the plugin
-#: bambora-online-checkout.php:1765 bambora-online-checkout.php:1776
+#. Plugin Name of the plugin
+#: bambora-online-checkout.php
+#: bambora-online-checkout.php:1869
+#: bambora-online-checkout.php:1880
 msgid "Worldline Online Checkout"
 msgstr "Worldline Online Checkout"
 
-#. %s: search term
-#: bambora-online-checkout.php:1421
+#. translators: %s: search term
+#: bambora-online-checkout.php:1524
 #, php-format
 msgid "Worldline Online Checkout Payment completed with transaction id %s"
 msgstr "Worldline Online Checkout Payment fullgjord med transaktion ID %s"
 
 #. Description of the plugin
-msgid ""
-"Worldline Online Checkout Payment Gateway for WooCommerce (prev. Bambora "
-"Online Checkout)"
-msgstr ""
-"Worldline Online Checkout Payment Gateway för WooCommerce (tidigare Bambora "
-"Online Checkout)"
+#: bambora-online-checkout.php
+msgid "Worldline Online Checkout Payment Gateway for WooCommerce (prev. Bambora Online Checkout)"
+msgstr "Worldline Online Checkout Payment Gateway för WooCommerce (tidigare Bambora Online Checkout)"
 
-#: bambora-online-checkout.php:1741 bambora-online-checkout.php:1752
-#: bambora-online-checkout.php:2527
+#: bambora-online-checkout.php:1845
+#: bambora-online-checkout.php:1856
+#: bambora-online-checkout.php:2729
 msgid "Worldline Online Checkout Payment Request"
 msgstr "Worldline Online Checkout Payment Request"
 
-#. %s: search term
-#: bambora-online-checkout.php:1128
+#. translators: %s: search term
+#: bambora-online-checkout.php:1249
 #, php-format
-#| msgid "Worldline Online Checkout Payment Request %s deleted for order %s"
 msgid "Worldline Online Checkout Payment Request %1$s deleted for order %2$s"
-msgstr ""
-"Worldline Online Checkout Betalningsförfrågan %1$s raderad för beställning "
-"%2$s"
+msgstr "Worldline Online Checkout Betalningsförfrågan %1$s raderad för beställning %2$s"
 
-#. %s: search term
-#: bambora-online-checkout.php:1095
+#. translators: %s: search term
+#: bambora-online-checkout.php:1216
 #, php-format
-#| msgid ""
-#| "Worldline Online Checkout Payment Request with id %s created for order %s"
-msgid ""
-"Worldline Online Checkout Payment Request with id %1$s created for order %2$s"
-msgstr ""
-"Worldline Online Checkout Betalningsförfrågan med id %1$s skapad för order "
-"%2$s"
+msgid "Worldline Online Checkout Payment Request with id %1$s created for order %2$s"
+msgstr "Worldline Online Checkout Betalningsförfrågan med id %1$s skapad för order %2$s"
 
-#. %s: search term
-#: bambora-online-checkout.php:1172
+#. translators: %s: search term
+#: bambora-online-checkout.php:1293
 #, php-format
-#| msgid ""
-#| "Worldline Online Checkout Payment Request with id %s sent with email to %s"
-msgid ""
-"Worldline Online Checkout Payment Request with id %1$s sent with email to "
-"%2$s"
-msgstr ""
-"Worldline Online Checkout Betalningsförfrågan med id %1$s skickas med e-post "
-"till %2$s"
+msgid "Worldline Online Checkout Payment Request with id %1$s sent with email to %2$s"
+msgstr "Worldline Online Checkout Betalningsförfrågan med id %1$s skickas med e-post till %2$s"
 
-#. %s: search term
-#: bambora-online-checkout.php:828
+#. translators: %s: search term
+#: bambora-online-checkout.php:929
 #, php-format
-#| msgid ""
-#| "Worldline Online Checkout Subscription was authorized for renewal order "
-#| "%1$s with transaction id %2$s"
-msgid ""
-"Worldline Online Checkout Subscription (%1$s) was authorized for renewal "
-"order %2$s with transaction id %3$s"
-msgstr ""
-"Worldline Online Checkout Prenumeration (%1$s) auktoriserades för "
-"förnyelseorder %2$s med transaktion ID %3$s"
+msgid "Worldline Online Checkout Subscription (%1$s) was authorized for renewal order %2$s with transaction id %3$s"
+msgstr "Worldline Online Checkout Prenumeration (%1$s) auktoriserades för förnyelseorder %2$s med transaktion ID %3$s"
 
-#. %s: search term
-#: bambora-online-checkout.php:1516
+#. translators: %s: search term
+#: bambora-online-checkout.php:1626
 #, php-format
-#| msgid ""
-#| "Worldline Online Checkout Subscription activated with subscription id: %s "
-#| "by order %s"
-msgid ""
-"Worldline Online Checkout Subscription activated with subscription id: %1$s "
-"by order %2$s"
-msgstr ""
-"Worldline Online Checkout Prenumeration aktiverad med prenumeration ID: %1$s "
-"för order %2$s"
+msgid "Worldline Online Checkout Subscription activated with subscription id: %1$s by order %2$s"
+msgstr "Worldline Online Checkout Prenumeration aktiverad med prenumeration ID: %1$s för order %2$s"
 
-#. %s: search term
-#: bambora-online-checkout.php:1461
+#. translators: %s: search term
+#: bambora-online-checkout.php:1577
 #, php-format
-msgid ""
-"Worldline Online Checkout Subscription activated with subscription id: %s"
-msgstr ""
-"Worldline Online Checkout Prenumeration aktiverad med prenumeration ID: %s"
+msgid "Worldline Online Checkout Subscription activated with subscription id: %s"
+msgstr "Worldline Online Checkout Prenumeration aktiverad med prenumeration ID: %s"
 
-#. %s: search term
-#: bambora-online-checkout.php:1448
+#. translators: %s: search term
+#: bambora-online-checkout.php:1552
+#: bambora-online-checkout.php:1571
 #, php-format
-#| msgid "Worldline Online Checkout Subscription changed from: %s to: %s"
 msgid "Worldline Online Checkout Subscription changed from: %1$s to: %2$s"
 msgstr "Worldline Online Checkout Prenumeration ändrad från: %1$s till: %2$s"
 
-#: bambora-online-checkout.php:813 bambora-online-checkout.php:861
+#: bambora-online-checkout.php:915
+#: bambora-online-checkout.php:968
 msgid "Worldline Online Checkout Subscription ID was not found"
 msgstr "Worldline Online Checkout Prenumerations-ID hittades inte"
 
-#. %s: search term
-#: bambora-online-checkout.php:876
+#. translators: %s: search term
+#: bambora-online-checkout.php:983
 #, php-format
-#| msgid "Worldline Online Checkout Subscription could not be canceled - %s"
-msgid ""
-"Worldline Online Checkout Subscription Id: %1$s could not be canceled - %2$s"
-msgstr ""
-"Worldline Online Checkout Prenumeration Id %1$s kunde inte avbrytas - %2$s"
+msgid "Worldline Online Checkout Subscription Id: %1$s could not be canceled - %2$s"
+msgstr "Worldline Online Checkout Prenumeration Id %1$s kunde inte avbrytas - %2$s"
 
-#. %s: search term
-#: bambora-online-checkout.php:835
+#. translators: %s: search term
+#: bambora-online-checkout.php:939
 #, php-format
-msgid ""
-"Worldline Online Checkout Subscription Id: %1$s could not be renewed - %2$s"
-msgstr ""
-"Worldline Online Checkout Prenumeration Id: %1$s kunne ikke fornyes - %2$s"
+msgid "Worldline Online Checkout Subscription Id: %1$s could not be renewed - %2$s"
+msgstr "Worldline Online Checkout Prenumeration Id: %1$s kunne ikke fornyes - %2$s"
 
-#: bambora-online-checkout.php:1615 bambora-online-checkout.php:1656
+#: bambora-online-checkout.php:1719
+#: bambora-online-checkout.php:1760
 msgid "You can only refund complete order lines for payments made with Walley."
-msgstr ""
-"Du kan enbart återbetala fullständiga orderrader för betalningar gjorda med "
-"Walley."
+msgstr "Du kan enbart återbetala fullständiga orderrader för betalningar gjorda med Walley."
 
-#: bambora-online-checkout.php:1542
+#: bambora-online-checkout.php:1646
 msgid "You have to refund a higher amount than 0."
 msgstr "Du måste ange en summa högre än 0 för att kunna återbetala."
 
-#: bambora-online-checkout.php:2065
-msgid "Your role cannot capture or delete the payment"
-msgstr "Din roll kan inte fånga eller radera betalningen"
-
-#: bambora-online-checkout.php:1538
+#: bambora-online-checkout.php:1642
 msgid "Your user role is not allowed to refund via Worldline Online Checkout"
-msgstr ""
-"Din brukerrolle har ikke lov til å refundere via Worldline Online Checkout"
+msgstr "Din användarroll har inte behörighet att återbetala via Worldline Online Checkout"
+
+#: bambora-online-checkout.php:526
+msgid "The action was not performed, because your browser used an outdated version of the Worldline Online Checkout script. Please reload the page (Ctrl+F5) and try again."
+msgstr "Åtgärden utfördes inte eftersom din webbläsare använde en föråldrad version av Worldline Online Checkout-skriptet. Ladda om sidan (Ctrl+F5) och försök igen."
+
+#: bambora-online-checkout.php:1011
+msgid "The MD5 key is missing. Please configure it in the plugin settings."
+msgstr "MD5-nyckeln saknas. Ange den i modulens inställningar."
+
+#: bambora-online-checkout.php:1029
+msgid "Could not retrive the payment window. Please try again or contact us for assistance."
+msgstr "Betalningsfönstret kunde inte hämtas. Försök igen eller kontakta oss för hjälp."
+
+#: bambora-online-checkout.php:1988
+msgid "Your role cannot create payment requests"
+msgstr "Din roll kan inte skapa betalningsförfrågningar"
+
+#. translators: %s: wallet name, ex. MobilePay
+#: bambora-online-checkout.php:2133
+#, php-format
+msgid "via %s"
+msgstr "via %s"
+
+#: bambora-online-checkout.php:2142
+msgid "Transaction"
+msgstr "Transaktion"
+
+#. translators: %s: ECI value
+#: bambora-online-checkout.php:2149
+#, php-format
+msgid "ECI %s"
+msgstr "ECI %s"
+
+#. translators: %s: exemptions, ex. LowValuePayment
+#: bambora-online-checkout.php:2156
+#, php-format
+msgid "Exemption: %s"
+msgstr "Undantag: %s"
+
+#. translators: %s: acquirer reference
+#: bambora-online-checkout.php:2161
+#, php-format
+msgid "Acquirer reference: %s"
+msgstr "Inlösarreferens: %s"
+
+#: bambora-online-checkout.php:2193
+msgid "Left to capture"
+msgstr "Kvar att fånga"
+
+#: bambora-online-checkout.php:2217
+msgid "Your role cannot capture or delete the payment."
+msgstr "Din roll kan inte fånga eller radera betalningen."
+
+#: bambora-online-checkout.php:2228
+msgid "Amount to capture"
+msgstr "Belopp att fånga"
+
+#: bambora-online-checkout.php:2234
+msgid "With Walley only full capture is possible here. For partial capture, use the Worldline Merchant Portal."
+msgstr "Med Walley kan bara hela beloppet fångas här. Använd Worldline Merchant Portal för delvis fångst."
+
+#: bambora-online-checkout.php:2236
+msgid "The amount is in the wrong format. Use for example 1234.56"
+msgstr "Beloppet har fel format. Använd till exempel 1234.56"
+
+#: bambora-online-checkout.php:2243
+msgid "Delete payment"
+msgstr "Radera betalning"
+
+#: bambora-online-checkout.php:2278
+msgid "Transaction history"
+msgstr "Transaktionshistorik"
+
+#: bambora-online-checkout.php:2431
+msgid "Your user role is not allowed to perform this action"
+msgstr "Din användarroll har inte behörighet att utföra den här åtgärden"
+
+#: bambora-online-checkout.php:2434
+msgid "The order was not paid with Worldline Online Checkout"
+msgstr "Ordern betalades inte med Worldline Online Checkout"
+
+#. translators: 1: running PHP version, 2: list of supported PHP versions
+#: lib/bambora-online-checkout-php-version.php:97
+#, php-format
+msgid "Worldline Online Checkout: The server runs PHP %1$s, which no longer receives security fixes. Ask your hosting provider to upgrade to one of these versions or newer: %2$s."
+msgstr "Worldline Online Checkout: Servern kör PHP %1$s, som inte längre får säkerhetsuppdateringar. Be din webbhotelleverantör att uppgradera till någon av dessa versioner eller senare: %2$s."
+
+#. translators: 1: running PHP version, 2: minimum patched PHP version
+#: lib/bambora-online-checkout-php-version.php:101
+#, php-format
+msgid "Worldline Online Checkout: The server runs PHP %1$s, which is missing security fixes. Ask your hosting provider to update PHP to %2$s or newer."
+msgstr "Worldline Online Checkout: Servern kör PHP %1$s, som saknar säkerhetsuppdateringar. Be din webbhotelleverantör att uppdatera PHP till %2$s eller senare."
+
+#: lib/bambora-online-checkout-php-version.php:105
+msgid "This PHP build is from a Linux distribution, which may include the security fixes without changing the version number. Check with your hosting provider."
+msgstr "Den här PHP-versionen kommer från en Linux-distribution, som kan innehålla säkerhetsuppdateringarna utan att versionsnumret ändras. Kontrollera med din webbhotelleverantör."
+
+#: lib/bambora-online-checkout-php-version.php:139
+msgid "Worldline Online Checkout PHP version"
+msgstr "Worldline Online Checkout PHP-version"
+
+#: lib/bambora-online-checkout-php-version.php:153
+msgid "PHP has the latest security fixes"
+msgstr "PHP har de senaste säkerhetsuppdateringarna"
+
+#: lib/bambora-online-checkout-php-version.php:156
+msgid "Security"
+msgstr "Säkerhet"
+
+#. translators: %s: running PHP version
+#: lib/bambora-online-checkout-php-version.php:160
+#, php-format
+msgid "The server runs PHP %s."
+msgstr "Servern kör PHP %s."
+
+#: lib/bambora-online-checkout-php-version.php:165
+msgid "PHP is missing security fixes"
+msgstr "PHP saknar säkerhetsuppdateringar"
+
+#: bambora-online-checkout.php:2287
+msgid "Copied"
+msgstr "Kopierad"
+
+#: bambora-online-checkout.php:2287
+msgid "Copy"
+msgstr "Kopiera"
+
+#: bambora-online-checkout.php:2335
+msgid "Please enter a valid email address."
+msgstr "Ange en giltig e-postadress."
+
+#: bambora-online-checkout.php:2338
+msgid "Delete request"
+msgstr "Radera förfrågan"
+
+#: bambora-online-checkout.php:2339
+msgid "Send email"
+msgstr "Skicka e-post"
+
+#: bambora-online-checkout.php:514
+msgid "Worldline Online Checkout is not offered to your customers, because the MD5 key is missing. Configure the same MD5 key in the module settings and in the Worldline administration."
+msgstr "Worldline Online Checkout erbjuds inte till dina kunder eftersom MD5-nyckeln saknas. Ange samma MD5-nyckel i modulens inställningar och i Worldline-administrationen."
+
+#: bambora-online-checkout.php:515
+msgid "Open the module settings"
+msgstr "Öppna modulens inställningar"
+
+#: bambora-online-checkout.php:1019
+msgid "The renewal order is incomplete (missing currency or customer), so it was not saved correctly and is not charged. Create a new renewal order from the subscription."
+msgstr "Förnyelseordern är ofullständig (saknar valuta eller kund), så den sparades inte korrekt och debiteras inte. Skapa en ny förnyelseorder från prenumerationen."
+
+#. translators: %s: search term
+#: bambora-online-checkout.php:1067
+#, php-format
+msgid "Worldline Online Checkout Subscription Id: %s was not deleted at Worldline, because it is used by another subscription"
+msgstr "Worldline Online Checkout prenumerations-ID: %s raderades inte hos Worldline eftersom det används av en annan prenumeration"
+
+#. translators: 1: transaction id, 2: authorized amount, 3: order total
+#: bambora-online-checkout.php:1724
+#, php-format
+msgid "Worldline Online Checkout payment with transaction id %1$s was not accepted automatically: the authorized amount %2$s does not match the order total %3$s. Check the payment before you process the order."
+msgstr "Worldline Online Checkout-betalningen med transaktions-ID %1$s godkändes inte automatiskt: det auktoriserade beloppet %2$s stämmer inte med ordersumman %3$s. Kontrollera betalningen innan du behandlar ordern."
+
+#: bambora-online-checkout.php:3064
+msgid "Payment Request"
+msgstr "Betalningsförfrågan"
+
+#: bambora-online-checkout.php:3121
+msgid "The status could not be retrieved from Worldline. See the log for details."
+msgstr "Statusen kunde inte hämtas från Worldline. Se loggen för detaljer."
+
+#: bambora-online-checkout.php:3121
+msgid "Unavailable"
+msgstr "Inte tillgänglig"
+
+#: bambora-online-checkout.php:3143
+msgid "Open"
+msgstr "Öppen"
+
+#: bambora-online-checkout.php:3144
+msgid "Closed"
+msgstr "Stängd"
+
+#: bambora-online-checkout.php:3145
+msgid "Expired"
+msgstr "Utgången"

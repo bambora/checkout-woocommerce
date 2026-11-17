@@ -1,6 +1,6 @@
 <?php
 
-require BOC_LIB . 'bambora-online-checkout-endpoints.php';
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Bambora Online Checkout API
@@ -33,17 +33,17 @@ class Bambora_Online_Checkout_Api {
 	 * @param string $service_url - Service Url.
 	 * @param string $json_data - Json data.
 	 * @param string $method - REST Method.
+	 * @param int    $timeout - Timeout in seconds.
 	 * @return mixed
-	 * @throws Exception - Throws an Exeception if REST call fails.
+	 * @throws Exception - Throws an Exeception if REST call fails or the response is not a valid API response.
 	 */
-	private function call_rest_service( $service_url, $json_data, $method ) {
+	private function call_rest_service( $service_url, $json_data, $method, $timeout = 30 ) {
 		$headers  = array(
 			'Content-Type'  => 'application/json',
 			'Accept'        => 'application/json',
 			'Authorization' => $this->api_key,
 			'X-EPay-System' => Bambora_Online_Checkout_Helper::get_module_header_info(),
 		);
-		$timeout  = 30; // Defined in secounds.
 		$response = null;
 		switch ( $method ) {
 			case self::GET:
@@ -82,7 +82,13 @@ class Bambora_Online_Checkout_Api {
 		} elseif ( is_wp_error( $response ) ) {
 			throw new Exception( esc_attr( $response->get_error_message( 'http_request_failed' ) ) );
 		}
-		return json_decode( wp_remote_retrieve_body( $response ) );
+		$decoded = json_decode( wp_remote_retrieve_body( $response ) );
+		// Every API response has a meta object. Without it the response is not from the API (ex. an error page from a proxy).
+		if ( ! is_object( $decoded ) || ! isset( $decoded->meta ) || ! is_object( $decoded->meta ) ) {
+			$http_code = (int) wp_remote_retrieve_response_code( $response );
+			throw new Exception( esc_attr( "Unexpected response from Worldline (HTTP {$http_code})" ) );
+		}
+		return $decoded;
 	}
 
 	/**
@@ -99,24 +105,6 @@ class Bambora_Online_Checkout_Api {
 	}
 
 	/**
-	 * Get Bambora Online Checkout payment window url
-	 *
-	 * @return string
-	 */
-	public function get_checkout_payment_window_url() {
-		return Bambora_Online_Checkout_Endpoints::get_checkout_endpoint();
-	}
-
-	/**
-	 * Get Bambora Online Checkout payment window JavaScript url
-	 *
-	 * @return string
-	 */
-	public function get_checkout_payment_window_js_url() {
-		return Bambora_Online_Checkout_Endpoints::get_checkout_assets() . '/paymentwindow-v1.min.js';
-	}
-
-	/**
 	 * Get Response Code data
 	 *
 	 * @param string $source - Bambora Action Source.
@@ -125,7 +113,7 @@ class Bambora_Online_Checkout_Api {
 	 * @return mixed
 	 */
 	public function get_response_code_data( $source, $action_code ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_data_endpoint() . "/responsecodes/{$source}/{$action_code}";
+		$service_url = Bambora_Online_Checkout_Endpoints::get_data_endpoint() . '/responsecodes/' . rawurlencode( (string) $source ) . '/' . rawurlencode( (string) $action_code );
 		return $this->call_rest_service( $service_url, null, self::GET );
 	}
 
@@ -140,7 +128,7 @@ class Bambora_Online_Checkout_Api {
 	 * @return mixed
 	 */
 	public function capture( $transaction_id, $amount, $currency, $capture_lines = null ) {
-		$service_url      = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/capture";
+		$service_url      = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . '/transactions/' . rawurlencode( (string) $transaction_id ) . '/capture';
 		$data             = array();
 		$data['amount']   = intval( $amount );
 		$data['currency'] = $currency;
@@ -162,7 +150,7 @@ class Bambora_Online_Checkout_Api {
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
 	public function credit( $transaction_id, $amount, $currency, $credit_lines ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/credit";
+		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . '/transactions/' . rawurlencode( (string) $transaction_id ) . '/credit';
 
 		$data             = array();
 		$data['amount']   = intval( $amount );
@@ -182,7 +170,7 @@ class Bambora_Online_Checkout_Api {
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
 	public function delete( $transaction_id ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . "/transactions/{$transaction_id}/delete";
+		$service_url = Bambora_Online_Checkout_Endpoints::get_transaction_endpoint() . '/transactions/' . rawurlencode( (string) $transaction_id ) . '/delete';
 		return $this->call_rest_service( $service_url, null, self::POST );
 	}
 
@@ -194,7 +182,7 @@ class Bambora_Online_Checkout_Api {
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
 	public function get_transaction( $transaction_id ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/transactions/{$transaction_id}";
+		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . '/transactions/' . rawurlencode( (string) $transaction_id );
 		return $this->call_rest_service( $service_url, null, self::GET );
 	}
 
@@ -206,7 +194,7 @@ class Bambora_Online_Checkout_Api {
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
 	public function get_transaction_operations( $transaction_id ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/transactions/{$transaction_id}/transactionoperations";
+		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . '/transactions/' . rawurlencode( (string) $transaction_id ) . '/transactionoperations';
 		return $this->call_rest_service( $service_url, null, self::GET );
 	}
 
@@ -215,12 +203,19 @@ class Bambora_Online_Checkout_Api {
 	 *
 	 * @param string $currency - Currency.
 	 * @param int    $amount - Amount.
+	 * @param int    $timeout - Timeout in seconds. Short by default, since the checkout page waits for the response.
 	 * @return mixed
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
-	public function get_payment_types( $currency, $amount ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . "/paymenttypes?currency={$currency}&amount={$amount}";
-		return $this->call_rest_service( $service_url, null, self::GET );
+	public function get_payment_types( $currency, $amount, $timeout = 5 ) {
+		$query       = http_build_query(
+			array(
+				'currency' => $currency,
+				'amount'   => $amount,
+			)
+		);
+		$service_url = Bambora_Online_Checkout_Endpoints::get_merchant_endpoint() . '/paymenttypes?' . $query;
+		return $this->call_rest_service( $service_url, null, self::GET, $timeout );
 	}
 
 	/**
@@ -255,7 +250,7 @@ class Bambora_Online_Checkout_Api {
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
 	public function get_payment_request( $payment_request_id ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . "/paymentrequests/{$payment_request_id}";
+		$service_url = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . '/paymentrequests/' . rawurlencode( (string) $payment_request_id );
 		return $this->call_rest_service( $service_url, null, self::GET );
 	}
 
@@ -268,7 +263,7 @@ class Bambora_Online_Checkout_Api {
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
 	public function send_payment_request_email( $payment_request_id, $recipient ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . "/paymentrequests/{$payment_request_id}/email-notifications";
+		$service_url = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . '/paymentrequests/' . rawurlencode( (string) $payment_request_id ) . '/email-notifications';
 		$json_data   = wp_json_encode( $recipient );
 		return $this->call_rest_service( $service_url, $json_data, self::POST );
 	}
@@ -281,7 +276,7 @@ class Bambora_Online_Checkout_Api {
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
 	public function delete_payment_request( $payment_request_id ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . "/paymentrequests/{$payment_request_id}";
+		$service_url = Bambora_Online_Checkout_Endpoints::get_checkout_api_endpoint() . '/paymentrequests/' . rawurlencode( (string) $payment_request_id );
 		return $this->call_rest_service( $service_url, null, self::DELETE );
 	}
 
@@ -297,7 +292,7 @@ class Bambora_Online_Checkout_Api {
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
 	public function authorize_subscription( $subscription_id, $amount, $currency, $order_id, $instant_capture_amount ) {
-		$service_url                   = Bambora_Online_Checkout_Endpoints::get_subscription_endpoint() . "/subscriptions/{$subscription_id}/authorize";
+		$service_url                   = Bambora_Online_Checkout_Endpoints::get_subscription_endpoint() . '/subscriptions/' . rawurlencode( (string) $subscription_id ) . '/authorize';
 		$data                          = array();
 		$data['authorize']['currency'] = $currency;
 		$data['authorize']['amount']   = intval( $amount );
@@ -317,7 +312,7 @@ class Bambora_Online_Checkout_Api {
 	 * @throws Exception - Throws an Exeception if REST call fails.
 	 */
 	public function delete_subscription( $subscription_id ) {
-		$service_url = Bambora_Online_Checkout_Endpoints::get_subscription_endpoint() . "/subscriptions/{$subscription_id}";
+		$service_url = Bambora_Online_Checkout_Endpoints::get_subscription_endpoint() . '/subscriptions/' . rawurlencode( (string) $subscription_id );
 		return $this->call_rest_service( $service_url, null, self::DELETE );
 	}
 }
