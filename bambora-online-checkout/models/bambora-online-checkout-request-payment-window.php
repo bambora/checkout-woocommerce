@@ -1,5 +1,7 @@
 <?php
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Bambora_Online_Checkout_Request_Payment_Window
  */

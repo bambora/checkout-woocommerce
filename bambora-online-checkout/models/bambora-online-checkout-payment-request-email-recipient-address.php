@@ -1,4 +1,6 @@
 <?php
+
+defined( 'ABSPATH' ) || exit;
 /**
  * Bambora_Online_Checkout_Payment_Request_Email_Recipient_Address.
  */

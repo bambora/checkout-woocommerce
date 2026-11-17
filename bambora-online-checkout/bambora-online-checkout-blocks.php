@@ -1,5 +1,7 @@
 <?php
 
+defined( 'ABSPATH' ) || exit;
+
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 /**
  * Bambora Online Checkout Blocks
@@ -39,7 +41,7 @@ final class Bambora_Online_Checkout_Blocks extends AbstractPaymentMethodType {
 	 */
 	public function initialize() {
 		$this->settings = get_option(
-			"woocommerce_{$this->name}_settings",
+			"woocommerce_{$this->gateway->id}_settings",
 			array()
 		);
 	}
@@ -79,7 +81,7 @@ final class Bambora_Online_Checkout_Blocks extends AbstractPaymentMethodType {
 				'wp-html-entities',
 				'wp-i18n',
 			),
-			BOC_VERSION,
+			Bambora_Online_Checkout_Helper::get_asset_version( 'assets/js/bambora-online-checkout.js' ),
 			true
 		);
 		if ( function_exists( 'wp_set_script_translations' ) ) {

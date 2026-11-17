@@ -1,5 +1,7 @@
 <?php
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Bambora Online Checkout Helper
  */
@@ -26,6 +28,18 @@ class Bambora_Online_Checkout_Helper {
 		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 		$encoded_key = base64_encode( $combined );
 		return "Basic {$encoded_key}";
+	}
+
+	/**
+	 * Get the version for an asset (script or style).
+	 * The file modification time is added, so browsers and proxies load the new file whenever it changes.
+	 *
+	 * @param string $relative_path - Path relative to the plugin folder, ex. assets/js/bambora-online-checkout-admin.js.
+	 * @return string
+	 */
+	public static function get_asset_version( $relative_path ) {
+		$file = dirname( __DIR__ ) . '/' . ltrim( $relative_path, '/' );
+		return file_exists( $file ) ? BOC_VERSION . '-' . filemtime( $file ) : BOC_VERSION;
 	}
 
 	/**
@@ -139,59 +153,6 @@ class Bambora_Online_Checkout_Helper {
 	}
 
 	/**
-	 * Format date time
-	 *
-	 * @param string $raw_date_time - Raw Date Time.
-	 * @return string
-	 */
-	public static function format_date_time( $raw_date_time ) {
-		$date_format      = wc_date_format();
-		$time_format      = wc_time_format();
-		$date_time_format = "{$date_format} - {$time_format}";
-
-		$date_time     = wc_string_to_datetime( $raw_date_time );
-		$formated_date = wc_format_datetime( $date_time, $date_time_format );
-
-		return $formated_date;
-	}
-
-
-	/**
-	 * Format a number
-	 *
-	 * @param mixed $number - Number.
-	 * @param int   $decimals - Decimals.
-	 * @param bool  $display_thousand_separator - Display Thousand Separator (Default true).
-	 * @return string
-	 */
-	public static function format_number( $number, $decimals, $display_thousand_separator = true ) {
-		if ( $display_thousand_separator ) {
-			return number_format( $number, $decimals, wc_get_price_decimal_separator(), wc_get_price_thousand_separator() );
-		}
-		return number_format( $number, $decimals, wc_get_price_decimal_separator(), '' );
-	}
-
-	/**
-	 * Translate action
-	 *
-	 * @param string $action - Bambora Action.
-	 * @return string
-	 */
-	public static function translate_action( $action ) {
-		if ( 'Authorize' === $action ) {
-			return __( 'Authorized', 'bambora-online-checkout' );
-		} elseif ( 'Capture' === $action ) {
-			return __( 'Captured', 'bambora-online-checkout' );
-		} elseif ( 'Credit' === $action ) {
-			return __( 'Refunded', 'bambora-online-checkout' );
-		} elseif ( 'Delete' === $action ) {
-			return __( 'Deleted', 'bambora-online-checkout' );
-		} else {
-			return $action;
-		}
-	}
-
-	/**
 	 * Returns the Callback url
 	 *
 	 * @param string $order_id - WC Order Id.
@@ -259,33 +220,73 @@ class Bambora_Online_Checkout_Helper {
 	/**
 	 * Validate Callback
 	 *
+	 * Validates the callback parameters and the MD5 hash first. Only then is the transaction
+	 * fetched from the Merchant API and validated against the callback.
+	 *
 	 * @param mixed    $params - GET Parameters.
 	 * @param string   $md5_key - Bambora MD5 Key.
-	 * @param WC_Order $order - WC Order.
+	 * @param string   $api_key - Bambora API Key for the order.
+	 * @param WC_Order $order - Output WC Order.
+	 * @param object   $transaction - Output transaction from the Merchant API.
+	 * @param string   $message - Output message.
+	 * @return bool
+	 * @throws Exception - Throws an Exception if the call to the Merchant API fails.
+	 */
+	public static function validate_bambora_online_checkout_callback( $params, $md5_key, $api_key, &$order, &$transaction, &$message ) {
+		if ( ! self::validate_bambora_online_checkout_callback_params( $params, $md5_key, $order, $message ) ) {
+			return false;
+		}
+
+		return self::validate_bambora_online_checkout_callback_transaction( $params, $api_key, $transaction, $message );
+	}
+
+	/**
+	 * Validate the callback parameters, the WooCommerce order and the MD5 hash
+	 *
+	 * @param mixed    $params - GET Parameters.
+	 * @param string   $md5_key - Bambora MD5 Key.
+	 * @param WC_Order $order - Output WC Order.
 	 * @param string   $message - Output message.
 	 * @return bool
 	 */
-	public static function validate_bambora_online_checkout_callback_params( $params, $md5_key, &$order, &$message ) {
-		if ( ! isset( $params ) || empty( $params ) ) {
+	private static function validate_bambora_online_checkout_callback_params( $params, $md5_key, &$order, &$message ) {
+		if ( empty( $params ) || ! is_array( $params ) ) {
 			$message = 'No GET parameters supplied to the system';
 			return false;
 		}
 
+		// All values are concatenated for the MD5 hash, so they must be strings!
+		foreach ( $params as $key => $value ) {
+			if ( ! is_string( $value ) ) {
+				$message = "The GET parameter {$key} is not valid";
+				return false;
+			}
+		}
+
+		// Check required parameters exists!
+		foreach ( array( 'wcorderid', 'txnid', 'orderid', 'currency', 'hash' ) as $key ) {
+			if ( empty( $params[ $key ] ) ) {
+				$message = "No {$key} was supplied to the system!";
+				return false;
+			}
+		}
+
+		// Worldline always adds the hash last. Parameters after the hash are not part of the hash, so they are not accepted!
+		if ( 'hash' !== array_key_last( $params ) ) {
+			$message = 'The hash is not the last parameter';
+			return false;
+		}
+
+		// The amount can be 0 (ex. subscriptions with a free trial) so empty() can not be used!
+		if ( ! isset( $params['amount'] ) || ! ctype_digit( $params['amount'] ) ) {
+			$message = 'No valid amount was supplied to the system!';
+			return false;
+		}
+
 		// Validate woocommerce order!
-		if ( ! array_key_exists( 'wcorderid', $params ) || empty( $params['wcorderid'] ) ) {
-			$message = 'No WooCommerce Order Id was supplied to the system!';
-			return false;
-		}
-
 		$order = wc_get_order( $params['wcorderid'] );
-		if ( ! isset( $order ) || false === $order ) {
+		if ( empty( $order ) ) {
 			$message = "Could not find order with WooCommerce Order id {$params['wcorderid']}";
-			return false;
-		}
-
-		// Check exists transactionid!
-		if ( ! array_key_exists( 'txnid', $params ) || empty( $params['txnid'] ) ) {
-			$message = 'No txnid was supplied to the system!';
 			return false;
 		}
 
@@ -293,21 +294,86 @@ class Bambora_Online_Checkout_Helper {
 			$order_language = self::get_wpml_order_language( $order->get_id() );
 			$md5_key        = self::get_wpml_option_value( 'md5key', $order_language, $md5_key );
 		}
+
+		if ( empty( $md5_key ) ) {
+			$message = 'The MD5 key is missing. Please configure it in the plugin settings.';
+			return false;
+		}
+
 		// Validate MD5!
 		$var = '';
-		if ( strlen( $md5_key ) > 0 ) {
-			foreach ( $params as $key => $value ) {
-				if ( 'hash' === $key ) {
-					break;
-				}
-				$var .= $value;
+		foreach ( $params as $key => $value ) {
+			if ( 'hash' === $key ) {
+				break;
 			}
-			$genstamp = md5( "{$var}{$md5_key}" );
-			if ( ! hash_equals( $genstamp, $params['hash'] ) ) {
-				$message = 'Validation failed - Please contact Worldline support';
-				return false;
-			}
+			$var .= $value;
 		}
+		$genstamp = md5( "{$var}{$md5_key}" );
+		if ( ! hash_equals( $genstamp, $params['hash'] ) ) {
+			$message = 'Validation failed - Please contact Worldline support';
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get the transaction from the Merchant API and validate that it matches the callback
+	 *
+	 * The callback amount is checked both with and without the surcharge fee,
+	 * since the authorized amount on the transaction includes the fee.
+	 *
+	 * @param mixed  $params - GET Parameters.
+	 * @param string $api_key - Bambora API Key for the order.
+	 * @param object $transaction - Output transaction from the Merchant API.
+	 * @param string $message - Output message.
+	 * @return bool
+	 * @throws Exception - Throws an Exception if the call to the Merchant API fails.
+	 */
+	private static function validate_bambora_online_checkout_callback_transaction( $params, $api_key, &$transaction, &$message ) {
+		// Get the transaction!
+		$api                      = new Bambora_Online_Checkout_Api( $api_key );
+		$get_transaction_response = $api->get_transaction( $params['txnid'] );
+		if ( ! $get_transaction_response->meta->result ) {
+			$message = "Transaction is not valid: {$get_transaction_response->meta->message->merchant}";
+			return false;
+		}
+		$transaction = $get_transaction_response->transaction;
+
+		// Validate transaction!
+		if ( empty( $transaction->orderid ) || empty( $transaction->currency ) || ! isset( $transaction->total->authorized ) ) {
+			$message = 'The transaction is missing order id, currency or total';
+			return false;
+		}
+
+		// Validate order id!
+		if ( $params['orderid'] !== $transaction->orderid ) {
+			$message = 'The order id does not match the transaction';
+			return false;
+		}
+
+		// Validate currency - accept both ISO 4217 alpha-3 (DKK) and numeric-3 (208)!
+		$transaction_currencies = array();
+		if ( ! empty( $transaction->currency->code ) ) {
+			$transaction_currencies[] = strtoupper( $transaction->currency->code );
+		}
+		if ( ! empty( $transaction->currency->number ) ) {
+			$transaction_currencies[] = $transaction->currency->number;
+		}
+		if ( ! in_array( strtoupper( $params['currency'] ), $transaction_currencies, true ) ) {
+			$message = 'The currency does not match the transaction';
+			return false;
+		}
+
+		// Validate amount in minorunits!
+		$amount     = intval( $params['amount'] );
+		$authorized = $transaction->total->authorized;
+		$fee_amount = isset( $transaction->total->feeamount ) ? $transaction->total->feeamount : 0;
+		if ( ! in_array( $amount, array( $authorized, $authorized - $fee_amount ), true ) ) {
+			$message = 'The amount does not match the transaction';
+			return false;
+		}
+
 		return true;
 	}
 
@@ -315,10 +381,13 @@ class Bambora_Online_Checkout_Helper {
 	 * Get the language the order was made in
 	 *
 	 * @param int $order_id - WC Order Id.
-	 * @return string
+	 * @return string|null
 	 */
 	public static function get_wpml_order_language( $order_id ) {
 		$order = wc_get_order( $order_id );
+		if ( empty( $order ) ) {
+			return null;
+		}
 		return $order->get_meta( 'wpml_language', true );
 	}
 
@@ -333,14 +402,14 @@ class Bambora_Online_Checkout_Helper {
 	 */
 	public static function get_wpml_option_value( $key, $language = null, $default_value = null ) {
 		if ( is_null( $language ) ) {
-			$language = apply_filters( 'wpml_current_language', null );
+			$language = apply_filters( 'wpml_current_language', null ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML hook.
 		}
 		$option_value = null;
 		$options      = get_option( 'woocommerce_bambora_settings' );
 		if ( isset( $options[ $key ] ) ) {
 			$key_value = $options[ $key ];
 			if ( isset( $language ) && ! empty( $language ) ) {
-				$option_value = apply_filters( 'wpml_translate_single_string', $key_value, 'admin_texts_woocommerce_bambora_settings', '[woocommerce_bambora_settings]' . $key, $language );
+				$option_value = apply_filters( 'wpml_translate_single_string', $key_value, 'admin_texts_woocommerce_bambora_settings', '[woocommerce_bambora_settings]' . $key, $language ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML hook.
 			}
 		}
 		// Always return default value in case of not set.
@@ -363,15 +432,16 @@ class Bambora_Online_Checkout_Helper {
 
 		// For Legacy.
 		if ( empty( $bambora_subscription_id ) ) {
-			$parent_order_id         = $subscription->get_parent_id();
-			$bambora_subscription_id = get_post_meta( $parent_order_id, self::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY, true );
-			if ( ! empty( $bambora_subscription_id ) ) {
-				// Transform Legacy to new standards.
-				$subscription->update_meta_data( self::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
-				$subscription->save();
-				$parent = wc_get_order( $parent_order_id );
-				$parent->delete_meta_data( self::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY );
-				$parent->save();
+			$parent = wc_get_order( $subscription->get_parent_id() );
+			if ( ! empty( $parent ) ) {
+				$bambora_subscription_id = $parent->get_meta( self::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY, true );
+				if ( ! empty( $bambora_subscription_id ) ) {
+					// Transform Legacy to new standards.
+					$subscription->update_meta_data( self::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID, $bambora_subscription_id );
+					$subscription->save();
+					$parent->delete_meta_data( self::BAMBORA_ONLINE_CHECKOUT_SUBSCRIPTION_ID_LEGACY );
+					$parent->save();
+				}
 			}
 		}
 		return $bambora_subscription_id;
@@ -386,11 +456,10 @@ class Bambora_Online_Checkout_Helper {
 		$transaction_id = $order->get_transaction_id();
 		// For Legacy.
 		if ( empty( $transaction_id ) ) {
-			$order_id       = $order->get_id();
-			$transaction_id = get_post_meta( $order_id, self::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY, true );
+			$transaction_id = $order->get_meta( self::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY, true );
 			if ( ! empty( $transaction_id ) ) {
 				// Transform Legacy to new standards.
-				delete_post_meta( $order_id, self::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY );
+				$order->delete_meta_data( self::BAMBORA_ONLINE_CHECKOUT_TRANSACTION_ID_LEGACY );
 				$order->set_transaction_id( $transaction_id );
 				$order->save();
 			}
@@ -399,7 +468,9 @@ class Bambora_Online_Checkout_Helper {
 	}
 
 	/**
-	 * Build the list of notices to display on the administration
+	 * Add a notice to display on the administration for the current user.
+	 * The notices are stored per user, so they are not shown to other users.
+	 * Without a logged in user (ex. cron or a callback) there is no one to show the notice to, so callers must log instead.
 	 *
 	 * @param string $type - Type.
 	 * @param string $message - Message.
@@ -407,39 +478,69 @@ class Bambora_Online_Checkout_Helper {
 	 * @return void
 	 */
 	public static function add_admin_notices( $type, $message, $keep_post = false ) {
-		$message  = array(
+		$user_id = get_current_user_id();
+		if ( 0 === $user_id ) {
+			return;
+		}
+		$transient  = self::get_admin_notices_transient_name( $user_id );
+		$notices    = get_transient( $transient );
+		$messages   = is_array( $notices ) && isset( $notices['messages'] ) && is_array( $notices['messages'] ) ? $notices['messages'] : array();
+		$messages[] = array(
 			'type'    => $type,
 			'message' => $message,
 		);
-		$messages = get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, false );
-		if ( ! $messages ) {
-			update_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, array( $message ) );
-		} else {
-			array_push( $messages, $message );
-			update_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, $messages );
-		}
-		update_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST, $keep_post );
+		set_transient(
+			$transient,
+			array(
+				'messages'  => $messages,
+				'keep_post' => (bool) $keep_post,
+			),
+			HOUR_IN_SECONDS
+		);
 	}
 
 	/**
-	 * Echo the notices to the Administration
+	 * Echo the notices for the current user to the Administration
 	 *
 	 * @return void
 	 */
 	public static function echo_admin_notices() {
-		$messages = get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, false );
-		if ( ! $messages ) {
-			return;
-		}
-		foreach ( $messages as $message ) {
-            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo self::message_to_html( $message['type'], $message['message'] );
-		}
-		if ( ! get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST, false ) ) {
+		// Before version 9.0.0 the notices were stored in options shared by all users. Remove them.
+		if ( false !== get_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES, false ) ) {
 			delete_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES );
-		} else {
 			delete_option( self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES_KEEP_FOR_POST );
 		}
+
+		$user_id = get_current_user_id();
+		if ( 0 === $user_id ) {
+			return;
+		}
+		$transient = self::get_admin_notices_transient_name( $user_id );
+		$notices   = get_transient( $transient );
+		if ( ! is_array( $notices ) || empty( $notices['messages'] ) || ! is_array( $notices['messages'] ) ) {
+			return;
+		}
+		foreach ( $notices['messages'] as $message ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in message_to_html.
+			echo self::message_to_html( $message['type'], $message['message'] );
+		}
+		if ( ! empty( $notices['keep_post'] ) ) {
+			// Show the notices one more time.
+			$notices['keep_post'] = false;
+			set_transient( $transient, $notices, HOUR_IN_SECONDS );
+		} else {
+			delete_transient( $transient );
+		}
+	}
+
+	/**
+	 * Get the name of the transient holding the admin notices for a user
+	 *
+	 * @param int $user_id - WP User Id.
+	 * @return string
+	 */
+	private static function get_admin_notices_transient_name( $user_id ) {
+		return self::BAMBORA_ONLINE_CHECKOUT_STATUS_MESSAGES . '_' . (int) $user_id;
 	}
 
 	/**
@@ -507,7 +608,7 @@ class Bambora_Online_Checkout_Helper {
 			}
 			// Temporary renaming for Lindorff to Walley & Collector Bank to Walley require until implemented in Acquire. (from 1st September 2021 called Walley).
 			$third_party_name = $transaction_operation->acquirername;
-			$third_party_name = strtolower( $third_party_name ) !== ( 'lindorff' || 'collectorbank' ) ? $third_party_name : 'Walley';
+			$third_party_name = in_array( strtolower( $third_party_name ), array( 'lindorff', 'collectorbank' ), true ) ? 'Walley' : $third_party_name;
 
 			switch ( $sub_action ) {
 				case 'threed':
@@ -665,23 +766,5 @@ class Bambora_Online_Checkout_Helper {
 			return '';
 		}
 		return sanitize_text_field( $items[ $key ] );
-	}
-
-	/**
-	 * Get the order ID depending on what was passed.
-	 *
-	 * @param  mixed $order Order data to convert to an ID.
-	 * @return int|bool false on failure
-	 */
-	public static function get_order_id( $order ) {
-		if ( is_numeric( $order ) ) {
-			return $order;
-		} elseif ( $order instanceof WC_Abstract_Order ) {
-			return $order->get_id();
-		} elseif ( ! empty( $order->ID ) ) {
-			return $order->ID;
-		} else {
-			return false;
-		}
 	}
 }
