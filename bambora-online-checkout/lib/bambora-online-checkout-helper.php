@@ -218,6 +218,37 @@ class Bambora_Online_Checkout_Helper {
 	}
 
 	/**
+	 * Get the signed callback parameters
+	 *
+	 * Worldline always adds the hash last, so the parameters after the hash are not part of the hash.
+	 * They are added by someone else (ex. a rewrite rule, a CDN or a redirect at the hosting) and could
+	 * be added by anyone, so they are removed and never used.
+	 *
+	 * @param mixed $params - GET Parameters.
+	 * @param array $unsigned_keys - Output keys of the removed parameters.
+	 * @return mixed
+	 */
+	public static function get_signed_callback_params( $params, &$unsigned_keys = array() ) {
+		$unsigned_keys = array();
+		if ( ! is_array( $params ) || ! array_key_exists( 'hash', $params ) ) {
+			return $params;
+		}
+
+		$signed_params = array();
+		$after_hash    = false;
+		foreach ( $params as $key => $value ) {
+			if ( $after_hash ) {
+				$unsigned_keys[] = (string) $key;
+				continue;
+			}
+			$signed_params[ $key ] = $value;
+			$after_hash            = 'hash' === $key;
+		}
+
+		return $signed_params;
+	}
+
+	/**
 	 * Validate Callback
 	 *
 	 * Validates the callback parameters and the MD5 hash first. Only then is the transaction
@@ -272,6 +303,7 @@ class Bambora_Online_Checkout_Helper {
 		}
 
 		// Worldline always adds the hash last. Parameters after the hash are not part of the hash, so they are not accepted!
+		// The callback removes them with get_signed_callback_params() first, so this only protects other callers.
 		if ( 'hash' !== array_key_last( $params ) ) {
 			$message = 'The hash is not the last parameter';
 			return false;

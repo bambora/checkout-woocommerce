@@ -1,9 +1,9 @@
 === Worldline Online Checkout ===
 Contributors: bambora
-Tags: woocommerce, woo commerce, payment, payment gateway, gateway, bambora, checkout, integration, woocommerce bambora, woocommerce bambora online checkout, worldline, Worldline Online Checkout, woocommerce worldline, worldline nordics, psp, subscription, subscriptions
+Tags: woocommerce, payment gateway, worldline, bambora, subscriptions
 Requires at least: 6.6
 Tested up to: 7.1.4
-Stable tag: 9.0.0
+Stable tag: 9.0.1
 Requires PHP: 8.2
 WC requires at least: 8.0
 WC tested up to: 11.3.0
@@ -91,10 +91,17 @@ By using Worldline Online Checkout you won't have to worry about the security of
 <a href="https://developer.bambora.com/europe/shopping-carts/shopping-carts/woocommerce">Click here for more information about **Settings**</a>
 
 == Upgrade Notice ==
+= 9.0.1 =
+Fixes callbacks being rejected with HTTP 400 ("The hash is not the last parameter") when the hosting adds parameters to the callback URL.
+
 = 9.0.0 =
 The MD5 key is now required. Configure the same MD5 key in the plugin settings and in the Worldline administration BEFORE you update. Without it the payment method is hidden at checkout and callbacks are rejected. Requires PHP 8.2 or newer.
 
 == Changelog ==
+= 9.0.1 =
+Fixes:
+* Fixed callbacks being rejected with HTTP 400 "The hash is not the last parameter" when the hosting adds parameters to the callback URL (ex. a rewrite rule, a CDN or a redirect). Parameters after the hash are not signed, so they are now ignored instead of rejected and are never used. The ignored parameters are written to the log
+
 = 9.0.0 =
 This is a major release. Please read the breaking changes before updating.
 
