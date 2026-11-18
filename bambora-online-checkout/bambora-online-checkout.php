@@ -4,7 +4,7 @@
  * Plugin Name: Worldline Online Checkout
  * Plugin URI: https://worldline.com/
  * Description: Worldline Online Checkout Payment Gateway for WooCommerce (prev. Bambora Online Checkout)
- * Version: 9.0.0
+ * Version: 9.0.1
  * Author: Bambora
  * Author URI: https://worldline.com/
  * Text Domain: bambora-online-checkout
@@ -39,7 +39,7 @@ function init_bambora_online_checkout() {
 	// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Existing constants that other code may use. Renaming them would break it.
 	define( 'BOC_LIB', __DIR__ . '/lib/' );
 	define( 'BOC_MODELS', __DIR__ . '/models/' );
-	define( 'BOC_VERSION', '9.0.0' );
+	define( 'BOC_VERSION', '9.0.1' );
 	// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 
 	// Including Bambora files!
@@ -1587,6 +1587,12 @@ function init_bambora_online_checkout() {
 			}
 			$params = wp_unslash( $_GET );
 			// phpcs:enable WordPress.Security.NonceVerification.Recommended
+			// Only the signed parameters are used. Parameters after the hash are removed, ex. added by the hosting.
+			$unsigned_keys = array();
+			$params        = Bambora_Online_Checkout_Helper::get_signed_callback_params( $params, $unsigned_keys );
+			if ( ! empty( $unsigned_keys ) ) {
+				$this->boc_log->add( 'Callback - ignored parameters after the hash, they are not signed: ' . implode( ', ', $unsigned_keys ) );
+			}
 			$message       = '';
 			$error_message = '';
 			$order         = null;
